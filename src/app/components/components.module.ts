@@ -3,13 +3,15 @@ import { CommonModule } from '@angular/common';
 import { TabPage } from './tab/tab.page';
 import { CabeceraComponent } from './cabecera/cabecera.component';
 import { IonicModule } from '@ionic/angular';
+import { NotificacionesComponent } from './notificaciones/notificaciones.component';
 
 
 
 @NgModule({
   declarations: [
     TabPage,
-    CabeceraComponent
+    CabeceraComponent,
+    NotificacionesComponent
   ],
   imports: [
     CommonModule,
@@ -17,7 +19,8 @@ import { IonicModule } from '@ionic/angular';
   ],
   exports: [
     TabPage,
-    CabeceraComponent
+    CabeceraComponent,
+    NotificacionesComponent
   ]
 })
 export class ComponentsModule { }
