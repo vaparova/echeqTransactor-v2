@@ -1,60 +1,20 @@
-List of Text Items
-<ion-list>
-  <ion-item>
-    <ion-label>Pokémon Yellow</ion-label>
-  </ion-item>
-  <ion-item>
-    <ion-label>Mega Man X</ion-label>
-  </ion-item>
-  <ion-item>
-    <ion-label>The Legend of Zelda</ion-label>
-  </ion-item>
-  <ion-item>
-    <ion-label>Pac-Man</ion-label>
-  </ion-item>
-  <ion-item>
-    <ion-label>Super Mario World</ion-label>
-  </ion-item>
-</ion-list> 
+<ion-list-header lines="inset">
+  <ion-label class="titulo">Notificaciones</ion-label>
+</ion-list-header>
 
-<!-- List of Input Items -->
-<ion-list>
-  <ion-item>
-    <ion-label>Input</ion-label>
-    <ion-input></ion-input>
-  </ion-item>
-  <ion-item>
-    <ion-label>Toggle</ion-label>
-    <ion-toggle slot="end"></ion-toggle>
-  </ion-item>
-  <ion-item>
-    <ion-label>Radio</ion-label>
-    <ion-radio slot="end"></ion-radio>
-  </ion-item>
-  <ion-item>
-    <ion-label>Checkbox</ion-label>
-    <ion-checkbox slot="start"></ion-checkbox>
-  </ion-item>
-</ion-list> 
+<!-- item que se repetirá por cada alerta existente -->
+<ion-list-header>
+  <ion-label lines="inset">Has recibido un nuevo Echeq</ion-label>
+  <ion-button >
+    <ion-icon slot="icon-only" name="chevron-forward-outline" color="dark"></ion-icon>
+  </ion-button>
+</ion-list-header>
 
-<!-- List of Sliding Items -->
-<ion-list>
-  <ion-item-sliding>
-    <ion-item>
-      <ion-label>Item</ion-label>
-    </ion-item>
-    <ion-item-options side="end">
-      <ion-item-option >Unread</ion-item-option>
-    </ion-item-options>
-  </ion-item-sliding>
+<ion-list-header>
+  <ion-label lines="inset">Tienes Echeq disponibles para depositar</ion-label>
+  <ion-button>
+    <ion-icon slot="icon-only" name="chevron-forward-outline" color="dark"></ion-icon>
+  </ion-button>
+</ion-list-header>
 
-  <ion-item-sliding>
-    <ion-item>
-      <ion-label>Item</ion-label>
-    </ion-item>
-    <ion-item-options side="end">
-      <ion-item-option >Unread</ion-item-option>
-    </ion-item-options>
-  </ion-item-sliding>
-</ion-list> 
 
