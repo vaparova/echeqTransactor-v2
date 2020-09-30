@@ -18,7 +18,11 @@ export class NotificacionesComponent implements OnInit {
       },
       {
         titulo: 'Tienes Echeq disponibles para depositar',
-        detalle: 'Revisa tu calendario para ver tus echeq pronto a ser depositados'
+        detalle: 'Revisa tu calendario para ver echeqs pronto a ser depositados'
+      },
+      {
+        titulo: 'Tu Echeq en custodia se depositará hoy',
+        detalle: 'El valor 00072486 será depositado en tu cuenta de Banco Nación'
       }
     ];
   }

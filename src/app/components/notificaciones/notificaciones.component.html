@@ -3,18 +3,13 @@
 </ion-list-header>
 
 <!-- item que se repetirá por cada alerta existente -->
-<ion-list-header>
-  <ion-label lines="inset">Has recibido un nuevo Echeq</ion-label>
+<ion-list-header *ngFor="let alerta of alertas">
+  <ion-label lines="inset">{{alerta.titulo}}</ion-label>
   <ion-button >
     <ion-icon slot="icon-only" name="chevron-forward-outline" color="dark"></ion-icon>
   </ion-button>
 </ion-list-header>
 
-<ion-list-header>
-  <ion-label lines="inset">Tienes Echeq disponibles para depositar</ion-label>
-  <ion-button>
-    <ion-icon slot="icon-only" name="chevron-forward-outline" color="dark"></ion-icon>
-  </ion-button>
-</ion-list-header>
+
 
 
