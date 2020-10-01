@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { NavController } from '@ionic/angular';
 import { Notificacion } from '../../models/notificacion.model';
+
 
 @Component({
   selector: 'app-notificaciones',
@@ -10,7 +12,7 @@ export class NotificacionesComponent implements OnInit {
 
   alertas: Notificacion[];
 
-  constructor() {
+  constructor(private navCtrl: NavController) {
     this.alertas = [
       {
         titulo: 'Has recibido un nuevo Echeq',
@@ -25,6 +27,11 @@ export class NotificacionesComponent implements OnInit {
         detalle: 'El valor 00072486 será depositado en tu cuenta de Banco Nación'
       }
     ];
+  }
+
+  verDetalle(i: number) {
+    console.log('evento click');
+    this.navCtrl.navigateForward(`/alerta/ ${i}`);
   }
 
   ngOnInit() {}

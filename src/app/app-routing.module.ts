@@ -10,6 +10,10 @@ const routes: Routes = [
     path: '',
     redirectTo: 'tab',
     pathMatch: 'full'
+  },
+  {
+    path: 'alerta/:id', // modificación del path agregando un parámetro id
+    loadChildren: () => import('./pages/alerta/alerta.module').then( m => m.AlertaPageModule)
   }
 ];
 
