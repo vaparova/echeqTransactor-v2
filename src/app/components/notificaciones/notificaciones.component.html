@@ -1,11 +1,11 @@
-<ion-list-header lines="inset">
+<ion-list-header lines="inset" mode="md">
   <ion-label class="titulo">Notificaciones</ion-label>
 </ion-list-header>
 
 <!-- Se agrega la variable i la cual tendrá como valor el index del arreglo que se está recorriendo -->
-<ion-list-header *ngFor="let alerta of alertas, let i = index"> 
-  <ion-label lines="inset">{{alerta.titulo}}</ion-label>        
-  <ion-button (click)="verDetalle(i)">
+<ion-list-header *ngFor="let alerta of alertas, let i = index" mode="md"> 
+  <ion-label lines="inset" mode="md">{{alerta.titulo}}</ion-label>        
+  <ion-button (click)="verDetalle(i)" mode="md">
     <!-- se agrega la variable i como parámetro cuando se ejecute el evento -->
     <ion-icon slot="icon-only" name="chevron-forward-outline" color="dark"></ion-icon>
   </ion-button>

@@ -1,10 +1,15 @@
-<!-- <ion-header>
-  <ion-toolbar>
-    <ion-title>alerta</ion-title>
-  </ion-toolbar>
-</ion-header> -->
 <app-cabecera ruta="Inicio > Notificaciones"></app-cabecera>
 
 <ion-content>
-
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>{{alerta.titulo}}</ion-card-title>
+    </ion-card-header>
+  
+    <ion-card-content>
+      {{alerta.detalle}}
+    </ion-card-content>
+  </ion-card>
+  
+  
 </ion-content>

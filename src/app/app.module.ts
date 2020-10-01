@@ -10,6 +10,7 @@ import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 import { ComponentsModule } from './components/components.module';
 import { TabPageRoutingModule } from './components/tab/tab-routing.module';
+import { AlertasService } from './providers/alertas.service';
 
 
 
@@ -20,6 +21,7 @@ import { TabPageRoutingModule } from './components/tab/tab-routing.module';
   providers: [
     StatusBar,
     SplashScreen,
+    AlertasService,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }
   ],
   bootstrap: [AppComponent]
