@@ -14,6 +14,10 @@ const routes: Routes = [
   {
     path: 'alerta/:id', // modificación del path agregando un parámetro id
     loadChildren: () => import('./pages/alerta/alerta.module').then( m => m.AlertaPageModule)
+  },
+  {
+    path: 'eventos',
+    loadChildren: () => import('./pages/eventos/eventos.module').then( m => m.EventosPageModule)
   }
 ];
 

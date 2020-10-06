@@ -1,3 +1,11 @@
-<ion-content>
+<ion-content class="calendario">
+  <ion-list-header mode="md">
+    <ion-label class="titulo">Calendario</ion-label>
+  </ion-list-header>
+
   <mbsc-eventcalendar [data]="events" [options]="eventSettings"></mbsc-eventcalendar>
+
+<ion-button expand="block" fill="outline" color="success" (click)="verEventos()">ver más</ion-button>
+
+
 </ion-content>

@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { MbscEventcalendarOptions } from '@mobiscroll/angular';
 import { HttpClient } from '@angular/common/http';
+import { NavController } from '@ionic/angular';
 
 
 @Component({
@@ -10,8 +11,7 @@ import { HttpClient } from '@angular/common/http';
 })
 export class CalendarioComponent implements OnInit {
 
-  constructor(private http: HttpClient) {}
-
+  constructor(private http: HttpClient, private navCtrl: NavController) {}
   events: any;
 
   eventSettings: MbscEventcalendarOptions = {
@@ -20,8 +20,8 @@ export class CalendarioComponent implements OnInit {
       themeVariant: 'light',
       display: 'inline',
       view: {
-          calendar: { type: 'month' },
-          eventList: { type: 'month', scrollable: true }
+          calendar: { type: 'month', popover: true },
+         // eventList: { type: 'month', scrollable: true }
       }
   };
 
@@ -31,4 +31,7 @@ export class CalendarioComponent implements OnInit {
       });
   }
 
+  verEventos() {
+    this.navCtrl.navigateForward('/eventos');
+  }
 }
