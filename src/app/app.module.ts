@@ -13,19 +13,21 @@ import { AppRoutingModule } from './app-routing.module';
 import { ComponentsModule } from './components/components.module';
 import { TabPageRoutingModule } from './components/tab/tab-routing.module';
 import { AlertasService } from './providers/alertas.service';
+import { EventosService } from './providers/eventos.service';
 
 
 
 @NgModule({
   declarations: [AppComponent],
   entryComponents: [],
-  imports: [ 
-    FormsModule,  
+  imports: [
+    FormsModule,
     MbscModule, BrowserModule, IonicModule.forRoot(), AppRoutingModule, ComponentsModule, TabPageRoutingModule],
   providers: [
     StatusBar,
     SplashScreen,
     AlertasService,
+    EventosService,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }
   ],
   bootstrap: [AppComponent]

@@ -1,7 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { MbscEventcalendarOptions } from '@mobiscroll/angular';
-import { HttpClient } from '@angular/common/http';
 import { NavController } from '@ionic/angular';
+import { EventosService } from '../../providers/eventos.service';
 
 
 @Component({
@@ -24,7 +24,8 @@ export class CalendarioComponent implements OnInit {
 
   eventSettings: MbscEventcalendarOptions;
 
-  constructor(private http: HttpClient, private navCtrl: NavController) {}
+  constructor(private navCtrl: NavController,
+              private eventServ: EventosService) {  }
 
   ngOnInit() {
     if (this.vista === '1'){
@@ -47,9 +48,12 @@ export class CalendarioComponent implements OnInit {
       };
     }
 
-    this.http.jsonp('https://trial.mobiscroll.com/events/', 'callback').subscribe((resp: any) => {
-          this.events = resp;
-      });
+    // this.http.jsonp('https://trial.mobiscroll.com/events/', 'callback')
+    //   .subscribe((resp: any) => {
+    //       this.events = resp;
+    //   });
+
+    this.events = this.eventServ.mostrarEventos();
   }
 
   verEventos() {
