@@ -1,4 +1,4 @@
-<ion-content class="calendario">
+<div class="calendario">
   <ion-list-header mode="md">
     <ion-label class="titulo">{{titulo}}</ion-label>
   </ion-list-header>
@@ -6,6 +6,4 @@
   <mbsc-eventcalendar [data]="events" [options]="eventSettings"></mbsc-eventcalendar>
 
 <ion-button *ngIf="!vista" expand="block" fill="outline" color="success" (click)="verEventos()">ver más</ion-button>
-
-
-</ion-content>
+</div>
