@@ -1,0 +1,15 @@
+<ion-list-header mode="md">
+  <ion-label class="titulo">Administrá tus Echeq</ion-label>
+</ion-list-header>
+
+<ion-card *ngFor="let subseccion of subsecciones">
+  <ion-item button color="secondary">
+    <ion-label class="titulo2">{{subseccion.titulo}}</ion-label>
+  </ion-item>
+
+  <ion-card-content>
+    {{subseccion.descripcion}}
+  </ion-card-content>
+</ion-card>
+
+

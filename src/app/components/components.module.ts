@@ -7,8 +7,7 @@ import { TabPage } from './tab/tab.page';
 import { CabeceraComponent } from './cabecera/cabecera.component';
 import { NotificacionesComponent } from './notificaciones/notificaciones.component';
 import { CalendarioComponent } from './calendario/calendario.component';
-import { MisEcheqComponent } from './mis-echeq/mis-echeq.component';
-import { EcheqRecibidosComponent } from './echeq-recibidos/echeq-recibidos.component';
+import { SubseccionesComponent } from './subsecciones/subsecciones.component';
 
 
 import { HttpClientModule, HttpClientJsonpModule } from '@angular/common/http';
@@ -23,8 +22,7 @@ import { MbscModule } from '@mobiscroll/angular';
     CabeceraComponent,
     NotificacionesComponent,
     CalendarioComponent,
-    MisEcheqComponent,
-    EcheqRecibidosComponent
+    SubseccionesComponent
   ],
   imports: [
     CommonModule,
@@ -40,8 +38,7 @@ import { MbscModule } from '@mobiscroll/angular';
     CabeceraComponent,
     NotificacionesComponent,
     CalendarioComponent,
-    MisEcheqComponent,
-    EcheqRecibidosComponent
+    SubseccionesComponent
   ]
 })
 export class ComponentsModule { }
