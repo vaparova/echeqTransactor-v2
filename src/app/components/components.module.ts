@@ -8,6 +8,7 @@ import { CabeceraComponent } from './cabecera/cabecera.component';
 import { NotificacionesComponent } from './notificaciones/notificaciones.component';
 import { CalendarioComponent } from './calendario/calendario.component';
 import { SubseccionesComponent } from './subsecciones/subsecciones.component';
+import { DatosPersonalesComponent } from './datos-personales/datos-personales.component';
 
 
 import { HttpClientModule, HttpClientJsonpModule } from '@angular/common/http';
@@ -22,7 +23,8 @@ import { MbscModule } from '@mobiscroll/angular';
     CabeceraComponent,
     NotificacionesComponent,
     CalendarioComponent,
-    SubseccionesComponent
+    SubseccionesComponent,
+    DatosPersonalesComponent
   ],
   imports: [
     CommonModule,
@@ -38,7 +40,8 @@ import { MbscModule } from '@mobiscroll/angular';
     CabeceraComponent,
     NotificacionesComponent,
     CalendarioComponent,
-    SubseccionesComponent
+    SubseccionesComponent,
+    DatosPersonalesComponent
   ]
 })
 export class ComponentsModule { }

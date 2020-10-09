@@ -18,6 +18,10 @@ const routes: Routes = [
   {
     path: 'eventos',
     loadChildren: () => import('./pages/eventos/eventos.module').then( m => m.EventosPageModule)
+  },
+  {
+    path: 'sector-mi-cuenta/:i',
+    loadChildren: () => import('./pages/sector-mi-cuenta/sector-mi-cuenta.module').then( m => m.SectorMiCuentaPageModule)
   }
 ];
 
