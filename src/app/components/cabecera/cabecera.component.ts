@@ -1,4 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { NavController } from '@ionic/angular';
 
 @Component({
   selector: 'app-cabecera',
@@ -7,9 +8,12 @@ import { Component, Input, OnInit } from '@angular/core';
 })
 export class CabeceraComponent implements OnInit {
   @Input() ruta: string;
-  constructor() {
+  @Input() back: string;
+  constructor(private navCtrl: NavController) {
   }
 
   ngOnInit() {}
-
+  volver(){
+    this.navCtrl.navigateBack(`/${this.back}`);
+  }
 }
