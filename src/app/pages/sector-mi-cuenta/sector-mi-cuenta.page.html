@@ -1,5 +1,5 @@
 <app-cabecera ruta="Mi Cuenta > Datos Personales" back="miCuenta"></app-cabecera>
 
-<ion-content>
-<app-datos-personales></app-datos-personales>
+<ion-content [ngSwitch]="index">
+    <app-datos-personales *ngSwitchCase="1"></app-datos-personales> 
 </ion-content>

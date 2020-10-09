@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-sector-mi-cuenta',
@@ -6,8 +7,13 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./sector-mi-cuenta.page.scss'],
 })
 export class SectorMiCuentaPage implements OnInit {
-
-  constructor() { }
+  index: any;
+  constructor(private route: ActivatedRoute) {
+    this.route.params.subscribe( data => {
+      this.index = Number(Object.values(data).toString());
+      console.log(this.index);
+    });
+   }
 
   ngOnInit() {
   }
