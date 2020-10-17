@@ -38,6 +38,6 @@ export class MiCuentaPage implements OnInit {
 
   verComponente(i: number){
     console.log(i);
-    this.navCtrl.navigateForward(`/sector-mi-cuenta/${i}`);
+    this.navCtrl.navigateForward(`/miCuenta/sector-mi-cuenta/${i}`);
   }
 }

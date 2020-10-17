@@ -1,5 +1,59 @@
 
-<ion-item>
-  <ion-label position="stacked">Stacked Label</ion-label>
-  <ion-input></ion-input>
+<form [formGroup]="forma">
+<ion-item lines="none"> 
+<ion-title class="titulo ion-no-padding">Datos Personales</ion-title>
+  <ion-icon *ngIf="readonly" class="boton" slot="end" name="pencil-sharp" color="success" (click)="editar()"></ion-icon>
+  <ion-icon *ngIf="!readonly" class="boton" slot="end" name="save-outline" color="danger" (click)="guardar()"></ion-icon>
 </ion-item>
+
+<ion-item>
+  <ion-label position="stacked">Nombre</ion-label>
+  <ion-input type="text" [readonly]="readonly" formControlName="nombre"></ion-input>
+</ion-item>
+<ion-item>
+  <ion-label position="stacked">Apellido</ion-label>
+  <ion-input type="text" [readonly]="readonly" formControlName="apellido"></ion-input>
+</ion-item>
+<ion-item>
+  <ion-label position="stacked">CUIL</ion-label>
+  <ion-input type="number" [readonly]="readonly" formControlName="cuil"></ion-input>
+</ion-item>
+<ion-item>
+  <ion-label position="stacked">E-mail</ion-label>
+  <ion-input type="text" [readonly]="readonly" formControlName="email"></ion-input>
+</ion-item>
+<ion-item>
+  <ion-label position="stacked">Teléfono</ion-label>
+  <ion-input type="number" [readonly]="readonly" formControlName="telefono"></ion-input>
+</ion-item>
+
+<ion-item lines="none"> 
+  <ion-title class="titulo ion-no-padding">Datos Postales</ion-title>
+  <ion-icon *ngIf="readonly" class="boton" slot="end" name="pencil-sharp" color="success" (click)="editar()"></ion-icon>
+  <ion-icon *ngIf="!readonly" class="boton" slot="end" name="save-outline" color="danger" (click)="guardar()"></ion-icon>
+  
+  </ion-item>
+
+<ion-item>
+  <ion-label position="stacked">Calle</ion-label>
+  <ion-input type="text" [readonly]="readonly" formControlName="calle"></ion-input>
+</ion-item>
+<ion-item>
+  <ion-label position="stacked">Altura</ion-label>
+  <ion-input type="number" [readonly]="readonly" formControlName="altura"></ion-input>
+</ion-item>
+<ion-item>
+  <ion-label position="stacked">CP</ion-label>
+  <ion-input type="number" [readonly]="readonly" formControlName="cp"></ion-input>
+</ion-item>
+<ion-item>
+  <ion-label position="stacked">Localidad</ion-label>
+  <ion-input type="text" [readonly]="readonly" formControlName="localidad"></ion-input>
+</ion-item>
+<ion-item>
+  <ion-label position="stacked">Provincia</ion-label>
+  <ion-input type="text" [readonly]="readonly" formControlName="provincia"></ion-input>
+</ion-item>
+
+</form>
+

@@ -7,6 +7,10 @@ const routes: Routes = [
   {
     path: '',
     component: MiCuentaPage
+  },
+  {
+    path: 'sector-mi-cuenta/:i',
+    loadChildren: () => import('../sector-mi-cuenta/sector-mi-cuenta.module').then( m => m.SectorMiCuentaPageModule)
   }
 ];
 

@@ -7,7 +7,11 @@ const routes: Routes = [
   {
     path: '',
     component: IndexPage
-  }
+  },
+  {
+    path: 'alerta/:id', // modificación del path agregando un parámetro id
+    loadChildren: () => import('../alerta/alerta.module').then( m => m.AlertaPageModule)
+  },
 ];
 
 @NgModule({

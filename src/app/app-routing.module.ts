@@ -12,17 +12,9 @@ const routes: Routes = [
     pathMatch: 'full'
   },
   {
-    path: 'alerta/:id', // modificación del path agregando un parámetro id
-    loadChildren: () => import('./pages/alerta/alerta.module').then( m => m.AlertaPageModule)
-  },
-  {
     path: 'eventos',
     loadChildren: () => import('./pages/eventos/eventos.module').then( m => m.EventosPageModule)
   },
-  {
-    path: 'sector-mi-cuenta/:i',
-    loadChildren: () => import('./pages/sector-mi-cuenta/sector-mi-cuenta.module').then( m => m.SectorMiCuentaPageModule)
-  }
 ];
 
 @NgModule({
