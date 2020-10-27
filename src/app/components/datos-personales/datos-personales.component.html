@@ -6,26 +6,28 @@
   <ion-icon *ngIf="!readonly" class="boton" slot="end" name="save-outline" color="danger" (click)="guardar()"></ion-icon>
 </ion-item>
 
+<div formGroupName="personales">
 <ion-item>
   <ion-label position="stacked">Nombre</ion-label>
-  <ion-input type="text" [readonly]="readonly" formControlName="nombre"></ion-input>
+  <ion-input type="text" readonly="true" formControlName="nombre"></ion-input>
 </ion-item>
 <ion-item>
   <ion-label position="stacked">Apellido</ion-label>
-  <ion-input type="text" [readonly]="readonly" formControlName="apellido"></ion-input>
+  <ion-input type="text" readonly="true" formControlName="apellido"></ion-input>
 </ion-item>
 <ion-item>
   <ion-label position="stacked">CUIL</ion-label>
-  <ion-input type="number" [readonly]="readonly" formControlName="cuil"></ion-input>
+  <ion-input type="number" readonly="true" formControlName="cuil"></ion-input>
 </ion-item>
 <ion-item>
   <ion-label position="stacked">E-mail</ion-label>
-  <ion-input type="text" [readonly]="readonly" formControlName="email"></ion-input>
+  <ion-input type="text" readonly="true" formControlName="email"></ion-input>
 </ion-item>
 <ion-item>
   <ion-label position="stacked">Teléfono</ion-label>
-  <ion-input type="number" [readonly]="readonly" formControlName="telefono"></ion-input>
+  <ion-input type="number" [readonly]="readonly" formControlName="tel"></ion-input>
 </ion-item>
+</div>
 
 <ion-item lines="none"> 
   <ion-title class="titulo ion-no-padding">Datos Postales</ion-title>
@@ -34,6 +36,7 @@
   
   </ion-item>
 
+<div formGroupName="postales">
 <ion-item>
   <ion-label position="stacked">Calle</ion-label>
   <ion-input type="text" [readonly]="readonly" formControlName="calle"></ion-input>
@@ -54,6 +57,7 @@
   <ion-label position="stacked">Provincia</ion-label>
   <ion-input type="text" [readonly]="readonly" formControlName="provincia"></ion-input>
 </ion-item>
+</div>
 
 </form>
 

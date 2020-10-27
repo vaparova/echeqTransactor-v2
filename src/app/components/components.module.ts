@@ -9,6 +9,7 @@ import { NotificacionesComponent } from './notificaciones/notificaciones.compone
 import { CalendarioComponent } from './calendario/calendario.component';
 import { SubseccionesComponent } from './subsecciones/subsecciones.component';
 import { DatosPersonalesComponent } from './datos-personales/datos-personales.component';
+import { PasswordComponent } from './password/password.component';
 
 
 import { HttpClientModule, HttpClientJsonpModule } from '@angular/common/http';
@@ -24,7 +25,8 @@ import { MbscModule } from '@mobiscroll/angular';
     NotificacionesComponent,
     CalendarioComponent,
     SubseccionesComponent,
-    DatosPersonalesComponent
+    DatosPersonalesComponent,
+    PasswordComponent
   ],
   imports: [
     CommonModule,
@@ -41,7 +43,8 @@ import { MbscModule } from '@mobiscroll/angular';
     NotificacionesComponent,
     CalendarioComponent,
     SubseccionesComponent,
-    DatosPersonalesComponent
+    DatosPersonalesComponent,
+    PasswordComponent
   ]
 })
 export class ComponentsModule { }

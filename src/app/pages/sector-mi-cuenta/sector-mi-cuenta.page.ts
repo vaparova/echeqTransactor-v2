@@ -8,10 +8,14 @@ import { ActivatedRoute } from '@angular/router';
 })
 export class SectorMiCuentaPage implements OnInit {
   index: any;
+  ruta = [
+    'no definido',
+    'Mi Cuenta > Datos Personales',
+    'Mi Cuenta > Cambiar Contraseña'
+  ];
   constructor(private route: ActivatedRoute) {
     this.route.params.subscribe( data => {
       this.index = Number(Object.values(data).toString());
-      console.log(this.index);
     });
    }
 
