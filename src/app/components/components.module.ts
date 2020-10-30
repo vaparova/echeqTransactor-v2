@@ -10,11 +10,13 @@ import { CalendarioComponent } from './calendario/calendario.component';
 import { SubseccionesComponent } from './subsecciones/subsecciones.component';
 import { DatosPersonalesComponent } from './datos-personales/datos-personales.component';
 import { PasswordComponent } from './password/password.component';
+import { TokenComponent } from './token/token.component';
 
 
 import { HttpClientModule, HttpClientJsonpModule } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MbscModule } from '@mobiscroll/angular';
+import { EnviarTokenComponent } from './enviar-token/enviar-token.component';
 
 
 
@@ -26,7 +28,9 @@ import { MbscModule } from '@mobiscroll/angular';
     CalendarioComponent,
     SubseccionesComponent,
     DatosPersonalesComponent,
-    PasswordComponent
+    PasswordComponent,
+    TokenComponent,
+    EnviarTokenComponent
   ],
   imports: [
     CommonModule,
@@ -35,7 +39,7 @@ import { MbscModule } from '@mobiscroll/angular';
     FormsModule,
     ReactiveFormsModule,
     HttpClientModule,
-    HttpClientJsonpModule
+    HttpClientJsonpModule,
   ],
   exports: [
     TabPage,
@@ -44,7 +48,9 @@ import { MbscModule } from '@mobiscroll/angular';
     CalendarioComponent,
     SubseccionesComponent,
     DatosPersonalesComponent,
-    PasswordComponent
+    PasswordComponent,
+    TokenComponent,
+    EnviarTokenComponent
   ]
 })
 export class ComponentsModule { }

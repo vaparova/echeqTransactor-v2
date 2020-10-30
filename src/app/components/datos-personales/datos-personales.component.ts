@@ -79,7 +79,7 @@ export class DatosPersonalesComponent implements OnInit {
     this.toast.mostrarToast('Datos guardados!', 'primary');
   }
 
-  actualizarUsuario(){
+  private actualizarUsuario(){
     const valores = Object.values(this.forma.value);
     Object.keys(this.usuario.usuario.datosPersonales).forEach( (atributo, indice) => {
       this.usuario.usuario.datosPersonales[atributo] = valores[0][atributo];

@@ -1,0 +1,42 @@
+<form [formGroup]="forma">
+  <ion-item lines="none"> 
+  <ion-title class="titulo ion-no-padding">Alta PIN Token</ion-title>
+  </ion-item>
+  
+  <ion-item>
+    <ion-label position="stacked">PIN</ion-label>
+    <ion-input  [type]="datos[0].tipo" formControlName="pin"  ></ion-input>
+    <ion-icon *ngIf="!datos[0].ver" name="eye-outline" slot="end" (click)="datos[0].ver= !datos[0].ver; datos[0].tipo ='text'" ></ion-icon>
+    <ion-icon *ngIf="datos[0].ver" name="eye-off-outline" slot="end" (click)="datos[0].ver= !datos[0].ver; datos[0].tipo ='password'"></ion-icon>
+  </ion-item>
+  <ion-item>
+    <ion-label position="stacked">Repetir PIN</ion-label>
+    <ion-input [type]="datos[1].tipo" formControlName="repetir"   ></ion-input>
+    <ion-icon *ngIf="!datos[1].ver" name="eye-outline" slot="end" (click)="datos[1].ver= !datos[1].ver; datos[1].tipo ='text'" ></ion-icon>
+    <ion-icon *ngIf="datos[1].ver" name="eye-off-outline" slot="end" (click)="datos[1].ver= !datos[1].ver; datos[1].tipo ='password'"></ion-icon>
+  </ion-item>
+  <br>
+    <ion-card>
+    <ion-card-header>
+      <ion-card-subtitle>Recuerda que tu PIN ...</ion-card-subtitle>
+    </ion-card-header>
+  
+    <ion-card-content>
+  
+        <p>- Debe ser un número de 4 dígitos</p>
+        <p>- Será tu segundo factor de autenticación</p>
+        <p>- Cuando lo ingreses te enviaremos un SMS con tu token</p>
+        <p>- Podrás concretar operaciones validando tu token</p>
+        <p>- No reveles nunca tu PIN</p>
+   
+    </ion-card-content>
+  </ion-card>
+<br>
+  <ion-button class="ion-margin-top" expand="block" color="success" (click)="EnviarToken()">
+    <ion-icon slot="start" name="save-outline" ></ion-icon>
+    Dar de alta PIN
+  </ion-button>
+ </form> 
+
+
+

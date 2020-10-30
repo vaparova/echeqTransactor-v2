@@ -11,7 +11,8 @@ export class SectorMiCuentaPage implements OnInit {
   ruta = [
     'no definido',
     'Mi Cuenta > Datos Personales',
-    'Mi Cuenta > Cambiar Contraseña'
+    'Mi Cuenta > Cambiar Contraseña',
+    'Mi Cuenta > Token'
   ];
   constructor(private route: ActivatedRoute) {
     this.route.params.subscribe( data => {

@@ -1,20 +1,23 @@
 import { DatosPersonales } from './datosPersonales';
 import { DatosPostales } from './datosPostales';
 import { DatosIngreso } from './datosIngreso';
+import { DatosToken } from './datosToken';
 
 export class DatosUsuario{
 
     usuario: {
         datosPersonales: DatosPersonales,
         datosPostales: DatosPostales,
-        datosIngreso: DatosIngreso
+        datosIngreso: DatosIngreso,
+        datosToken: DatosToken
     };
 
     constructor(pers: DatosPersonales, post: DatosPostales, ing: DatosIngreso){
        this.usuario = {
            datosPersonales: pers,
            datosPostales: post,
-           datosIngreso: ing
+           datosIngreso: ing,
+           datosToken: new DatosToken()
        };
     }
 }
