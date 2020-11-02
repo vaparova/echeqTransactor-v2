@@ -18,6 +18,11 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MbscModule } from '@mobiscroll/angular';
 import { EnviarTokenComponent } from './enviar-token/enviar-token.component';
 
+import { AngularFireModule } from '@angular/fire';
+import { AngularFirestoreModule } from '@angular/fire/firestore';
+import { AngularFireAuthModule, AngularFireAuth } from '@angular/fire/auth';
+import { environment } from '../../environments/environment';
+
 
 
 @NgModule({
@@ -40,6 +45,9 @@ import { EnviarTokenComponent } from './enviar-token/enviar-token.component';
     ReactiveFormsModule,
     HttpClientModule,
     HttpClientJsonpModule,
+    AngularFireAuthModule,
+    AngularFirestoreModule,
+    AngularFireModule.initializeApp(environment.firebaseConfig)
   ],
   exports: [
     TabPage,
@@ -51,6 +59,9 @@ import { EnviarTokenComponent } from './enviar-token/enviar-token.component';
     PasswordComponent,
     TokenComponent,
     EnviarTokenComponent
+  ],
+  providers: [
+    AngularFireAuth
   ]
 })
 export class ComponentsModule { }

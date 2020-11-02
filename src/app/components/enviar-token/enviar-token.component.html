@@ -1,12 +1,31 @@
 
-<ion-toolbar>
+<ion-toolbar mode="md">
 <ion-card>
     <ion-item color="success">
-      <ion-icon slot="end" name="close-circle-outline" (click)="cerrar()"></ion-icon>
+      <ion-icon slot="end" name="close-circle-outline" (click)="cerrar(false,'Envío de token cancelado!')"></ion-icon>
         <ion-label>
             <h1 class="titulo">Enviar Token SMS</h1>
         </ion-label>
     </ion-item>
     </ion-card>
 </ion-toolbar>
+<ion-content mode="md">
+    <ion-card>
+        <ion-card-header>
+            <ion-card-subtitle>Enviaremos tu token al:</ion-card-subtitle>
+            <ion-card-title>+{{usuario.usuario.datosPersonales.tel}}</ion-card-title>
+        </ion-card-header>
+      
+        <ion-card-content>
+            <ion-card-title>¿Qué debo hacer?</ion-card-title>
+            <p>1 - Aprieta el botón enviar</p>
+            <p>2 - Resuelve el desafío captcha</p>
+            <p>3 - Te enviaremos un código token a tu celular</p>
+            <p>4 - Ingresá tu token y, ¡Listo!</p>
+        </ion-card-content>
+        <ion-button expand="block" color="success" (click)="comenzar()">Enviar</ion-button>
+    </ion-card>
+     <div class="ion-padding" id="recaptcha-container"></div>
+    
+</ion-content>
 

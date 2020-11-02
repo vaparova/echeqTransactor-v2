@@ -18,7 +18,7 @@ export class UsuariosService {
         'Molina',
         'servicebelgrano@hotmail.com',
         20277852536,
-        155874932
+        5492615874932
       ),
       new DatosPostales(
         'belgrano',
@@ -37,7 +37,7 @@ export class UsuariosService {
         'Romero',
         'vaparova_92@hotmail.com',
         27364183807,
-        155058054
+        5492615058054
       ),
       new DatosPostales(
         'avellaneda',

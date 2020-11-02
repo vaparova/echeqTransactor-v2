@@ -16,13 +16,22 @@ import { AlertasService } from './providers/alertas.service';
 import { EventosService } from './providers/eventos.service';
 
 
+import { environment } from '../environments/environment';
+
+
 
 @NgModule({
   declarations: [AppComponent],
   entryComponents: [],
   imports: [
     FormsModule,
-    MbscModule, BrowserModule, IonicModule.forRoot(), AppRoutingModule, ComponentsModule, TabPageRoutingModule],
+    MbscModule,
+    BrowserModule,
+    IonicModule.forRoot(),
+    AppRoutingModule,
+    ComponentsModule,
+    TabPageRoutingModule,
+  ],
   providers: [
     StatusBar,
     SplashScreen,

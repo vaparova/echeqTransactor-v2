@@ -51,13 +51,18 @@ export class TokenComponent implements OnInit {
         });
   }
   async EnviarToken(){
+    if (this.forma.invalid){
+      this.toast.mostrarToast('PIN inválido!', 'danger');
+      return;
+    }
     const tkn = await this.presentModal();
-    console.log(tkn.data.verificado);
     if (tkn.data.verificado) {
+      this.usuario.usuario.datosToken.altaToken(this.forma.controls.pin.value, tkn.data.uid);
+      this.user.modificarUsuario(27364183807, this.usuario);
       this.toast.mostrarToast('Alta de token exitoso!', 'primary');
       this.navCtrl.navigateForward(`/miCuenta`);
     }else{
-    this.toast.mostrarToast('Error de Token!', 'danger');
+    this.toast.mostrarToast(tkn.data.argument, 'danger');
     }
   }
 
