@@ -1,3 +1,58 @@
-<p>
-  chequeras-electronicas works!
-</p>
+<ion-item lines="none"> 
+  <ion-title class="titulo ion-no-padding">Chequeras Electrónicas</ion-title>
+</ion-item>
+
+<ion-chip *ngIf="sinChequeras" color="danger">
+  <ion-icon name="sad-outline"></ion-icon>
+  <ion-label>Aún no posees chequeras electrónicas para activar!</ion-label>
+</ion-chip>
+
+<ion-card *ngFor="let chequera of chequeras; let i = index">
+  
+  
+  <ion-item *ngIf="!chequera.cheq.estadoChequera">
+    <ion-chip color="primary">
+      <ion-icon name="information-circle-outline"></ion-icon>
+      <ion-label>Chequera sin activar</ion-label>
+    </ion-chip>
+   
+    <ion-icon slot="end" color="primary" name="key-outline"></ion-icon>
+  </ion-item>
+  
+
+  <ion-item *ngIf="chequera.cheq.estadoChequera">
+    <ion-chip color="success">
+      <ion-icon name="checkmark-outline"></ion-icon>
+      <ion-label>Chequera vigente</ion-label>
+    </ion-chip>
+    <ion-icon color="success" slot="end" name="chevron-forward-circle-outline"></ion-icon>
+  </ion-item>
+
+  <ion-card-header>
+    <ion-card-subtitle class="subtitulo">Echeq Disponibles: {{chequera.cheq.cantidadDisponible}}</ion-card-subtitle>
+    <ion-card-title>{{chequera.ent.nombreEntidad}}</ion-card-title>
+  </ion-card-header>
+
+  <ion-card-content>
+    <p class="texto">Número Primer Echeq: {{chequera.cheq.nroPrimerEcheq}}</p>
+    <p class="texto">CBU Cuenta: {{chequera.cta.cbu}}</p>
+    <p class="texto">Denominación: {{chequera.cta.denominacion}}</p>
+    <p class="texto">Sucursal: {{chequera.ent.numeroSucursal}} - {{chequera.ent.nombreSucursal}} </p>
+  </ion-card-content>
+</ion-card>
+
+<hr><hr>
+<ion-card color="secondary">
+  <ion-item lines="none">
+    <ion-icon color="secondary" name="information-circle-outline" slot="start"></ion-icon>
+    <ion-label color="secondary"><b>Importante</b></ion-label>
+  </ion-item>
+  <ion-card-content>
+    <p> <b>¿No aparece tu cuenta?</b> </p>
+    <p> - Puede ser que tu entidad aún no la haya vinculado a tu usuario</p>
+    <p> <b>¿Qué clave debo ingresar?</b></p>
+    <p> - Tu entidad te brindará una clave de activación para vincular tu cuenta</p>
+    <p> <b>¿Qué pasa si desvinculo una cuenta?</b>
+    <p> - Perderás acceso a las chequeras electrónicas que tengas asociadas</p>
+  </ion-card-content>
+</ion-card>

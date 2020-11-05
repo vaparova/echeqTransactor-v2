@@ -7,6 +7,7 @@ import { DatosCuentas } from '../models/datosCuentas';
 import { DatosEntidad } from '../models/datosEntidad';
 import { DatosCuenta } from '../models/datosCuenta';
 import { DatosToken } from '../models/datosToken';
+import { DatosChequeras } from '../models/datosChequeras';
 
 @Injectable({
   providedIn: 'root'
@@ -69,6 +70,13 @@ export class UsuariosService {
         'clave de activacionuser2');
       this.adherirCuenta(otraCuentaUser2, user2.usuario.datosPersonales.cuil);
 
+      const chequeraUser2 = new DatosChequeras(1, 'clave para activar');
+      this.nuevaChequera(chequeraUser2, cuentaUser2, 27364183807);
+
+      const otraChequeraUser2 = new DatosChequeras(1, 'otra clave de activacion');
+      this.nuevaChequera(otraChequeraUser2, otraCuentaUser2, 27364183807);
+
+
     }else{
       console.log('Data pre-existente en localStorage');
     }
@@ -84,6 +92,15 @@ export class UsuariosService {
   private adherirCuenta(cuenta: DatosCuentas, cuil: number){
     const user = this.obtenerUsuario(cuil);
     user.usuario.datosCuentas.push(cuenta);
+    this.modificarUsuario(cuil, user);
+  }
+
+  private nuevaChequera(chequera: DatosChequeras, cuenta: DatosCuentas, cuil: number){
+    const user = this.obtenerUsuario(cuil);
+    const arrCtas = user.usuario.datosCuentas;
+    const cbu =  cuenta.cuentas.cuenta.cbu;
+    const i = this.indexCuenta(arrCtas, cbu);
+    arrCtas[i].cuentas.chequeras.push(chequera);
     this.modificarUsuario(cuil, user);
   }
 

@@ -1,5 +1,6 @@
 import { DatosEntidad } from './datosEntidad';
 import { DatosCuenta } from './datosCuenta';
+import { DatosChequeras } from './datosChequeras';
 
 export class DatosCuentas {
         cuentas: {
@@ -7,7 +8,7 @@ export class DatosCuentas {
         cuenta: DatosCuenta,
         estado: boolean,
         claveActivación: string,
-        chequeras: [];
+        chequeras: DatosChequeras[];
     };
 
     constructor(banco: DatosEntidad, cta: DatosCuenta, clave: string){
