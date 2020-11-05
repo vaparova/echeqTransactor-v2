@@ -1,9 +1,9 @@
 export class DatosPersonales {
-     nombre: string;
-     apellido: string;
-     email: string;
-     cuil: number;
-     tel: number;
+    nombre: string;
+    apellido: string;
+    email: string;
+    cuil: number;
+    tel: number;
 
      constructor(nombre: string, apellido: string, email: string, cuil: number, tel: number) {
          this.nombre = nombre;

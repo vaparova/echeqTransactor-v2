@@ -1,0 +1,56 @@
+<ion-item lines="none"> 
+  <ion-title class="titulo ion-no-padding">Cuentas Bancarias</ion-title>
+</ion-item>
+
+<ion-chip *ngIf="sinCuentas" color="danger">
+  <ion-icon name="sad-outline"></ion-icon>
+  <ion-label>Aún no posees cuentas para activar!</ion-label>
+</ion-chip>
+
+<ion-card *ngFor="let cuenta of cuentas; let i = index">
+  
+  
+  <ion-item *ngIf="!cuenta.cuentas.estado">
+    <ion-chip color="primary">
+      <ion-icon name="information-circle-outline"></ion-icon>
+      <ion-label>Cuenta no vinculada</ion-label>
+    </ion-chip>
+   
+    <ion-icon slot="end" color="primary" name="add-circle-outline" (click)="vincular(i)"></ion-icon>
+  </ion-item>
+  
+
+  <ion-item *ngIf="cuenta.cuentas.estado">
+    <ion-chip color="success">
+      <ion-icon name="checkmark-outline"></ion-icon>
+      <ion-label>Cuenta vinculada</ion-label>
+    </ion-chip>
+    <ion-icon slot="end" color="danger" name="trash-outline" (click)="desvincular(i)"></ion-icon>
+  </ion-item>
+
+  <ion-card-header>
+    <ion-card-subtitle class="subtitulo">{{cuenta.cuentas.entidad.nombreEntidad}}</ion-card-subtitle>
+    <ion-card-title>{{cuenta.cuentas.cuenta.tipoCuenta}} - {{cuenta.cuentas.cuenta.numeroCuenta}}</ion-card-title>
+  </ion-card-header>
+
+  <ion-card-content>
+    <p class="texto">Denominación: {{cuenta.cuentas.cuenta.denominacion}}</p>
+    <p class="texto">Sucursal: {{cuenta.cuentas.entidad.numeroSucursal}} - {{cuenta.cuentas.entidad.nombreSucursal}}</p>
+  </ion-card-content>
+</ion-card>
+
+<hr><hr>
+<ion-card color="secondary">
+  <ion-item lines="none">
+    <ion-icon color="secondary" name="information-circle-outline" slot="start"></ion-icon>
+    <ion-label color="secondary"><b>Importante</b></ion-label>
+  </ion-item>
+  <ion-card-content>
+    <p> <b>¿No aparece tu cuenta?</b> </p>
+    <p> - Puede ser que tu entidad aún no la haya vinculado a tu usuario</p>
+    <p> <b>¿Qué clave debo ingresar?</b></p>
+    <p> - Tu entidad te brindará una clave de activación para vincular tu cuenta</p>
+    <p> <b>¿Qué pasa si desvinculo una cuenta?</b>
+    <p> - Perderás acceso a las chequeras electrónicas que tengas asociadas</p>
+  </ion-card-content>
+</ion-card>

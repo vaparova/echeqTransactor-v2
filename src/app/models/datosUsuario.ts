@@ -2,6 +2,7 @@ import { DatosPersonales } from './datosPersonales';
 import { DatosPostales } from './datosPostales';
 import { DatosIngreso } from './datosIngreso';
 import { DatosToken } from './datosToken';
+import { DatosCuentas } from './datosCuentas';
 
 export class DatosUsuario{
 
@@ -9,7 +10,8 @@ export class DatosUsuario{
         datosPersonales: DatosPersonales,
         datosPostales: DatosPostales,
         datosIngreso: DatosIngreso,
-        datosToken: DatosToken
+        datosToken: DatosToken,
+        datosCuentas: DatosCuentas[]
     };
 
     constructor(pers: DatosPersonales, post: DatosPostales, ing: DatosIngreso){
@@ -17,7 +19,8 @@ export class DatosUsuario{
            datosPersonales: pers,
            datosPostales: post,
            datosIngreso: ing,
-           datosToken: new DatosToken()
+           datosToken: new DatosToken(),
+           datosCuentas: []
        };
     }
 }

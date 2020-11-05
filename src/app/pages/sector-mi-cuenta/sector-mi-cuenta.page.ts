@@ -12,7 +12,9 @@ export class SectorMiCuentaPage implements OnInit {
     'no definido',
     'Mi Cuenta > Datos Personales',
     'Mi Cuenta > Cambiar Contraseña',
-    'Mi Cuenta > Token'
+    'Mi Cuenta > Token',
+    'Mi Cuenta > Cuentas Bancarias',
+    'Mi Cuenta > Chequeras Electrónicas'
   ];
   constructor(private route: ActivatedRoute) {
     this.route.params.subscribe( data => {

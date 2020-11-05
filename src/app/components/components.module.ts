@@ -22,6 +22,8 @@ import { AngularFireModule } from '@angular/fire';
 import { AngularFirestoreModule } from '@angular/fire/firestore';
 import { AngularFireAuthModule, AngularFireAuth } from '@angular/fire/auth';
 import { environment } from '../../environments/environment';
+import { CuentasComponent } from './cuentas/cuentas.component';
+import { ChequerasElectronicasComponent } from './chequeras-electronicas/chequeras-electronicas.component';
 
 
 
@@ -35,7 +37,9 @@ import { environment } from '../../environments/environment';
     DatosPersonalesComponent,
     PasswordComponent,
     TokenComponent,
-    EnviarTokenComponent
+    EnviarTokenComponent,
+    CuentasComponent,
+    ChequerasElectronicasComponent
   ],
   imports: [
     CommonModule,
@@ -58,7 +62,9 @@ import { environment } from '../../environments/environment';
     DatosPersonalesComponent,
     PasswordComponent,
     TokenComponent,
-    EnviarTokenComponent
+    EnviarTokenComponent,
+    CuentasComponent,
+    ChequerasElectronicasComponent
   ],
   providers: [
     AngularFireAuth

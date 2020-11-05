@@ -12,4 +12,10 @@ export class DatosToken {
         this.uid = uid;
         this.estado = true;
     }
+
+    bajaToken(){
+        this.claveToken = null;
+        this.uid = '';
+        this.estado = false;
+    }
 }

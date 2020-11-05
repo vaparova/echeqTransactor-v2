@@ -7,6 +7,7 @@ import { ValidacionesService } from '../../providers/validaciones.service';
 import { ModalController, NavController } from '@ionic/angular';
 import { EnviarTokenComponent } from '../enviar-token/enviar-token.component';
 import { ToastsService } from '../../providers/toasts.service';
+import { VerificarPasswordService } from '../../providers/verificar-password.service';
 
 
 @Component({
@@ -31,7 +32,8 @@ export class TokenComponent implements OnInit {
                 private validadores: ValidacionesService,
                 private modal: ModalController,
                 private toast: ToastsService,
-                private navCtrl: NavController
+                private navCtrl: NavController,
+                private passw: VerificarPasswordService
               ) {
     this.usuario = this.user.obtenerUsuario(27364183807);
     this.crearFormulario();
@@ -57,8 +59,7 @@ export class TokenComponent implements OnInit {
     }
     const tkn = await this.presentModal();
     if (tkn.data.verificado) {
-      this.usuario.usuario.datosToken.altaToken(this.forma.controls.pin.value, tkn.data.uid);
-      this.user.modificarUsuario(27364183807, this.usuario);
+      this.user.altaToken(2736418380, this.usuario, this.forma.controls.pin.value, tkn.data.uid);
       this.toast.mostrarToast('Alta de token exitoso!', 'primary');
       this.navCtrl.navigateForward(`/miCuenta`);
     }else{
@@ -74,6 +75,22 @@ export class TokenComponent implements OnInit {
     await modal.present();
     const respuesta = await modal.onDidDismiss();
     return respuesta;
+  }
+
+  async bajaToken(){
+    const pass = await this.passw.verificarPass(27364183807).then(resp => {
+      console.log(resp);
+      if (resp.data.respuesta){
+        this.toast.mostrarToast(resp.data.argumento, 'primary');
+        setTimeout( () => {
+          this.toast.mostrarToast('Token dado de baja!', 'primary');
+          this.user.bajaToken(27364183807, this.usuario);
+          this.navCtrl.navigateForward(`/miCuenta`);
+        }, 2000);
+      }else{
+        this.toast.mostrarToast(resp.data.argumento, 'danger');
+      }
+    });
   }
 
 }

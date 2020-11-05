@@ -1,3 +1,10 @@
+<div *ngIf="!usuario.usuario.datosToken.estado">
+  
+  <ion-chip color="danger" class="ion-margin-top">
+    <ion-icon name="information-circle-outline"></ion-icon>
+    <ion-label>Aún no posees tu token, actívalo!</ion-label>
+  </ion-chip>
+    
 <form [formGroup]="forma">
   <ion-item lines="none"> 
   <ion-title class="titulo ion-no-padding">Alta PIN Token</ion-title>
@@ -39,4 +46,36 @@
  </form> 
 
 
+</div>
+<div *ngIf="usuario.usuario.datosToken.estado">
+  <ion-chip color="primary" class="ion-margin-top">
+    <ion-icon name="information-circle-outline"></ion-icon>
+    <ion-label>Tu token se encuentra activo</ion-label>
+  </ion-chip>
 
+  <ion-item lines="none"> 
+    <ion-title class="titulo ion-no-padding">Baja PIN Token</ion-title>
+  </ion-item>
+
+  <ion-card>
+    <ion-card-header>
+      <ion-card-subtitle>
+        <b>Si das de baja tu token ...</b>
+      </ion-card-subtitle>
+    </ion-card-header>
+  
+    <ion-card-content>
+  
+        <p>- No podrás realizar operaciones que requieran un segundo factor de autenticación</p>
+        <p>- Utiliza esta opción sólo si has perdido o cambiado tu número de celular</p>
+        <p>- Recuerda que sólo podrás modificar tu número de teléfono en tu entidad bancaria </p>
+   
+    </ion-card-content>
+  </ion-card>
+
+  <br>
+  <ion-button class="ion-margin-top" expand="block" color="success" (click)="bajaToken()">
+    <ion-icon slot="start" name="save-outline" ></ion-icon>
+    Baja Token
+  </ion-button>
+</div>
