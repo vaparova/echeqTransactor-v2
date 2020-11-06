@@ -16,7 +16,7 @@
       <ion-label>Chequera sin activar</ion-label>
     </ion-chip>
    
-    <ion-icon slot="end" color="primary" name="key-outline"></ion-icon>
+    <ion-icon slot="end" color="primary" name="key-outline" (click)="activar(i)"></ion-icon>
   </ion-item>
   
 
@@ -48,11 +48,9 @@
     <ion-label color="secondary"><b>Importante</b></ion-label>
   </ion-item>
   <ion-card-content>
-    <p> <b>¿No aparece tu cuenta?</b> </p>
-    <p> - Puede ser que tu entidad aún no la haya vinculado a tu usuario</p>
+    <p> <b>¿No aparece tu chequera?</b> </p>
+    <p> - Puede ser que tu entidad aún no haya aprobado tu solicitud</p>
     <p> <b>¿Qué clave debo ingresar?</b></p>
-    <p> - Tu entidad te brindará una clave de activación para vincular tu cuenta</p>
-    <p> <b>¿Qué pasa si desvinculo una cuenta?</b>
-    <p> - Perderás acceso a las chequeras electrónicas que tengas asociadas</p>
+    <p> - Tu entidad te brindará una clave para activar tu chequera</p>
   </ion-card-content>
 </ion-card>

@@ -5,6 +5,7 @@ import { DatosCuentas } from '../../models/datosCuentas';
 import { AlertController } from '@ionic/angular';
 import { ToastsService } from '../../providers/toasts.service';
 import { VerificarPasswordService } from '../../providers/verificar-password.service';
+import { VerificarClaveService } from '../../providers/verificar-clave.service';
 
 
 @Component({
@@ -21,7 +22,8 @@ export class CuentasComponent implements OnInit {
   constructor(  private user: UsuariosService,
                 private alertController: AlertController,
                 private toast: ToastsService,
-                private passw: VerificarPasswordService) {
+                private passw: VerificarPasswordService,
+                private verifClave: VerificarClaveService) {
 
     this.usuario = this.user.obtenerUsuario(27364183807);
     this.cuentas = this.usuario.usuario.datosCuentas;
@@ -35,7 +37,7 @@ export class CuentasComponent implements OnInit {
   async vincular(i: number){
     const cuenta = this.cuentas[i];
     const clave = this.usuario.usuario.datosCuentas[i].cuentas.claveActivación;
-    const resp = await this.IngresarClaveActivación(clave);
+    const resp = await this.verifClave.ingresarClaveActivación(clave);
     console.log(resp);
     if (!resp.data.resp){
       this.toast.mostrarToast(resp.data.arg, 'danger');
@@ -72,51 +74,6 @@ export class CuentasComponent implements OnInit {
     }
   }
 
-
-  async IngresarClaveActivación(clave: string) {
-    const alert = await this.alertController.create({
-      cssClass: 'my-custom-class',
-      header: 'Ingresa tu clave para vincular tu cuenta',
-      inputs: [
-        {
-          name: 'codigo',
-          type: 'text',
-          placeholder: 'Clave que te brindó tu banco'
-        }
-      ],
-      buttons: [
-        {
-          text: 'Cancel',
-          role: 'cancel',
-          cssClass: 'secondary',
-          handler: (data) => {
-            console.log('Confirm Cancel');
-            const rp = {  resp: false,
-                          arg: 'Operacion cancelada!'};
-            return rp;
-          }
-        }, {
-          text: 'Ok',
-          handler: (data) => {
-            console.log(data);
-            if (data.codigo === clave){
-              const rp = {  resp: true,
-                            arg: 'Clave correcta!'};
-              return rp;
-            }else{
-              const rp = {  resp: false,
-                arg: 'Clave incorrecta!'};
-              return rp;
-            }
-          }
-        }
-      ]
-    });
-
-    await alert.present();
-    const response = await alert.onDidDismiss();
-    return response;
-  }
 
   async alertaDesvincular() {
     const alert = await this.alertController.create({

@@ -190,6 +190,27 @@ export class UsuariosService {
     const cuenta = cuentasArr.find( resp => resp.cuentas.cuenta.cbu === cbu);
     return cuentasArr.indexOf(cuenta);
   }
+
+  // F U N C I O N E S   C H E Q U E R A S   E L E C T R O N I C A S
+
+  activarChequeraElectronica(chequera: DatosChequeras, cuenta: DatosCuentas, cuil: number){
+    const user = this.obtenerUsuario(cuil);
+    const arrCtas = user.usuario.datosCuentas;
+    const cbu =  cuenta.cuentas.cuenta.cbu;
+    const arrCheq = cuenta.cuentas.chequeras;
+    const indexCta = this.indexCuenta(arrCtas, cbu); // indice de cuentas
+    const indexCheq = this.indexChequera(arrCheq, chequera.nroPrimerEcheq);
+    chequera.estadoChequera = true;
+    arrCtas[indexCta].cuentas.chequeras.splice(indexCheq, 1, chequera);
+    user.usuario.datosCuentas = arrCtas;
+    this.modificarUsuario(cuil, user);
+    this.guardarStorage();
+  }
+
+  indexChequera(chequerasArr: DatosChequeras[], primerEcheq: number){
+    const chequera = chequerasArr.find( resp => resp.nroPrimerEcheq === primerEcheq);
+    return chequerasArr.indexOf(chequera);
+  }
 }
 
 

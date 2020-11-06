@@ -3,6 +3,8 @@ import { UsuariosService } from '../../providers/usuarios.service';
 import { DatosUsuario } from '../../models/datosUsuario';
 import { DatosChequeras } from '../../models/datosChequeras';
 import { DatosCuentas } from '../../models/datosCuentas';
+import { VerificarClaveService } from '../../providers/verificar-clave.service';
+import { ToastsService } from '../../providers/toasts.service';
 
 @Component({
   selector: 'app-chequeras-electronicas',
@@ -15,7 +17,9 @@ export class ChequerasElectronicasComponent implements OnInit {
   chequeras = [];
   sinChequeras = false;
 
-  constructor(private user: UsuariosService) {
+  constructor(private user: UsuariosService,
+              private verifClave: VerificarClaveService,
+              private toast: ToastsService) {
     this.usuario = this.user.obtenerUsuario(27364183807);
     this.cuentas = this.usuario.usuario.datosCuentas;
     this.obtenerChequeras();
@@ -36,5 +40,22 @@ export class ChequerasElectronicasComponent implements OnInit {
         return this.chequeras.push(obj);
       });
     });
+  }
+
+  async activar(i: number){
+    const cuenta = this.cuentas[i];
+    const clave = this.chequeras[i].cheq.codigoActivacion;
+    const resp = await this.verifClave.ingresarClaveActivación(clave);
+    console.log(resp);
+    if (!resp.data.resp){
+      this.toast.mostrarToast(resp.data.arg, 'danger');
+      return;
+    }else{
+      this.toast.mostrarToast(resp.data.arg, 'primary');
+      setTimeout(() => {
+        this.user.activarChequeraElectronica(this.chequeras[i], cuenta, 27364183807);
+        this.toast.mostrarToast('Has activado tu chequera!', 'primary');
+      }, 3000);
+    }
   }
 }
