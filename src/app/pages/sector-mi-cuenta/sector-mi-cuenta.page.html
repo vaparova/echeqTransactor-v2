@@ -1,4 +1,4 @@
-<app-cabecera [ruta]="ruta[index]" back="miCuenta">
+<app-cabecera [ruta]="ruta[index].comp" [back]="ruta[index].atras">
 </app-cabecera>
 
 <ion-content [ngSwitch]="index">
@@ -7,5 +7,6 @@
     <app-token *ngSwitchCase="3" mode="md"></app-token>
     <app-cuentas *ngSwitchCase="4" mode="md"></app-cuentas>
     <app-chequeras-electronicas *ngSwitchCase="5" mode="md"></app-chequeras-electronicas>
+    <app-nueva-chequera *ngSwitchCase="6" mode="md"></app-nueva-chequera>
 
 </ion-content>

@@ -7,6 +7,7 @@
   <ion-label>Aún no posees chequeras electrónicas para activar!</ion-label>
 </ion-chip>
 
+
 <ion-card *ngFor="let chequera of chequeras; let i = index">
   
   
@@ -40,8 +41,13 @@
     <p class="texto">Sucursal: {{chequera.ent.numeroSucursal}} - {{chequera.ent.nombreSucursal}} </p>
   </ion-card-content>
 </ion-card>
+<br>
+<ion-button expand="block" class="ion-margin-start ion-margin-end" color="success" (click)="nuevaChequera()">
+  <ion-label>Nueva Chequera</ion-label>
+  <ion-icon slot="start" name="add-outline"></ion-icon>
+</ion-button>
 
-<hr><hr>
+<br>
 <ion-card color="secondary">
   <ion-item lines="none">
     <ion-icon color="secondary" name="information-circle-outline" slot="start"></ion-icon>
@@ -54,3 +60,4 @@
     <p> - Tu entidad te brindará una clave para activar tu chequera</p>
   </ion-card-content>
 </ion-card>
+

@@ -71,6 +71,7 @@ export class UsuariosService {
       this.adherirCuenta(otraCuentaUser2, user2.usuario.datosPersonales.cuil);
 
       const chequeraUser2 = new DatosChequeras(1, 'clave para activar');
+      chequeraUser2.cantidadDisponible = 10;
       this.nuevaChequera(chequeraUser2, cuentaUser2, 27364183807);
 
       const otraChequeraUser2 = new DatosChequeras(1, 'otra clave de activacion');
@@ -193,15 +194,16 @@ export class UsuariosService {
 
   // F U N C I O N E S   C H E Q U E R A S   E L E C T R O N I C A S
 
-  activarChequeraElectronica(chequera: DatosChequeras, cuenta: DatosCuentas, cuil: number){
+  activarChequeraElectronica(chequera: any, cuenta: DatosCuentas, cuil: number){
     const user = this.obtenerUsuario(cuil);
-    const arrCtas = user.usuario.datosCuentas;
-    const cbu =  cuenta.cuentas.cuenta.cbu;
+    const arrCtas = user.usuario.datosCuentas;        // array de cuentas del usuario
+    const cbu =  cuenta.cuentas.cuenta.cbu;           // cbu de la cuenta a modificar
     const arrCheq = cuenta.cuentas.chequeras;
-    const indexCta = this.indexCuenta(arrCtas, cbu); // indice de cuentas
-    const indexCheq = this.indexChequera(arrCheq, chequera.nroPrimerEcheq);
-    chequera.estadoChequera = true;
-    arrCtas[indexCta].cuentas.chequeras.splice(indexCheq, 1, chequera);
+    const indexCta = this.indexCuenta(arrCtas, cbu);  // indice de cuentas
+    const indexCheq = this.indexChequera(arrCheq, chequera.cheq.nroPrimerEcheq); // indice de chequera
+    const cheq = arrCtas[indexCta].cuentas.chequeras[indexCheq];
+    cheq.estadoChequera = true;                       // actualización de chequera
+    arrCtas[indexCta].cuentas.chequeras.splice(indexCheq, 1, cheq);
     user.usuario.datosCuentas = arrCtas;
     this.modificarUsuario(cuil, user);
     this.guardarStorage();

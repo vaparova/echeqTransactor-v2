@@ -5,6 +5,8 @@ import { DatosChequeras } from '../../models/datosChequeras';
 import { DatosCuentas } from '../../models/datosCuentas';
 import { VerificarClaveService } from '../../providers/verificar-clave.service';
 import { ToastsService } from '../../providers/toasts.service';
+import { SpinnerService } from '../../providers/spinner.service';
+import { NavController } from '@ionic/angular';
 
 @Component({
   selector: 'app-chequeras-electronicas',
@@ -19,7 +21,9 @@ export class ChequerasElectronicasComponent implements OnInit {
 
   constructor(private user: UsuariosService,
               private verifClave: VerificarClaveService,
-              private toast: ToastsService) {
+              private toast: ToastsService,
+              private spinner: SpinnerService,
+              private navCtrl: NavController) {
     this.usuario = this.user.obtenerUsuario(27364183807);
     this.cuentas = this.usuario.usuario.datosCuentas;
     this.obtenerChequeras();
@@ -51,11 +55,17 @@ export class ChequerasElectronicasComponent implements OnInit {
       this.toast.mostrarToast(resp.data.arg, 'danger');
       return;
     }else{
+      this.spinner.presentLoading();
       this.toast.mostrarToast(resp.data.arg, 'primary');
       setTimeout(() => {
         this.user.activarChequeraElectronica(this.chequeras[i], cuenta, 27364183807);
         this.toast.mostrarToast('Has activado tu chequera!', 'primary');
       }, 3000);
     }
+  }
+
+  nuevaChequera(){
+    console.log('entro a la funcion nueva');
+    this.navCtrl.navigateForward(`/miCuenta/sector-mi-cuenta/6`);
   }
 }

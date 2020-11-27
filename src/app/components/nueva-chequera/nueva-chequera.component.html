@@ -1,0 +1,50 @@
+<ion-progress-bar color="secondary" [value]="avance" [buffer]="avance"></ion-progress-bar>
+<ion-item lines="none"> 
+  <ion-title class="titulo ion-no-padding">Solicitar Chequera Electrónica</ion-title>
+</ion-item>
+
+<div *ngIf="!paso">
+<ion-chip>
+  <ion-icon name="information-circle-outline"></ion-icon>
+  <ion-label>Selecciona la cuenta donde pedirás tu chequera</ion-label>
+</ion-chip>
+ 
+<ion-card *ngFor="let cuenta of cuentas; let i = index">
+  <ion-item button color="secondary" (click)="solicitar(i)">
+    <ion-label color="light">{{cuenta.cuentas.cuenta.tipoCuenta}} - {{cuenta.cuentas.cuenta.numeroCuenta}}</ion-label>
+    <ion-icon slot="end" color="light" name="chevron-forward-outline"></ion-icon>
+  </ion-item>
+  <ion-card-content>
+      <p class="texto">Denominación: {{cuenta.cuentas.cuenta.denominacion}} </p>
+      <p class="texto">Entidad: {{cuenta.cuentas.entidad.nombreEntidad}}</p>
+      <p class="texto">Sucursal: {{cuenta.cuentas.entidad.numeroSucursal}} - {{cuenta.cuentas.entidad.nombreSucursal}}</p>
+    </ion-card-content>
+</ion-card>
+</div>
+  
+<div *ngIf="paso">
+<ion-card>
+  <ion-item color="secondary">
+  <ion-label class="ion-text-center" color="light">
+    <b>PEDIDO CHEQUERA ELECTRÓNICA</b>
+  </ion-label>  
+  </ion-item>  
+
+  <ion-card-content>
+    <br>
+    <h1>{{cuentaCheq.cuentas.entidad.nombreEntidad}}</h1>
+    <h2>{{cuentaCheq.cuentas.cuenta.tipoCuenta}} - {{cuentaCheq.cuentas.cuenta.numeroCuenta}}</h2>
+    <br>
+    <p> - Solicitaremos a la entidad bancaria que habilite una chequera electrónica de 50 Echeq</p> 
+    <p> - Una vez que la entidad apruebe tu pedido, te brindará un código de activación para poder
+      activarla
+    </p>
+    <p> - Al realizar esta operacion estás de acuerdo con los términos y condiciones
+      generales de uso del servicio de cheque electrónico echeq.</p>
+  </ion-card-content>
+</ion-card>
+
+<ion-button class="ion-margin-start ion-margin-end" expand="block" color="success" (click)="pedirChequera()" >
+  Confirmar</ion-button>
+
+</div>
