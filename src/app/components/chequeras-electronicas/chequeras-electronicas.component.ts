@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, DoCheck } from '@angular/core';
 import { UsuariosService } from '../../providers/usuarios.service';
 import { DatosUsuario } from '../../models/datosUsuario';
 import { DatosChequeras } from '../../models/datosChequeras';
@@ -24,6 +24,9 @@ export class ChequerasElectronicasComponent implements OnInit {
               private toast: ToastsService,
               private spinner: SpinnerService,
               private navCtrl: NavController) {
+  }
+
+  ngOnInit() {
     this.usuario = this.user.obtenerUsuario(27364183807);
     this.cuentas = this.usuario.usuario.datosCuentas;
     this.obtenerChequeras();
@@ -32,8 +35,6 @@ export class ChequerasElectronicasComponent implements OnInit {
     }
     console.log(this.chequeras);
   }
-
-  ngOnInit() {}
 
   obtenerChequeras(){
     this.cuentas.forEach(resp => {
@@ -66,6 +67,6 @@ export class ChequerasElectronicasComponent implements OnInit {
 
   nuevaChequera(){
     console.log('entro a la funcion nueva');
-    this.navCtrl.navigateForward(`/miCuenta/sector-mi-cuenta/6`);
+    this.navCtrl.navigateBack(`/miCuenta/sector-mi-cuenta/6`);
   }
 }

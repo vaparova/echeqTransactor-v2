@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, DoCheck, OnInit } from '@angular/core';
 import { UsuariosService } from '../../providers/usuarios.service';
 import { DatosUsuario } from '../../models/datosUsuario';
 import { DatosCuentas } from '../../models/datosCuentas';
@@ -27,12 +27,15 @@ export class NuevaChequeraComponent implements OnInit {
               private toast: ToastsService,
               private spinner: SpinnerService,
               private navCtrl: NavController) {
+  }
+
+  ngOnInit() {
     this.usuario = this.user.obtenerUsuario(27364183807);
     this.cuentas = this.usuario.usuario.datosCuentas;
     console.log(this.cuentas);
   }
 
-  ngOnInit() {}
+
 
   async solicitar(i: number){
     const chequeras = this.cuentas[i].cuentas.chequeras;
@@ -52,12 +55,14 @@ export class NuevaChequeraComponent implements OnInit {
     console.log(resp);
     if (!resp.data.respuesta){
       this.toast.mostrarToast(resp.data.argumento, 'danger');
-      this.navCtrl.navigateForward('/miCuenta/sector-mi-cuenta/5');
+      this.navCtrl.navigateBack('/miCuenta/sector-mi-cuenta/5');
     }else{
       this.spinner.presentLoading();
       this.user.pedirChequera(this.cuentaCheq, 27364183807);
-      this.navCtrl.navigateForward('/miCuenta/sector-mi-cuenta/5');
+      setTimeout(() => {
       this.toast.mostrarToast(resp.data.argumento, 'primary');
+      this.navCtrl.navigateBack('/miCuenta/sector-mi-cuenta/5');
+      }, 2000);
     }
   }
 
