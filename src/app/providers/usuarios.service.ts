@@ -213,6 +213,10 @@ export class UsuariosService {
     const chequera = chequerasArr.find( resp => resp.nroPrimerEcheq === primerEcheq);
     return chequerasArr.indexOf(chequera);
   }
+
+  pedirChequera(){
+    console.log('algo');
+  }
 }
 
 

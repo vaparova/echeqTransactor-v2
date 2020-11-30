@@ -3,11 +3,10 @@ import { UsuariosService } from '../../providers/usuarios.service';
 import { DatosUsuario } from '../../models/datosUsuario';
 import { DatosCuentas } from '../../models/datosCuentas';
 import { DatosChequeras } from '../../models/datosChequeras';
-import { AlertController } from '@ionic/angular';
+import { AlertController, NavController } from '@ionic/angular';
 import { VerificarPasswordService } from '../../providers/verificar-password.service';
 import { ToastsService } from '../../providers/toasts.service';
 import { SpinnerService } from '../../providers/spinner.service';
-import { DatosCuenta } from '../../models/datosCuenta';
 
 
 @Component({
@@ -26,7 +25,8 @@ export class NuevaChequeraComponent implements OnInit {
               private alertController: AlertController,
               private verifPass: VerificarPasswordService,
               private toast: ToastsService,
-              private spinner: SpinnerService) {
+              private spinner: SpinnerService,
+              private navCtrl: NavController) {
     this.usuario = this.user.obtenerUsuario(27364183807);
     this.cuentas = this.usuario.usuario.datosCuentas;
     console.log(this.cuentas);
@@ -52,6 +52,7 @@ export class NuevaChequeraComponent implements OnInit {
     console.log(resp);
     if (!resp.data.respuesta){
       this.toast.mostrarToast(resp.data.argumento, 'danger');
+      this.navCtrl.navigateForward('/miCuenta/sector-mi-cuenta/5');
     }else{
       this.spinner.presentLoading();
       this.toast.mostrarToast(resp.data.argumento, 'primary');

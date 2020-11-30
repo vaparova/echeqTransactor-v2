@@ -4,14 +4,14 @@
 
 <ion-chip *ngIf="sinChequeras" color="danger">
   <ion-icon name="sad-outline"></ion-icon>
-  <ion-label>Aún no posees chequeras electrónicas para activar!</ion-label>
+  <ion-label>Aún no posees chequeras electrónicas!</ion-label>
 </ion-chip>
 
 
 <ion-card *ngFor="let chequera of chequeras; let i = index">
   
   
-  <ion-item *ngIf="!chequera.cheq.estadoChequera">
+  <ion-item *ngIf="!chequera.cheq.estadoChequera && chequera.cheq.estadoPedido">
     <ion-chip color="primary">
       <ion-icon name="information-circle-outline"></ion-icon>
       <ion-label>Chequera sin activar</ion-label>
@@ -21,12 +21,19 @@
   </ion-item>
   
 
-  <ion-item *ngIf="chequera.cheq.estadoChequera">
+  <ion-item *ngIf="chequera.cheq.estadoChequera && chequera.cheq.estadoPedido">
     <ion-chip color="success">
       <ion-icon name="checkmark-outline"></ion-icon>
       <ion-label>Chequera vigente</ion-label>
     </ion-chip>
     <ion-icon color="success" slot="end" name="chevron-forward-circle-outline"></ion-icon>
+  </ion-item>
+
+  <ion-item *ngIf="!chequera.cheq.estadoPedido">
+    <ion-chip color="warning">
+      <ion-icon name="time-outline"></ion-icon>
+      <ion-label>Pedido Pendiente</ion-label>
+    </ion-chip>
   </ion-item>
 
   <ion-card-header>
