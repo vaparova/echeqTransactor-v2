@@ -70,11 +70,13 @@ export class UsuariosService {
         'clave de activacionuser2');
       this.adherirCuenta(otraCuentaUser2, user2.usuario.datosPersonales.cuil);
 
-      const chequeraUser2 = new DatosChequeras(1, 'clave para activar');
+      const chequeraUser2 = new DatosChequeras();
+      chequeraUser2.crearChequera(1, 'codigodeactivacion');
       chequeraUser2.cantidadDisponible = 10;
       this.nuevaChequera(chequeraUser2, cuentaUser2, 27364183807);
 
-      const otraChequeraUser2 = new DatosChequeras(1, 'otra clave de activacion');
+      const otraChequeraUser2 = new DatosChequeras();
+      otraChequeraUser2.crearChequera(1, 'codigodeactivacion');
       this.nuevaChequera(otraChequeraUser2, otraCuentaUser2, 27364183807);
 
 
@@ -214,8 +216,10 @@ export class UsuariosService {
     return chequerasArr.indexOf(chequera);
   }
 
-  pedirChequera(){
-    console.log('algo');
+  pedirChequera(cuenta: DatosCuentas, cuil: number){
+    console.log('pedirChequera()');
+    const chequera = new DatosChequeras();
+    this.nuevaChequera(chequera, cuenta, 27364183807);
   }
 }
 

@@ -22,8 +22,6 @@ export class VerificarClaveService {
       buttons: [
         {
           text: 'Cancel',
-          role: 'cancel',
-          cssClass: 'secondary',
           handler: (data) => {
             console.log('Confirm Cancel');
             const rp = {  resp: false,

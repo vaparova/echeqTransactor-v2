@@ -55,6 +55,8 @@ export class NuevaChequeraComponent implements OnInit {
       this.navCtrl.navigateForward('/miCuenta/sector-mi-cuenta/5');
     }else{
       this.spinner.presentLoading();
+      this.user.pedirChequera(this.cuentaCheq, 27364183807);
+      this.navCtrl.navigateForward('/miCuenta/sector-mi-cuenta/5');
       this.toast.mostrarToast(resp.data.argumento, 'primary');
     }
   }

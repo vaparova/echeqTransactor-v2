@@ -9,8 +9,18 @@ export class DatosChequeras{
     cantidadDisponible: number;
     echeq: DatosEcheq [];
 
-    constructor(nroPrimerEcheq: number, codigoActivacion: string){
+    constructor(){
         this.estadoPedido = false;
+        this.estadoChequera = false;
+        this.codigoActivacion = null;
+        this.nroPrimerEcheq = null;
+        this.cantidadEcheq = null;
+        this.cantidadDisponible = null;
+        this.echeq = [];
+    }
+
+    crearChequera(nroPrimerEcheq: number, codigoActivacion: string){
+        this.estadoPedido = true;
         this.estadoChequera = false;
         this.codigoActivacion = codigoActivacion;
         this.nroPrimerEcheq = nroPrimerEcheq;

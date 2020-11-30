@@ -11,7 +11,6 @@ export class SpinnerService {
   async presentLoading() {
     const loading = await this.loadingController.create({
       cssClass: 'my-custom-class',
-      message: 'Please wait...',
       duration: 3000
     });
     await loading.present();
