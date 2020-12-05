@@ -3,6 +3,8 @@ import { UsuariosService } from '../../providers/usuarios.service';
 import { DatosUsuario } from '../../models/datosUsuario';
 import { FormBuilder, FormGroup, Validators, FormArray } from '@angular/forms';
 import { ToastsService } from '../../providers/toasts.service';
+import { DatosSesion } from '../../models/datosSesion';
+import { NavController } from '@ionic/angular';
 
 @Component({
   selector: 'app-datos-personales',
@@ -12,16 +14,30 @@ import { ToastsService } from '../../providers/toasts.service';
 export class DatosPersonalesComponent implements OnInit {
   usuario: DatosUsuario;
   forma: FormGroup;
+  sesion: DatosSesion;
   readonly = true;
 
 
-  constructor(private user: UsuariosService, private fb: FormBuilder, private toast: ToastsService) {
-    this.usuario = this.user.obtenerUsuario(27364183807);
-    console.log(this.usuario);
+  constructor(private user: UsuariosService,
+              private fb: FormBuilder,
+              private toast: ToastsService,
+              private navCtrl: NavController
+              ) {
+    this.obtenerData();
     this.crearFormulario();
     this.cargarData();
   }
   ngOnInit() {}
+
+  obtenerData(){
+    this.sesion = this.user.obtenerSesion();
+    if (this.sesion === null){
+      this.toast.mostrarToast('Inicie sesión para continuar', 'danger');
+      this.navCtrl.navigateBack('/ingreso');
+      return;
+    }
+    this.usuario = this.user.obtenerUsuario(this.sesion.cuil);
+  }
 
   crearFormulario(): void{
     this.forma = this.fb.group({
@@ -75,7 +91,7 @@ export class DatosPersonalesComponent implements OnInit {
     }
     this.actualizarUsuario();
     this.readonly = true;
-    this.user.modificarUsuario(27364183807, this.usuario);
+    this.user.modificarUsuario(this.sesion.cuil, this.usuario);
     this.toast.mostrarToast('Datos guardados!', 'primary');
   }
 

@@ -9,87 +9,35 @@ import { DatosCuenta } from '../models/datosCuenta';
 import { DatosToken } from '../models/datosToken';
 import { DatosChequeras } from '../models/datosChequeras';
 
+// R E A L T I M E    B D
+import { AngularFireDatabase } from '@angular/fire/database';
+import { Observable } from 'rxjs';
+import { DatosSesion } from '../models/datosSesion';
+
+
 @Injectable({
   providedIn: 'root'
 })
 export class UsuariosService {
 
   usuarios: DatosUsuario[] = [];
+  usuariobd: DatosUsuario;
+  item: Observable<any>;
+  sesion: DatosSesion;
 
-  constructor() {
-    const data = this.cargarStorage();
+  constructor( private afs: AngularFireDatabase ) {
 
-    if (!data){
-      const user = new DatosUsuario(
-        new DatosPersonales(
-          'Martín',
-          'Molina',
-          'servicebelgrano@hotmail.com',
-          20277852536,
-          5492615874932
-        ),
-        new DatosPostales(
-          'belgrano',
-          519,
-          'Godoy Cruz',
-          'Mendoza',
-          5501
-        ),
-        new DatosIngreso('molina1979', 'mol1979mol')
-      );
-      this.nuevoUsuario(user);
-
-      const user2 = new DatosUsuario(
-        new DatosPersonales(
-          'Vanesa',
-          'Romero',
-          'vaparova_92@hotmail.com',
-          27364183807,
-          5492615058054
-        ),
-        new DatosPostales(
-          'avellaneda',
-          388,
-          'Godoy Cruz',
-          'Mendoza',
-          5501
-        ),
-        new DatosIngreso('vaparova', 'vp1992rv')
-      );
-      this.nuevoUsuario(user2);
-
-      const cuentaUser2 = new DatosCuentas(
-        new DatosEntidad('Banco Nacion', '011', 'Godoy Cruz', '285', '5501'),
-        new DatosCuenta( '0110285930028500003701', 'CC', '2850000370', 'Romero Vanesa'),
-        'clavedeactivacionuser2');
-      this.adherirCuenta(cuentaUser2, user2.usuario.datosPersonales.cuil);
-
-      const otraCuentaUser2 = new DatosCuentas(
-        new DatosEntidad('Banco Galicia', '007', 'Godoy Cruz', '246', '5501'),
-        new DatosCuenta('007024530093500000524', 'CC', '9350000052', 'Romero Vanesa'),
-        'clave de activacionuser2');
-      this.adherirCuenta(otraCuentaUser2, user2.usuario.datosPersonales.cuil);
-
-      const chequeraUser2 = new DatosChequeras();
-      chequeraUser2.crearChequera(1, 'codigodeactivacion');
-      chequeraUser2.cantidadDisponible = 10;
-      this.nuevaChequera(chequeraUser2, cuentaUser2, 27364183807);
-
-      const otraChequeraUser2 = new DatosChequeras();
-      otraChequeraUser2.crearChequera(1, 'codigodeactivacion');
-      this.nuevaChequera(otraChequeraUser2, otraCuentaUser2, 27364183807);
-
-
-    }else{
-      console.log('Data pre-existente en localStorage');
-    }
   }
 
   // M É T O D O S    P R O P I O S
 
   private nuevoUsuario(usuario: DatosUsuario){
+    console.log('se esta creando un nuevo usuario local');
     this.usuarios.push(usuario);
+    console.log(this.usuarios);
     this.guardarStorage();
+    // const cuil = usuario.usuario.datosPersonales.cuil;
+    // this.nuevoUsuarioFb(cuil, usuario);
   }
 
   private adherirCuenta(cuenta: DatosCuentas, cuil: number){
@@ -107,12 +55,46 @@ export class UsuariosService {
     this.modificarUsuario(cuil, user);
   }
 
+  // M É T O D O S    F I R E B A S E   R E A L T I M E   D A T E B A S E
+
+  obtenerUsuarioFb(cuil: number){
+    this.item = this.afs.object(`usuarios/${cuil}`).snapshotChanges();
+    this.item.subscribe(action => {
+      this.usuariobd = action.payload.val();
+      this.nuevoUsuario(this.usuariobd);
+    });
+  }
+
+  loginFb(cuil: number){
+    return this.afs.object(`usuarios/${cuil}`).snapshotChanges();
+  }
+
+  private nuevoUsuarioFb(cuil: number, datos: DatosUsuario){
+    this.afs.object(`usuarios/${cuil}`).set(datos);
+  }
+
+  public modificarUsuario(cuil: number, datos: DatosUsuario) {
+   return this.afs.object(`usuarios/${cuil}`).update(datos);
+  }
+
   // A L M A C E N A M I E N T O   L O C A L
 
   private guardarStorage(){
     localStorage.setItem('data', JSON.stringify(this.usuarios));
   }
 
+  guardarSesion(sesion: DatosSesion){
+    localStorage.setItem('sesion', JSON.stringify(sesion));
+  }
+
+  obtenerSesion(){
+    if (localStorage.getItem('sesion')) {
+      this.sesion = JSON.parse(localStorage.getItem('sesion'));
+      console.log(this.sesion);
+      return true;
+      }
+    return null;
+  }
   private cargarStorage(){
     if (localStorage.getItem('data')) {
       this.usuarios = JSON.parse(localStorage.getItem('data'));
@@ -128,16 +110,19 @@ export class UsuariosService {
   }
 
   obtenerUsuario(cuil: number){
-   return this.usuarios.find( resp => resp.usuario.datosPersonales.cuil === cuil);
+    console.log(`US obtenerUsuario() cuil recibido: ${cuil}`);
+    // console.log(this.usuarios.find( resp => resp.usuario.datosPersonales.cuil === cuil));
+    // return this.usuarios.find( resp => resp.usuario.datosPersonales.cuil === cuil);
+   // return this.usuarios[0];
   }
 
   obtenerIndex(cuil: number){
     return this.usuarios.indexOf(this.obtenerUsuario(cuil));
   }
 
-  modificarUsuario(cuil: number, userMod: DatosUsuario){
+  modificarUsuarioOk(cuil: number, userMod: DatosUsuario){
     const i = this.obtenerIndex(cuil);
-    this.usuarios.splice(i, 1, userMod);
+    this.usuarios.splice(0, 1, userMod);
     this.guardarStorage();
   }
 

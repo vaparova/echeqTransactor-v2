@@ -6,6 +6,7 @@ import { ValidacionesService } from '../../providers/validaciones.service';
 import { ToastsService } from '../../providers/toasts.service';
 import { DatosIngreso } from '../../models/datosIngreso';
 import { NavController } from '@ionic/angular';
+import { DatosSesion } from '../../models/datosSesion';
 
 @Component({
   selector: 'app-password',
@@ -24,8 +25,9 @@ export class PasswordComponent implements OnInit {
     { ver: false,
       tipo: 'password'}
   ];
+  sesion: DatosSesion;
 
-  constructor(
+ constructor(
                 private user: UsuariosService,
                 private fb: FormBuilder,
                 private validadores: ValidacionesService,
@@ -33,11 +35,24 @@ export class PasswordComponent implements OnInit {
                 private navCtrl: NavController
               ){
 
-    this.usuario = this.user.obtenerUsuario(27364183807);
+    this.obtenerData();
     this.crearFormulario();
   }
 
-    crearFormulario(): void{
+  obtenerData(){
+    const a =  this.user.obtenerSesion();
+    console.log(`passw: Obteniendo la sesion => ${a}`);
+    const cuil = this.user.sesion.cuil;
+    console.log(`passw: Obteniendo el cuil del sesion en US => ${cuil}`);
+    if (a){
+      this.usuario = this.user.obtenerUsuario(cuil);
+      console.log(`respta obtenerUsuario() US: ${this.usuario}`);
+    }else{
+      console.log('error de login!');
+    }
+  }
+
+  crearFormulario(): void{
       this.forma = this.fb.group({
           actual: ['', [Validators.required, Validators.minLength(8)]],
           nueva: ['', [Validators.pattern('^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])[a-zA-Z0-9]+$'), Validators.minLength(8),
@@ -70,16 +85,23 @@ export class PasswordComponent implements OnInit {
       return;
     }
     this.actualizarUsuario();
-    this.user.modificarUsuario(27364183807, this.usuario);
-    this.toast.mostrarToast('Contraseña modificada!', 'primary');
-    console.log(this.usuario);
-    this.navCtrl.navigateForward(`/miCuenta`);
-    }
+    this.user.modificarUsuario(this.sesion.cuil, this.usuario).then( () => {
+      this.toast.mostrarToast('Contraseña modificada!', 'primary');
+      this.user.modificarUsuarioOk(this.sesion.cuil, this.usuario);
+      console.log(this.usuario);
+      this.navCtrl.navigateForward(`/miCuenta`);
+    }).catch ( () => {
+      this.toast.mostrarToast('Error en BD!', 'danger');
+    });
+  }
 
   private actualizarUsuario(){
-    const vto = this.usuario.usuario.datosIngreso.calcularVencimiento();
-    this.usuario.usuario.datosIngreso.password = this.forma.controls.nueva.value;
-    this.usuario.usuario.datosIngreso.vencimiento = vto;
+    const psw = new DatosIngreso(this.usuario.usuario.datosIngreso.usuario, this.forma.controls.nueva.value);
+    psw.calcularVencimiento();
+    this.usuario.usuario.datosIngreso = psw;
+    // const vto = this.usuario.usuario.datosIngreso.calcularVencimiento();
+    // this.usuario.usuario.datosIngreso.password = this.forma.controls.nueva.value;
+    // this.usuario.usuario.datosIngreso.vencimiento = vto;
   }
   ngOnInit() {}
 

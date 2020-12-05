@@ -8,12 +8,16 @@ const routes: Routes = [
   },
   {
     path: '',
-    redirectTo: 'tab',
+    redirectTo: 'ingreso',
     pathMatch: 'full'
   },
   {
     path: 'eventos',
     loadChildren: () => import('./pages/eventos/eventos.module').then( m => m.EventosPageModule)
+  },
+  {
+    path: 'ingreso',
+    loadChildren: () => import('./pages/ingreso/ingreso.module').then( m => m.IngresoPageModule)
   },
 ];
 

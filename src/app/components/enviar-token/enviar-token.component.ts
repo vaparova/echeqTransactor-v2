@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ModalController } from '@ionic/angular';
+import { ModalController, NavController } from '@ionic/angular';
 import { AlertController } from '@ionic/angular';
 
 
@@ -8,6 +8,8 @@ import { AngularFireAuth } from '@angular/fire/auth';
 import firebase from 'firebase/app';
 import { UsuariosService } from '../../providers/usuarios.service';
 import { DatosUsuario } from '../../models/datosUsuario';
+import { DatosSesion } from '../../models/datosSesion';
+import { ToastsService } from '../../providers/toasts.service';
 
 @Component({
   selector: 'app-enviar-token',
@@ -18,14 +20,17 @@ export class EnviarTokenComponent implements OnInit {
   applicationVerifier: firebase.auth.RecaptchaVerifier;
   usuario: DatosUsuario;
   tel: string;
+  sesion: DatosSesion;
 
   constructor(
               private modalCtrl: ModalController,
               private afb: AngularFireAuth,
               private alertCtrl: AlertController,
               private user: UsuariosService,
+              private navCtrl: NavController,
+              private toast: ToastsService
             ) {
-              this.usuario = this.user.obtenerUsuario(27364183807);
+              this.obtenerData();
               this.tel = `+${this.usuario.usuario.datosPersonales.tel.toString()}`;
               console.log(this.tel);
             }
@@ -33,6 +38,16 @@ export class EnviarTokenComponent implements OnInit {
   ngOnInit() {
     this.applicationVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container');
     console.log(this.applicationVerifier);
+  }
+
+  obtenerData(){
+    this.sesion = this.user.obtenerSesion();
+    if (this.sesion === null){
+      this.toast.mostrarToast('Inicie sesión para continuar', 'danger');
+      this.navCtrl.navigateBack('/ingreso');
+      return;
+    }
+    this.usuario = this.user.obtenerUsuario(this.sesion.cuil);
   }
 
   comenzar(){

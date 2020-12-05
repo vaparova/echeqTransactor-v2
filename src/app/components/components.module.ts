@@ -25,6 +25,7 @@ import { environment } from '../../environments/environment';
 import { CuentasComponent } from './cuentas/cuentas.component';
 import { ChequerasElectronicasComponent } from './chequeras-electronicas/chequeras-electronicas.component';
 import { NuevaChequeraComponent } from './nueva-chequera/nueva-chequera.component';
+import { LoginComponent } from './login/login.component';
 
 
 
@@ -41,7 +42,8 @@ import { NuevaChequeraComponent } from './nueva-chequera/nueva-chequera.componen
     EnviarTokenComponent,
     CuentasComponent,
     ChequerasElectronicasComponent,
-    NuevaChequeraComponent
+    NuevaChequeraComponent,
+    LoginComponent
   ],
   imports: [
     CommonModule,
@@ -67,7 +69,8 @@ import { NuevaChequeraComponent } from './nueva-chequera/nueva-chequera.componen
     EnviarTokenComponent,
     CuentasComponent,
     ChequerasElectronicasComponent,
-    NuevaChequeraComponent
+    NuevaChequeraComponent,
+    LoginComponent
   ],
   providers: [
     AngularFireAuth

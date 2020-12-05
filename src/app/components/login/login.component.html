@@ -1,0 +1,44 @@
+<form [formGroup]="forma">
+  <ion-item lines="none"> 
+  <ion-title mode="md" class="titulo ion-no-padding">Iniciar Sesión</ion-title>
+  </ion-item>
+  
+  <ion-item>
+    <ion-label position="stacked">Usuario</ion-label>
+    <ion-input type="number"  formControlName="cuil"></ion-input>
+  </ion-item>
+  <ion-item>
+    <ion-label position="stacked">Contraseña</ion-label>
+    <ion-input [type]="datos[1].tipo"   formControlName="password"></ion-input>
+    <ion-icon *ngIf="!datos[1].ver" name="eye-outline" slot="end" (click)="visualizar(1)"></ion-icon>
+    <ion-icon *ngIf="datos[1].ver" name="eye-off-outline" slot="end" (click)="ocultar(1)"></ion-icon>
+  </ion-item>
+  
+    
+  <ion-button class="ion-margin-top" fill="outline" expand="block" color="success" (click)="login()">
+    <ion-icon name="log-in"></ion-icon>
+    Ingresar
+  </ion-button>
+ </form> 
+
+ <br>
+ <br>
+ <ion-card>
+  <ion-card-header>
+    <ion-card-title>¿Necesitas Ayuda?</ion-card-title>
+  </ion-card-header>
+
+  <ion-card-content>
+
+    <p>Recuerda ingresar con tu cuil y constraseña que te brindó tu entidad bancaria</p>
+    <br>
+    <ion-button color="secondary" size="small">
+     Olvide mi contraseña
+    </ion-button>
+    <ion-button size="small" color="secondary">
+     Desbloquear mi cuenta
+    </ion-button>
+ 
+  </ion-card-content>
+</ion-card>
+

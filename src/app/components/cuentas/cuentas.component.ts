@@ -2,10 +2,11 @@ import { Component, OnInit } from '@angular/core';
 import { UsuariosService } from '../../providers/usuarios.service';
 import { DatosUsuario } from '../../models/datosUsuario';
 import { DatosCuentas } from '../../models/datosCuentas';
-import { AlertController } from '@ionic/angular';
+import { AlertController, NavController } from '@ionic/angular';
 import { ToastsService } from '../../providers/toasts.service';
 import { VerificarPasswordService } from '../../providers/verificar-password.service';
 import { VerificarClaveService } from '../../providers/verificar-clave.service';
+import { DatosSesion } from '../../models/datosSesion';
 
 
 @Component({
@@ -18,14 +19,16 @@ export class CuentasComponent implements OnInit {
   usuario: DatosUsuario;
   cuentas: DatosCuentas[];
   sinCuentas = false;
+  sesion: DatosSesion;
 
   constructor(  private user: UsuariosService,
                 private alertController: AlertController,
                 private toast: ToastsService,
                 private passw: VerificarPasswordService,
-                private verifClave: VerificarClaveService) {
+                private verifClave: VerificarClaveService,
+                private navCtrl: NavController) {
 
-    this.usuario = this.user.obtenerUsuario(27364183807);
+    this.obtenerData();
     this.cuentas = this.usuario.usuario.datosCuentas;
     if ( this.cuentas.length === 0){
       this.sinCuentas = true;
@@ -33,6 +36,16 @@ export class CuentasComponent implements OnInit {
    }
 
   ngOnInit() {}
+
+  obtenerData(){
+    this.sesion = this.user.obtenerSesion();
+    if (this.sesion === null){
+      this.toast.mostrarToast('Inicie sesión para continuar', 'danger');
+      this.navCtrl.navigateBack('/ingreso');
+      return;
+    }
+    this.usuario = this.user.obtenerUsuario(this.sesion.cuil);
+  }
 
   async vincular(i: number){
     const cuenta = this.cuentas[i];
@@ -45,7 +58,7 @@ export class CuentasComponent implements OnInit {
     }else{
       this.toast.mostrarToast(resp.data.arg, 'primary');
       setTimeout(() => {
-        this.user.vincularCuenta(2736418380, this.usuario, cuenta);
+        this.user.vincularCuenta(this.sesion.cuil, this.usuario, cuenta);
         this.toast.mostrarToast('Has vinculado tu cuenta!', 'primary');
       }, 3000);
     }
@@ -57,12 +70,12 @@ export class CuentasComponent implements OnInit {
     console.log(alerta.data.resp);
 
     if (alerta.data.resp){
-      const pass = await this.passw.verificarPass(27364183807).then(resp => {
+      const pass = await this.passw.verificarPass(this.sesion.cuil).then(resp => {
         console.log(resp);
         if (resp.data.respuesta){
           this.toast.mostrarToast(resp.data.argumento, 'primary');
           setTimeout( () => {
-            this.user.desvincularCuenta(2736418380, this.usuario, cuenta);
+            this.user.desvincularCuenta(this.sesion.cuil, this.usuario, cuenta);
             this.toast.mostrarToast('Cuenta desvinculada!', 'primary');
           }, 2000);
         }else{

@@ -18,6 +18,11 @@ import { EventosService } from './providers/eventos.service';
 
 import { environment } from '../environments/environment';
 
+import { AngularFireAuthModule, AngularFireAuth } from '@angular/fire/auth';
+import { AngularFireModule } from '@angular/fire';
+import { AngularFirestoreModule } from '@angular/fire/firestore';
+
+
 
 
 @NgModule({
@@ -31,12 +36,16 @@ import { environment } from '../environments/environment';
     AppRoutingModule,
     ComponentsModule,
     TabPageRoutingModule,
+    AngularFireAuthModule,
+    AngularFirestoreModule,
+    AngularFireModule.initializeApp(environment.firebaseConfig),
   ],
   providers: [
     StatusBar,
     SplashScreen,
     AlertasService,
     EventosService,
+    AngularFireAuth,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }
   ],
   bootstrap: [AppComponent]

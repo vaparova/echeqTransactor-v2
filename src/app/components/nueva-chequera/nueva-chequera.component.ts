@@ -7,6 +7,7 @@ import { AlertController, NavController } from '@ionic/angular';
 import { VerificarPasswordService } from '../../providers/verificar-password.service';
 import { ToastsService } from '../../providers/toasts.service';
 import { SpinnerService } from '../../providers/spinner.service';
+import { DatosSesion } from '../../models/datosSesion';
 
 
 @Component({
@@ -20,6 +21,7 @@ export class NuevaChequeraComponent implements OnInit {
   cuentaCheq: DatosCuentas;
   paso = false;
   avance = '0.3';
+  sesion: DatosSesion;
 
   constructor(private user: UsuariosService,
               private alertController: AlertController,
@@ -30,12 +32,20 @@ export class NuevaChequeraComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.usuario = this.user.obtenerUsuario(27364183807);
+    this.obtenerData();
     this.cuentas = this.usuario.usuario.datosCuentas;
     console.log(this.cuentas);
   }
 
-
+  obtenerData(){
+    this.sesion = this.user.obtenerSesion();
+    if (this.sesion === null){
+      this.toast.mostrarToast('Inicie sesión para continuar', 'danger');
+      this.navCtrl.navigateBack('/ingreso');
+      return;
+    }
+    this.usuario = this.user.obtenerUsuario(this.sesion.cuil);
+  }
 
   async solicitar(i: number){
     const chequeras = this.cuentas[i].cuentas.chequeras;
@@ -51,14 +61,14 @@ export class NuevaChequeraComponent implements OnInit {
   }
 
   async pedirChequera(){
-    const resp =  await this.verifPass.verificarPass(27364183807);
+    const resp =  await this.verifPass.verificarPass(this.sesion.cuil);
     console.log(resp);
     if (!resp.data.respuesta){
       this.toast.mostrarToast(resp.data.argumento, 'danger');
       this.navCtrl.navigateBack('/miCuenta/sector-mi-cuenta/5');
     }else{
       this.spinner.presentLoading();
-      this.user.pedirChequera(this.cuentaCheq, 27364183807);
+      this.user.pedirChequera(this.cuentaCheq, this.sesion.cuil);
       setTimeout(() => {
       this.toast.mostrarToast(resp.data.argumento, 'primary');
       this.navCtrl.navigateBack('/miCuenta/sector-mi-cuenta/5');

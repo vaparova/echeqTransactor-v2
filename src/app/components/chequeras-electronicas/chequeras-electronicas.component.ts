@@ -7,6 +7,9 @@ import { VerificarClaveService } from '../../providers/verificar-clave.service';
 import { ToastsService } from '../../providers/toasts.service';
 import { SpinnerService } from '../../providers/spinner.service';
 import { NavController } from '@ionic/angular';
+import { DatosSesion } from '../../models/datosSesion';
+
+
 
 @Component({
   selector: 'app-chequeras-electronicas',
@@ -18,22 +21,36 @@ export class ChequerasElectronicasComponent implements OnInit {
   cuentas: DatosCuentas [];
   chequeras = [];
   sinChequeras = false;
+  sesion: DatosSesion;
+
 
   constructor(private user: UsuariosService,
               private verifClave: VerificarClaveService,
               private toast: ToastsService,
               private spinner: SpinnerService,
-              private navCtrl: NavController) {
+              private navCtrl: NavController,
+              ) {
+
   }
 
   ngOnInit() {
-    this.usuario = this.user.obtenerUsuario(27364183807);
+    this.obtenerData();
     this.cuentas = this.usuario.usuario.datosCuentas;
     this.obtenerChequeras();
     if (this.chequeras.length === 0){
       this.sinChequeras = true;
     }
     console.log(this.chequeras);
+  }
+
+  obtenerData(){
+    this.sesion = this.user.obtenerSesion();
+    if (this.sesion === null){
+      this.toast.mostrarToast('Inicie sesión para continuar', 'danger');
+      this.navCtrl.navigateBack('/ingreso');
+      return;
+    }
+    this.usuario = this.user.obtenerUsuario(this.sesion.cuil);
   }
 
   obtenerChequeras(){
@@ -59,7 +76,7 @@ export class ChequerasElectronicasComponent implements OnInit {
       this.spinner.presentLoading();
       this.toast.mostrarToast(resp.data.arg, 'primary');
       setTimeout(() => {
-        this.user.activarChequeraElectronica(this.chequeras[i], cuenta, 27364183807);
+        this.user.activarChequeraElectronica(this.chequeras[i], cuenta, this.sesion.cuil);
         this.toast.mostrarToast('Has activado tu chequera!', 'primary');
       }, 3000);
     }

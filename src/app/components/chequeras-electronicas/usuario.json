@@ -1,0 +1,62 @@
+{
+"usuario": [
+    {
+    "datosCuentas": [
+      {
+        "cuentas": {
+          "chequeras": [
+            {
+              "cantidadDisponible": 10,
+              "cantidadEcheq": 50,
+              "codigoActivacion": "codigodeactivacion",
+              "echeq": [],
+              "estadoChequera": true,
+              "estadoPedido": true,
+              "nroPrimerEcheq": 1
+            }
+          ],
+          "claveActivacion": "clavedeactivacionuser2",
+          "cuenta": {
+            "cbu": "0110285930028500003701",
+            "denominacion": "Romero Vanesa",
+            "numeroCuenta": "2850000370",
+            "tipoCuenta": "CC"
+          },
+          "entidad": {
+            "cpSucursal": "5501",
+            "nombreEntidad": "Banco Nacion",
+            "nombreSucursal": "Godoy Cruz",
+            "numeroEntidad": "011",
+            "numeroSucursal": "285"
+          },
+          "estado": false
+        }
+      }
+    ],
+    "datosIngreso": {
+      "password": "vp1992rv",
+      "usuario": "vaparova",
+      "vencimiento": "2021-03-02T18:27:00.000Z"
+    },
+    "datosPersonales": {
+      "apellido": "Romero",
+      "cuil": 27364183807,
+      "email": "vaparova_92@hotmail.com",
+      "nombre": "Vanesa",
+      "tel": 5492615058054
+    },
+    "datosPostales": {
+      "altura": 388,
+      "calle": "avellaneda",
+      "cp": 5501,
+      "localidad": "Godoy Cruz",
+      "provincia": "Mendoza"
+    },
+    "datosToken": {
+      "claveToken": 2020,
+      "estado": true,
+      "uid": "VQ2vcXcXuhOyVPOCY9o5WlnMxBX2"
+    }
+  }
+]
+}
