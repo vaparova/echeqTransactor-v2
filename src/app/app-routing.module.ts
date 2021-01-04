@@ -4,20 +4,20 @@ import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 const routes: Routes = [
   {
     path: 'tab',
-    loadChildren: () => import('./components/tab/tab.module').then( m => m.TabPageModule)
+    loadChildren: () => import('../app/pages/tabs/tabs.module').then( m => m.TabsPageModule)
   },
   {
     path: '',
     redirectTo: 'ingreso',
     pathMatch: 'full'
   },
-  {
-    path: 'eventos',
-    loadChildren: () => import('./pages/eventos/eventos.module').then( m => m.EventosPageModule)
-  },
+  // {
+  //   path: 'eventos',
+  //   loadChildren: () => import('../app/pages/eventos/eventos.module').then( m => m.EventosPageModule)
+  // },
   {
     path: 'ingreso',
-    loadChildren: () => import('./pages/ingreso/ingreso.module').then( m => m.IngresoPageModule)
+    loadChildren: () => import('../app/pages/ingreso/ingreso.module').then( m => m.IngresoPageModule)
   },
 ];
 

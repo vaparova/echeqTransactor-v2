@@ -55,7 +55,7 @@ export class LoginComponent implements OnInit {
         this.user.guardarSesion(sesion);
         this.spinner.presentLoading();
         this.toast.mostrarToast('Ingreso Exitoso!', 'primary');
-        this.navCtrl.navigateBack('/index');
+        this.navCtrl.navigateBack('tab/index');
       }else{
         this.toast.mostrarToast('Constraseña Incorrecta!', 'danger');
       }

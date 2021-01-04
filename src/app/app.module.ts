@@ -21,6 +21,7 @@ import { environment } from '../environments/environment';
 import { AngularFireAuthModule, AngularFireAuth } from '@angular/fire/auth';
 import { AngularFireModule } from '@angular/fire';
 import { AngularFirestoreModule } from '@angular/fire/firestore';
+import { TabsPageRoutingModule } from './pages/tabs/tabs-routing.module';
 
 
 
@@ -35,7 +36,8 @@ import { AngularFirestoreModule } from '@angular/fire/firestore';
     IonicModule.forRoot(),
     AppRoutingModule,
     ComponentsModule,
-    TabPageRoutingModule,
+    TabsPageRoutingModule,
+    // TabPageRoutingModule,
     AngularFireAuthModule,
     AngularFirestoreModule,
     AngularFireModule.initializeApp(environment.firebaseConfig),
