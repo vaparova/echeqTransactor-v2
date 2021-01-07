@@ -31,22 +31,23 @@ export class UsuariosService {
 
   // M É T O D O S    P R O P I O S
 
-  private nuevoUsuario(usuario: DatosUsuario){
+  private nuevoUsuario(usuario: DatosUsuario): void{
     console.log('se esta creando un nuevo usuario local');
-    this.usuarios.push(usuario);
+    // this.usuarios.push(usuario);
+    this.usuarios[0] = usuario;
     console.log(this.usuarios);
     this.guardarStorage();
     // const cuil = usuario.usuario.datosPersonales.cuil;
     // this.nuevoUsuarioFb(cuil, usuario);
   }
 
-  private adherirCuenta(cuenta: DatosCuentas, cuil: number){
+  private adherirCuenta(cuenta: DatosCuentas, cuil: number): void{
     const user = this.obtenerUsuario(cuil);
     user.usuario.datosCuentas.push(cuenta);
     this.modificarUsuario(cuil, user);
   }
 
-  private nuevaChequera(chequera: DatosChequeras, cuenta: DatosCuentas, cuil: number){
+  private nuevaChequera(chequera: DatosChequeras, cuenta: DatosCuentas, cuil: number): void{
     const user = this.obtenerUsuario(cuil);
     const arrCtas = user.usuario.datosCuentas;
     const cbu =  cuenta.cuentas.cuenta.cbu;
@@ -57,7 +58,7 @@ export class UsuariosService {
 
   // M É T O D O S    F I R E B A S E   R E A L T I M E   D A T E B A S E
 
-  obtenerUsuarioFb(cuil: number){
+  obtenerUsuarioFb(cuil: number): void{
     this.item = this.afs.object(`usuarios/${cuil}`).snapshotChanges();
     this.item.subscribe(action => {
       this.usuariobd = action.payload.val();
@@ -65,25 +66,25 @@ export class UsuariosService {
     });
   }
 
-  loginFb(cuil: number){
+  loginFb(cuil: number): Observable<any>{
     return this.afs.object(`usuarios/${cuil}`).snapshotChanges();
   }
 
-  private nuevoUsuarioFb(cuil: number, datos: DatosUsuario){
+  private nuevoUsuarioFb(cuil: number, datos: DatosUsuario): void{
     this.afs.object(`usuarios/${cuil}`).set(datos);
   }
 
-  public modificarUsuario(cuil: number, datos: DatosUsuario) {
+  public modificarUsuario(cuil: number, datos: DatosUsuario): Promise<any> {
    return this.afs.object(`usuarios/${cuil}`).update(datos);
   }
 
   // A L M A C E N A M I E N T O   L O C A L
 
-  private guardarStorage(){
+  private guardarStorage(): void{
     localStorage.setItem('data', JSON.stringify(this.usuarios));
   }
 
-  guardarSesion(sesion: DatosSesion){
+  guardarSesion(sesion: DatosSesion): void{
     localStorage.setItem('sesion', JSON.stringify(sesion));
   }
 
@@ -91,16 +92,22 @@ export class UsuariosService {
     if (localStorage.getItem('sesion')) {
       this.sesion = JSON.parse(localStorage.getItem('sesion'));
       console.log(this.sesion);
-      return true;
+      return this.sesion;
       }
     return null;
   }
-  private cargarStorage(){
+
+  cargarStorage(){
     if (localStorage.getItem('data')) {
       this.usuarios = JSON.parse(localStorage.getItem('data'));
       return true;
       }
     return false;
+  }
+
+  borrarSesion(){
+    localStorage.clear();
+    this.sesion = null;
   }
 
   // F U N C I O N E S    U S U A R I O
@@ -109,11 +116,12 @@ export class UsuariosService {
     return this.usuarios;
   }
 
-  obtenerUsuario(cuil: number){
+  obtenerUsuario(cuil: number): DatosUsuario{
     console.log(`US obtenerUsuario() cuil recibido: ${cuil}`);
-    // console.log(this.usuarios.find( resp => resp.usuario.datosPersonales.cuil === cuil));
-    // return this.usuarios.find( resp => resp.usuario.datosPersonales.cuil === cuil);
-   // return this.usuarios[0];
+    console.log(this.usuarios);
+    console.log(this.usuarios.find( resp => resp.usuario.datosPersonales.cuil === cuil));
+    return this.usuarios.find( resp => resp.usuario.datosPersonales.cuil === cuil);
+    // return this.usuarios[0];
   }
 
   obtenerIndex(cuil: number){

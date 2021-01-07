@@ -35,7 +35,9 @@ export class LoginComponent implements OnInit {
     this.crearFormulario();
               }
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.user.borrarSesion();
+  }
 
   login(){
     if (this.forma.invalid){

@@ -11,17 +11,17 @@ export class SectorMiCuentaPage implements OnInit {
   ruta = [
     {atras: 'No definido',
      comp: 'No definido'},
-    {atras: 'miCuenta',
+    {atras: 'tab/miCuenta',
      comp: 'Mi Cuenta > Datos Personales'},
-    {atras: 'miCuenta',
+    {atras: 'tab/miCuenta',
      comp: 'Mi Cuenta > Cambiar Contraseña'},
-    {atras: 'miCuenta',
+    {atras: 'tab/miCuenta',
      comp: 'Token'},
-    {atras: 'miCuenta',
+    {atras: 'tab/miCuenta',
      comp: 'Mi Cuenta > Cuentas Bancarias'},
-    {atras: 'miCuenta',
+    {atras: 'tab/miCuenta',
      comp: 'Mi Cuenta > Chequeras Electrónicas'},
-    {atras: 'miCuenta/sector-mi-cuenta/5',
+    {atras: 'tab/miCuenta/sector-mi-cuenta/5',
      comp: 'Chequeras Electrónicas > Nueva Chequera'},
   ];
   constructor(private route: ActivatedRoute) {

@@ -29,15 +29,34 @@ export class DatosPersonalesComponent implements OnInit {
   }
   ngOnInit() {}
 
+  // obtenerData(){
+  //   this.sesion = this.user.obtenerSesion();
+  //   if (this.sesion === null){
+  //     this.toast.mostrarToast('Inicie sesión para continuar', 'danger');
+  //     this.navCtrl.navigateBack('/ingreso');
+  //     return;
+  //   }
+  //   this.usuario = this.user.obtenerUsuario(this.sesion.cuil);
+  // }
+
   obtenerData(){
-    this.sesion = this.user.obtenerSesion();
-    if (this.sesion === null){
-      this.toast.mostrarToast('Inicie sesión para continuar', 'danger');
+    const a =  this.user.obtenerSesion();
+    console.log(`componente: Obteniendo la sesion => ${a}`);
+    if (a){
+      this.sesion = this.user.sesion;
+      console.log(`componente: Obteniendo el cuil del sesion en US => ${this.sesion.cuil}`);
+      this.user.cargarStorage();
+      console.log(`se está obteniendo datos desde el localStorage`);
+      this.usuario = this.user.obtenerUsuario(this.sesion.cuil);
+      console.log(`respta obtenerUsuario() US: ${this.usuario}`);
+    }else{
+      this.user.borrarSesion();
+      this.toast.mostrarToast('Debes iniciar sesión', 'danger');
       this.navCtrl.navigateBack('/ingreso');
-      return;
+      console.log('error de login!');
     }
-    this.usuario = this.user.obtenerUsuario(this.sesion.cuil);
   }
+
 
   crearFormulario(): void{
     this.forma = this.fb.group({
