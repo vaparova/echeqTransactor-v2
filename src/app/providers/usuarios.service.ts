@@ -88,7 +88,7 @@ export class UsuariosService {
     localStorage.setItem('sesion', JSON.stringify(sesion));
   }
 
-  obtenerSesion(){
+  obtenerSesion(): DatosSesion{
     if (localStorage.getItem('sesion')) {
       this.sesion = JSON.parse(localStorage.getItem('sesion'));
       console.log(this.sesion);
@@ -97,7 +97,7 @@ export class UsuariosService {
     return null;
   }
 
-  cargarStorage(){
+  cargarStorage(): boolean{
     if (localStorage.getItem('data')) {
       this.usuarios = JSON.parse(localStorage.getItem('data'));
       return true;
@@ -105,11 +105,23 @@ export class UsuariosService {
     return false;
   }
 
-  borrarSesion(){
+  borrarSesion(): void{
     localStorage.clear();
     this.sesion = null;
   }
 
+  validarSesion(): DatosSesion{
+    const a =  this.obtenerSesion();
+    console.log(`componente: Obteniendo la sesion => ${a}`);
+    if (a){
+      console.log(`componente: Obteniendo el cuil del sesion en US => ${this.sesion.cuil}`);
+      this.cargarStorage();
+      console.log(`se está obteniendo datos desde el localStorage`);
+      return this.sesion;
+    }else{
+      return null;
+    }
+  }
   // F U N C I O N E S    U S U A R I O
 
   verUsuarios(){

@@ -11,7 +11,6 @@ import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 import { ComponentsModule } from './components/components.module';
-import { TabPageRoutingModule } from './components/tab/tab-routing.module';
 import { AlertasService } from './providers/alertas.service';
 import { EventosService } from './providers/eventos.service';
 
@@ -37,7 +36,6 @@ import { TabsPageRoutingModule } from './pages/tabs/tabs-routing.module';
     AppRoutingModule,
     ComponentsModule,
     TabsPageRoutingModule,
-    // TabPageRoutingModule,
     AngularFireAuthModule,
     AngularFirestoreModule,
     AngularFireModule.initializeApp(environment.firebaseConfig),

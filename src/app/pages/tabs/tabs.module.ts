@@ -8,7 +8,7 @@ import { TabsPageRoutingModule } from './tabs-routing.module';
 
 import { TabsPage } from './tabs.page';
 import { ComponentsModule } from '../../components/components.module';
-import { TabPageRoutingModule } from '../../components/tab/tab-routing.module';
+
 
 @NgModule({
   imports: [
@@ -16,7 +16,6 @@ import { TabPageRoutingModule } from '../../components/tab/tab-routing.module';
     FormsModule,
     IonicModule,
     TabsPageRoutingModule,
-    // TabPageRoutingModule,
     ComponentsModule
   ],
   declarations: [TabsPage]

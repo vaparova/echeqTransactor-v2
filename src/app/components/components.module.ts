@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
 
 
-import { TabPage } from './tab/tab.page';
 import { CabeceraComponent } from './cabecera/cabecera.component';
 import { NotificacionesComponent } from './notificaciones/notificaciones.component';
 import { CalendarioComponent } from './calendario/calendario.component';
@@ -31,7 +30,6 @@ import { LoginComponent } from './login/login.component';
 
 @NgModule({
   declarations: [
-    TabPage,
     CabeceraComponent,
     NotificacionesComponent,
     CalendarioComponent,
@@ -58,7 +56,6 @@ import { LoginComponent } from './login/login.component';
     AngularFireModule.initializeApp(environment.firebaseConfig)
   ],
   exports: [
-    TabPage,
     CabeceraComponent,
     NotificacionesComponent,
     CalendarioComponent,
