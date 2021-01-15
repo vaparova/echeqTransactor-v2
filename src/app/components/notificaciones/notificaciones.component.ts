@@ -18,7 +18,7 @@ export class NotificacionesComponent implements OnInit {
   }
 
   verDetalle(i: number) {
-    this.navCtrl.navigateForward(`/index/alerta/ ${i}`);
+    this.navCtrl.navigateForward(`/tab/index/alerta/ ${i}`);
   }
 
   ngOnInit() {}
