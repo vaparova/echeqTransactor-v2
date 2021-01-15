@@ -22,7 +22,7 @@ export class UsuariosService {
 
   usuarios: DatosUsuario[] = [];
   usuariobd: DatosUsuario;
-  item: Observable<any>;
+  private item: Observable<any>;
   sesion: DatosSesion;
 
   constructor( private afs: AngularFireDatabase ) {
@@ -32,13 +32,17 @@ export class UsuariosService {
   // M É T O D O S    P R O P I O S
 
   private nuevoUsuario(usuario: DatosUsuario): void{
-    console.log('se esta creando un nuevo usuario local');
-    // this.usuarios.push(usuario);
-    this.usuarios[0] = usuario;
-    console.log(this.usuarios);
-    this.guardarStorage();
-    // const cuil = usuario.usuario.datosPersonales.cuil;
-    // this.nuevoUsuarioFb(cuil, usuario);
+    if (usuario){
+      console.log('se esta creando un nuevo usuario local');
+      this.usuarios[0] = usuario;
+      console.log(this.usuarios);
+      this.guardarStorage();
+      return;
+    }else{
+      console.log('no se obtuvo usuario');
+      this.borrarSesion();
+      return;
+    }
   }
 
   private adherirCuenta(cuenta: DatosCuentas, cuil: number): void{
@@ -58,11 +62,38 @@ export class UsuariosService {
 
   // M É T O D O S    F I R E B A S E   R E A L T I M E   D A T E B A S E
 
-  obtenerUsuarioFb(cuil: number): void{
-    this.item = this.afs.object(`usuarios/${cuil}`).snapshotChanges();
-    this.item.subscribe(action => {
-      this.usuariobd = action.payload.val();
+  setearUsuarioFb() {
+    if (this.usuariobd){
       this.nuevoUsuario(this.usuariobd);
+    }else{
+      this.borrarSesion();
+    }
+  }
+
+  verificarUsuarioFb(cuil: number): void{
+    console.log('entro a verificarUsuarioFb');
+    this.buscarUsuarioFb(cuil);
+  }
+
+  verificarUsuarioBd(): boolean{
+    console.log('verificar resultado');
+    if (this.usuariobd){
+      console.log('usuariobd seteado');
+      console.log(this.usuariobd);
+      return true;
+    }else{
+      console.log('usuariobd vacío');
+      this.borrarSesion();
+      return false;
+    }
+  }
+
+  private buscarUsuarioFb(cuil: number) {
+    console.log(`Ejecutando buscarUsuarioFb, cuil: ${cuil}`);
+    this.item = this.afs.object(`usuarios/${cuil}`).snapshotChanges();
+    this.item.subscribe( action => {
+      this.usuariobd = action.payload.val();
+      console.log(`resultado usuarioFb: ${action.payload.val()}`);
     });
   }
 
@@ -106,8 +137,10 @@ export class UsuariosService {
   }
 
   borrarSesion(): void{
-    localStorage.clear();
+    this.usuarios = [];
+    this.usuariobd = null;
     this.sesion = null;
+    localStorage.clear();
   }
 
   validarSesion(): DatosSesion{
@@ -126,6 +159,20 @@ export class UsuariosService {
 
   verUsuarios(){
     return this.usuarios;
+  }
+
+  verificarContrasena(pass: string): boolean{
+    const us = this.usuariobd;
+    if (us.usuario.datosIngreso.password === pass){
+      console.log('contraseña correcta');
+      console.log(us.usuario.datosIngreso.password);
+      console.log(pass);
+      return true;
+    }else{
+      this.borrarSesion();
+      console.log('constraseña incorrecta');
+      return false;
+    }
   }
 
   obtenerUsuario(cuil: number): DatosUsuario{

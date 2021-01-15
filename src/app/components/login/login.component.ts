@@ -39,40 +39,72 @@ export class LoginComponent implements OnInit {
     this.user.borrarSesion();
   }
 
-  login(){
-    if (this.forma.invalid){
-      this.toast.mostrarToast('Formulario incorrecto!', 'danger');
+  async login(){
+    if (!this.verificarForm()){
       return;
-    }
-    this.item = this.user.loginFb(this.forma.controls.cuil.value);
-    this.item.subscribe(action => {
-      this.usuario = action.payload.val();
-      if (this.usuario === null){
-        this.toast.mostrarToast('Usuario Inexistente', 'danger');
+    }else{
+      const u = await this.verificarUsuario();
+      if (!u){
         return;
-      }
-      if (this.verificarPass()){
-        this.user.obtenerUsuarioFb(this.forma.controls.cuil.value);
-        const sesion = new DatosSesion(this.forma.controls.cuil.value);
-        this.user.guardarSesion(sesion);
-        this.spinner.presentLoading();
-        this.toast.mostrarToast('Ingreso Exitoso!', 'primary');
-        this.navCtrl.navigateBack('tab/index');
       }else{
-        this.toast.mostrarToast('Constraseña Incorrecta!', 'danger');
+        (this.verificarPass()) ? this.entrar() : this.passInvalida();
       }
-    });
+    }
   }
 
-  logout(){
 
+  entrar(){
+    console.log('Datos corroborados. Ingresando al sistema....');
+    const sesion = new DatosSesion(this.forma.controls.cuil.value);
+    this.user.guardarSesion(sesion);
+    this.user.setearUsuarioFb();
+    this.spinner.presentLoading();
+    this.toast.mostrarToast('Ingreso Exitoso!', 'primary');
+    this.navCtrl.navigateBack('tab/index');
+  }
+
+  async verificarUsuario(): Promise <boolean>{
+    console.log(`Usuario a verificar: ${this.forma.controls.cuil.value}`);
+    console.log('Verificando Usuario desde el componente....');
+    this.user.verificarUsuarioFb(this.forma.controls.cuil.value);
+    await this.delay(2000);
+    return this.verificarRtaFb();
+  }
+
+  verificarRtaFb(): boolean{
+    if (this.user.verificarUsuarioBd()){
+      console.log('Usuario Existe');
+      return true;
+    }else{
+      console.log('Usuario Inexistente');
+      this.resetFormulario();
+      this.user.borrarSesion();
+      this.toast.mostrarToast('Usuario Inexistente', 'danger');
+      return false;
+    }
+  }
+
+  passInvalida(): void{
+    this.resetFormulario();
+    this.user.borrarSesion();
+    this.toast.mostrarToast('Constraseña Incorrecta!', 'danger');
   }
 
   verificarPass(): boolean{
-    if (this.forma.controls.password.value === this.usuario.usuario.datosIngreso.password){
-      return true;
-    }else{
+    return this.user.verificarContrasena(this.forma.controls.password.value);
+  }
+
+  verificarForm(): boolean{
+    console.log('Verificando formulario....');
+    if (this.forma.invalid){
+      console.log('Formulario inválido');
+      this.user.borrarSesion();
+      this.resetFormulario();
+      this.toast.mostrarToast('Formulario incorrecto!', 'danger');
       return false;
+    }else{
+      console.log('Formulario válido');
+      return true;
     }
   }
 
@@ -92,5 +124,15 @@ export class LoginComponent implements OnInit {
         password: ['', [Validators.minLength(8),
         Validators.required]]
         });
+  }
+
+  resetFormulario(): void{
+    this.forma.controls.cuil.setValue('');
+    this.forma.controls.password.setValue('');
+  }
+
+  delay(ms: number) {
+    console.log('Esperando...');
+    return new Promise( resolve => setTimeout(resolve, ms) );
   }
 }
