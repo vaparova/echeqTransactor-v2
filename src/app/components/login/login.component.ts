@@ -60,6 +60,7 @@ export class LoginComponent implements OnInit {
     this.user.setearUsuarioFb();
     this.spinner.presentLoading();
     this.toast.mostrarToast('Ingreso Exitoso!', 'primary');
+    this.user.logOut();
     this.navCtrl.navigateBack('tab/index');
   }
 
@@ -135,4 +136,5 @@ export class LoginComponent implements OnInit {
     console.log('Esperando...');
     return new Promise( resolve => setTimeout(resolve, ms) );
   }
+
 }

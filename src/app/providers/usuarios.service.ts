@@ -13,6 +13,8 @@ import { DatosChequeras } from '../models/datosChequeras';
 import { AngularFireDatabase } from '@angular/fire/database';
 import { Observable } from 'rxjs';
 import { DatosSesion } from '../models/datosSesion';
+import { ToastsService } from './toasts.service';
+import { NavController } from '@ionic/angular';
 
 
 @Injectable({
@@ -24,9 +26,12 @@ export class UsuariosService {
   usuariobd: DatosUsuario;
   private item: Observable<any>;
   sesion: DatosSesion;
+  private time: number;
 
-  constructor( private afs: AngularFireDatabase ) {
-
+  constructor( private afs: AngularFireDatabase,
+               private toast: ToastsService,
+               private navCtrl: NavController ) {
+    this.time = 120000;
   }
 
   // M É T O D O S    P R O P I O S
@@ -191,6 +196,18 @@ export class UsuariosService {
     const i = this.obtenerIndex(cuil);
     this.usuarios.splice(0, 1, userMod);
     this.guardarStorage();
+  }
+
+  actividad(){
+    this.time = this.time + 60000;
+  }
+
+  logOut(){
+    setTimeout( () => {
+      this.borrarSesion();
+      this.toast.mostrarToast('Sesión Caducada!, debe volver a ingresar', 'danger');
+      this.navCtrl.navigateBack('/ingreso');
+    }, this.time);
   }
 
   // F U N C I O N E S   T O K E N
