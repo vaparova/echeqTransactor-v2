@@ -44,14 +44,27 @@ export class ChequerasElectronicasComponent implements OnInit {
   }
 
   obtenerData(){
-    this.sesion = this.user.obtenerSesion();
-    if (this.sesion === null){
-      this.toast.mostrarToast('Inicie sesión para continuar', 'danger');
+    const a = this.user.validarSesion();
+    if (a){
+      this.sesion = a;
+      this.usuario = this.user.obtenerUsuario(this.sesion.cuil);
+      console.log(`respta obtenerUsuario() US: ${this.usuario}`);
+    }else{
+      this.user.borrarSesion();
+      this.toast.mostrarToast('Debes iniciar sesión', 'danger');
       this.navCtrl.navigateBack('/ingreso');
-      return;
+      console.log('error de login!');
     }
-    this.usuario = this.user.obtenerUsuario(this.sesion.cuil);
   }
+  // obtenerData(){
+  //   this.sesion = this.user.obtenerSesion();
+  //   if (this.sesion === null){
+  //     this.toast.mostrarToast('Inicie sesión para continuar', 'danger');
+  //     this.navCtrl.navigateBack('/ingreso');
+  //     return;
+  //   }
+  //   this.usuario = this.user.obtenerUsuario(this.sesion.cuil);
+  // }
 
   obtenerChequeras(){
     this.cuentas.forEach(resp => {
@@ -86,6 +99,6 @@ export class ChequerasElectronicasComponent implements OnInit {
 
   nuevaChequera(){
     console.log('entro a la funcion nueva');
-    this.navCtrl.navigateBack(`/miCuenta/sector-mi-cuenta/6`);
+    this.navCtrl.navigateBack(`/tab/miCuenta/sector-mi-cuenta/6`);
   }
 }

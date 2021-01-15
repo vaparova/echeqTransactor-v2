@@ -40,17 +40,30 @@ export class PasswordComponent implements OnInit {
   }
 
   obtenerData(){
-    const a =  this.user.obtenerSesion();
-    console.log(`passw: Obteniendo la sesion => ${a}`);
-    const cuil = this.user.sesion.cuil;
-    console.log(`passw: Obteniendo el cuil del sesion en US => ${cuil}`);
+    const a = this.user.validarSesion();
     if (a){
-      this.usuario = this.user.obtenerUsuario(cuil);
+      this.sesion = a;
+      this.usuario = this.user.obtenerUsuario(this.sesion.cuil);
       console.log(`respta obtenerUsuario() US: ${this.usuario}`);
     }else{
+      this.user.borrarSesion();
+      this.toast.mostrarToast('Debes iniciar sesión', 'danger');
+      this.navCtrl.navigateBack('/ingreso');
       console.log('error de login!');
     }
   }
+  // obtenerData(){
+  //   const a =  this.user.obtenerSesion();
+  //   console.log(`passw: Obteniendo la sesion => ${a}`);
+  //   const cuil = this.user.sesion.cuil;
+  //   console.log(`passw: Obteniendo el cuil del sesion en US => ${cuil}`);
+  //   if (a){
+  //     this.usuario = this.user.obtenerUsuario(cuil);
+  //     console.log(`respta obtenerUsuario() US: ${this.usuario}`);
+  //   }else{
+  //     console.log('error de login!');
+  //   }
+  // }
 
   crearFormulario(): void{
       this.forma = this.fb.group({

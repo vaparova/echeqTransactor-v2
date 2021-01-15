@@ -41,16 +41,29 @@ export class TokenComponent implements OnInit {
     this.crearFormulario();
   }
 
+  // obtenerData(){
+  //   this.sesion = this.user.obtenerSesion();
+  //   if (this.sesion === null){
+  //     this.toast.mostrarToast('Inicie sesión para continuar', 'danger');
+  //     this.navCtrl.navigateBack('/ingreso');
+  //   }else{
+  //   this.usuario = this.user.obtenerUsuario(this.sesion.cuil);
+  //   }
+  // }
+
   obtenerData(){
-    this.sesion = this.user.obtenerSesion();
-    if (this.sesion === null){
-      this.toast.mostrarToast('Inicie sesión para continuar', 'danger');
-      this.navCtrl.navigateBack('/ingreso');
+    const a = this.user.validarSesion();
+    if (a){
+      this.sesion = a;
+      this.usuario = this.user.obtenerUsuario(this.sesion.cuil);
+      console.log(`respta obtenerUsuario() US: ${this.usuario}`);
     }else{
-    this.usuario = this.user.obtenerUsuario(this.sesion.cuil);
+      this.user.borrarSesion();
+      this.toast.mostrarToast('Debes iniciar sesión', 'danger');
+      this.navCtrl.navigateBack('/ingreso');
+      console.log('error de login!');
     }
   }
-
   ngOnInit() {}
 
   crearFormulario(): void{
