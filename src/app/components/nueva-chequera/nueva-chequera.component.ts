@@ -78,13 +78,13 @@ export class NuevaChequeraComponent implements OnInit {
     console.log(resp);
     if (!resp.data.respuesta){
       this.toast.mostrarToast(resp.data.argumento, 'danger');
-      this.navCtrl.navigateBack('/miCuenta/sector-mi-cuenta/5');
+      this.navCtrl.navigateBack('/tab/miCuenta/sector-mi-cuenta/5');
     }else{
       this.spinner.presentLoading();
       this.user.pedirChequera(this.cuentaCheq, this.sesion.cuil);
       setTimeout(() => {
       this.toast.mostrarToast(resp.data.argumento, 'primary');
-      this.navCtrl.navigateBack('/miCuenta/sector-mi-cuenta/5');
+      this.navCtrl.navigateBack('/tab/miCuenta/sector-mi-cuenta/5');
       }, 2000);
     }
   }

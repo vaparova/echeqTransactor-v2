@@ -102,7 +102,7 @@ export class PasswordComponent implements OnInit {
       this.toast.mostrarToast('Contraseña modificada!', 'primary');
       this.user.modificarUsuarioOk(this.sesion.cuil, this.usuario);
       console.log(this.usuario);
-      this.navCtrl.navigateForward(`/miCuenta`);
+      this.navCtrl.navigateForward(`/tab/miCuenta`);
     }).catch ( () => {
       this.toast.mostrarToast('Error en BD!', 'danger');
     });

@@ -86,7 +86,7 @@ export class TokenComponent implements OnInit {
     if (tkn.data.verificado) {
       this.user.altaToken(this.sesion.cuil, this.usuario, this.forma.controls.pin.value, tkn.data.uid);
       this.toast.mostrarToast('Alta de token exitoso!', 'primary');
-      this.navCtrl.navigateBack('/miCuenta');
+      this.navCtrl.navigateBack('/tab/miCuenta');
     }else{
     this.toast.mostrarToast(tkn.data.argument, 'danger');
     }
@@ -110,7 +110,7 @@ export class TokenComponent implements OnInit {
         setTimeout( () => {
           this.toast.mostrarToast('Token dado de baja!', 'primary');
           this.user.bajaToken(this.sesion.cuil, this.usuario);
-          this.navCtrl.navigateBack('/miCuenta');
+          this.navCtrl.navigateBack('/tab/miCuenta');
         }, 2000);
       }else{
         this.toast.mostrarToast(resp.data.argumento, 'danger');
