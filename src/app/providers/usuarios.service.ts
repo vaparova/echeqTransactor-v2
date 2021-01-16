@@ -111,7 +111,8 @@ export class UsuariosService {
   }
 
   public modificarUsuario(cuil: number, datos: DatosUsuario): Promise<any> {
-   return this.afs.object(`usuarios/${cuil}`).update(datos);
+    this.modificarUsuarioOk(cuil, datos);
+    return this.afs.object(`usuarios/${cuil}`).update(datos);
   }
 
   // A L M A C E N A M I E N T O   L O C A L
