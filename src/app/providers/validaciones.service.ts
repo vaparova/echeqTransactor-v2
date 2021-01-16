@@ -32,4 +32,16 @@ export class ValidacionesService {
       }
     };
   }
+
+  passNueva(pass1: string, pass2: string): any {
+    return (formGroup: FormGroup) => {
+      const pass2Control = formGroup.controls[pass1];
+
+      if (pass2Control.value === pass2){
+        pass2Control.setErrors( {PassActualIgualaNueva: true});
+      }else{
+        pass2Control.setErrors( null);
+      }
+    };
+  }
 }

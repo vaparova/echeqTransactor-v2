@@ -76,7 +76,8 @@ export class PasswordComponent implements OnInit {
           {
             validators: [
               this.validadores.passIguales('nueva', 'repetir'),
-              this.validadores.passActual('actual', this.usuario.usuario.datosIngreso.password)
+              this.validadores.passActual('actual', this.usuario.usuario.datosIngreso.password),
+              this.validadores.passNueva('nueva', this.usuario.usuario.datosIngreso.password),
             ]
           });
     }
