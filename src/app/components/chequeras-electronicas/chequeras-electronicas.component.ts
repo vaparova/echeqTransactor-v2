@@ -6,8 +6,9 @@ import { DatosCuentas } from '../../models/datosCuentas';
 import { VerificarClaveService } from '../../providers/verificar-clave.service';
 import { ToastsService } from '../../providers/toasts.service';
 import { SpinnerService } from '../../providers/spinner.service';
-import { NavController } from '@ionic/angular';
+import { NavController, AlertController } from '@ionic/angular';
 import { DatosSesion } from '../../models/datosSesion';
+import { VerificarPasswordService } from '../../providers/verificar-password.service';
 
 
 
@@ -29,6 +30,8 @@ export class ChequerasElectronicasComponent implements OnInit {
               private toast: ToastsService,
               private spinner: SpinnerService,
               private navCtrl: NavController,
+              private passw: VerificarPasswordService,
+              private alertController: AlertController
               ) {
 
   }
@@ -100,5 +103,58 @@ export class ChequerasElectronicasComponent implements OnInit {
   nuevaChequera(){
     console.log('entro a la funcion nueva');
     this.navCtrl.navigateBack(`/tab/miCuenta/sector-mi-cuenta/6`);
+  }
+
+
+  async cancelarPedido(i: number){
+    const cuenta = this.cuentas[i];
+    const alerta = await this.alertaCancelarPedido();
+    console.log(alerta.data.resp);
+
+    if (alerta.data.resp){
+      const pass = await this.passw.verificarPass(this.sesion.cuil).then(resp => {
+        console.log(resp);
+        if (resp.data.respuesta){
+          this.toast.mostrarToast(resp.data.argumento, 'primary');
+          setTimeout( () => {
+            this.user.desvincularCuenta(this.sesion.cuil, this.usuario, cuenta);
+            this.toast.mostrarToast('Cuenta desvinculada!', 'primary');
+          }, 2000);
+        }else{
+          this.toast.mostrarToast(resp.data.argumento, 'danger');
+        }
+      });
+    }else{
+      this.toast.mostrarToast(alerta.data.arg, 'danger');
+    }
+  }
+
+
+  async alertaCancelarPedido() {
+    const alert = await this.alertController.create({
+      header: 'Cancelar Pedido',
+      message: 'Se eliminará tu pedido de chequera, ¿Estás Seguro?',
+      buttons: [
+        {
+          text: 'Cancelar',
+          handler: () => {
+            const rp = {  resp: false,
+              arg: 'Operacion cancelada!'};
+            return rp;
+          }
+        }, {
+          text: 'Ok',
+          handler: () => {
+            const rp = {  resp: true,
+              arg: 'Operacion confirmada!'};
+            return rp;
+          }
+        }
+      ]
+    });
+
+    await alert.present();
+    const response = await alert.onDidDismiss();
+    return response;
   }
 }

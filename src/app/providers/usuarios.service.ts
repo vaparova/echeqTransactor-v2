@@ -31,8 +31,8 @@ export class UsuariosService {
   constructor( private afs: AngularFireDatabase,
                private toast: ToastsService,
                private navCtrl: NavController ) {
-    this.time = 120000;
-  }
+    this.time = 320000;
+   }
 
   // M É T O D O S    P R O P I O S
 
@@ -60,7 +60,7 @@ export class UsuariosService {
     const user = this.obtenerUsuario(cuil);
     const arrCtas = user.usuario.datosCuentas;
     const cbu =  cuenta.cuentas.cuenta.cbu;
-    const i = this.indexCuenta(arrCtas, cbu);
+    const i = this.getIndexCuenta(arrCtas, cbu);
     try{
       arrCtas[i].cuentas.chequeras.push(chequera);
       this.modificarUsuario(cuil, user);
@@ -74,9 +74,17 @@ export class UsuariosService {
     }
   }
 
+  agregarCtaNacion(){
+    const cuentaUser2 = new DatosCuentas(
+      new DatosEntidad('Banco Nacion', '011', 'Godoy Cruz', '285', '5501'),
+      new DatosCuenta( '0110285930028500003701', 'CC', '2850000370', 'Romero Vanesa'),
+      'clavedeactivacionuser2');
+    this.adherirCuenta(cuentaUser2, 27364183807);
+  }
+
   // M É T O D O S    F I R E B A S E   R E A L T I M E   D A T E B A S E
 
-  setearUsuarioFb() {
+  setearUsuarioFb(): void {
     if (this.usuariobd){
       this.nuevoUsuario(this.usuariobd);
     }else{
@@ -102,7 +110,7 @@ export class UsuariosService {
     }
   }
 
-  private buscarUsuarioFb(cuil: number) {
+  private buscarUsuarioFb(cuil: number): void {
     console.log(`Ejecutando buscarUsuarioFb, cuil: ${cuil}`);
     this.item = this.afs.object(`usuarios/${cuil}`).snapshotChanges();
     this.item.subscribe( action => {
@@ -172,7 +180,7 @@ export class UsuariosService {
   }
   // F U N C I O N E S    U S U A R I O
 
-  verUsuarios(){
+  verUsuarios(): DatosUsuario[] {
     return this.usuarios;
   }
 
@@ -198,21 +206,21 @@ export class UsuariosService {
     // return this.usuarios[0];
   }
 
-  obtenerIndex(cuil: number){
+  obtenerIndex(cuil: number): number{
     return this.usuarios.indexOf(this.obtenerUsuario(cuil));
   }
 
-  modificarUsuarioOk(cuil: number, userMod: DatosUsuario){
+  modificarUsuarioOk(cuil: number, userMod: DatosUsuario): void{
     const i = this.obtenerIndex(cuil);
     this.usuarios.splice(0, 1, userMod);
     this.guardarStorage();
   }
 
-  actividad(){
+  actividad(): void{
     this.time = this.time + 60000;
   }
 
-  logOut(){
+  logOut(): void{
     setTimeout( () => {
       this.borrarSesion();
       this.toast.mostrarToast('Sesión Caducada!, debe volver a ingresar', 'danger');
@@ -222,14 +230,14 @@ export class UsuariosService {
 
   // F U N C I O N E S   T O K E N
 
-  altaToken(cuil: number, userMod: DatosUsuario, pin: number, uid: string){
+  altaToken(cuil: number, userMod: DatosUsuario, pin: number, uid: string): void{
     const tkn = new DatosToken();
     tkn.altaToken(pin, uid);
     userMod.usuario.datosToken = tkn;
     this.modificarUsuario(cuil, userMod);
   }
 
-  bajaToken(cuil: number, userMod: DatosUsuario){
+  bajaToken(cuil: number, userMod: DatosUsuario): void{
     const tkn = new DatosToken();
     tkn.bajaToken();
     userMod.usuario.datosToken = tkn;
@@ -238,49 +246,63 @@ export class UsuariosService {
 
   // F U N C I O N E S   C U E N T A S
 
-  vincularCuenta(cuil: number, userMod: DatosUsuario, cuenta: DatosCuentas){
-    const cuentasArr = userMod.usuario.datosCuentas;
-    const cbu = cuenta.cuentas.cuenta.cbu;
-
-    const i = this.indexCuenta(cuentasArr, cbu);
-    cuenta.cuentas.estado = true;
-    cuentasArr.splice(i, 1, cuenta);
-
-    userMod.usuario.datosCuentas = cuentasArr;
+  vincularCuenta(cuil: number, userMod: DatosUsuario, cuenta: DatosCuentas): void{
+    userMod.usuario.datosCuentas = this.modArrayCtas(
+      this.getArrCuentas(userMod),
+      this.getIndexCuenta(this.getArrCuentas(userMod), this.getCbuCuenta(cuenta)),
+      this.activarCuenta(cuenta)
+      );
     this.modificarUsuario(cuil, userMod);
-    this.guardarStorage();
   }
 
-  desvincularCuenta(cuil: number, userMod: DatosUsuario,
-                    cuenta: DatosCuentas){
-    const cuentasArr = userMod.usuario.datosCuentas;
-    const cbu = cuenta.cuentas.cuenta.cbu;
-    console.log(cbu);
-
-    const i = this.indexCuenta(cuentasArr, cbu);
-    cuenta.cuentas.estado = false;
-    cuenta.cuentas.chequeras = [];
-    cuenta.cuentas.claveActivación = 'desvinculada';
-    cuentasArr.splice(i, 1, cuenta);
-
-    userMod.usuario.datosCuentas = cuentasArr;
+  desvincularCuenta(cuil: number, userMod: DatosUsuario, cuenta: DatosCuentas): void{
+    userMod.usuario.datosCuentas = this.modArrayCtas(
+      this.getArrCuentas(userMod),
+      this.getIndexCuenta(this.getArrCuentas(userMod), this.getCbuCuenta(cuenta)),
+      this.desactivarCuenta(cuenta)
+      );
     this.modificarUsuario(cuil, userMod);
-    this.guardarStorage();
   }
 
-  indexCuenta(cuentasArr: DatosCuentas[], cbu: string){
+  private getIndexCuenta(cuentasArr: DatosCuentas[], cbu: string): number{
     const cuenta = cuentasArr.find( resp => resp.cuentas.cuenta.cbu === cbu);
     return cuentasArr.indexOf(cuenta);
   }
 
+  private getCbuCuenta(cuenta: DatosCuentas): string{
+    return cuenta.cuentas.cuenta.cbu;
+  }
+
+  private getArrCuentas(userMod: DatosUsuario): DatosCuentas[]{
+    return userMod.usuario.datosCuentas;
+  }
+
+  private activarCuenta(cuenta: DatosCuentas): DatosCuentas{
+    cuenta.cuentas.estado = true;
+    return cuenta;
+  }
+
+  private desactivarCuenta(cuenta: DatosCuentas): DatosCuentas{
+    const cta: DatosCuentas = cuenta;
+    cta.cuentas.estado = false;
+    cta.cuentas.chequeras = [];
+    cta.cuentas.claveActivación = 'desvinculada';
+    return cta;
+  }
+
+  private modArrayCtas(cuentasArr: DatosCuentas[], i: number, cuenta: DatosCuentas): DatosCuentas[]{
+    cuentasArr.splice(i, 1, cuenta);
+    return cuentasArr;
+  }
+
   // F U N C I O N E S   C H E Q U E R A S   E L E C T R O N I C A S
 
-  activarChequeraElectronica(chequera: any, cuenta: DatosCuentas, cuil: number){
+  activarChequeraElectronica(chequera: any, cuenta: DatosCuentas, cuil: number): void{
     const user = this.obtenerUsuario(cuil);
     const arrCtas = user.usuario.datosCuentas;        // array de cuentas del usuario
     const cbu =  cuenta.cuentas.cuenta.cbu;           // cbu de la cuenta a modificar
     const arrCheq = cuenta.cuentas.chequeras;
-    const indexCta = this.indexCuenta(arrCtas, cbu);  // indice de cuentas
+    const indexCta = this.getIndexCuenta(arrCtas, cbu);  // indice de cuentas
     const indexCheq = this.indexChequera(arrCheq, chequera.cheq.nroPrimerEcheq); // indice de chequera
     const cheq = arrCtas[indexCta].cuentas.chequeras[indexCheq];
     cheq.estadoChequera = true;                       // actualización de chequera
@@ -290,15 +312,21 @@ export class UsuariosService {
     this.guardarStorage();
   }
 
-  indexChequera(chequerasArr: DatosChequeras[], primerEcheq: number){
+  indexChequera(chequerasArr: DatosChequeras[], primerEcheq: number): number{
     const chequera = chequerasArr.find( resp => resp.nroPrimerEcheq === primerEcheq);
     return chequerasArr.indexOf(chequera);
   }
 
-  pedirChequera(cuenta: DatosCuentas, cuil: number){
+  pedirChequera(cuenta: DatosCuentas, cuil: number): void{
     console.log('pedirChequera()');
     const chequera = new DatosChequeras();
-    this.nuevaChequera(chequera, cuenta, 27364183807);
+    this.nuevaChequera(chequera, cuenta, cuil);
+  }
+
+  cancelarPedidoChequera(cuenta: DatosCuenta, cuil: number, i: number){
+    console.log('cancelarPedidoChequera() - US');
+    const user = this.obtenerUsuario(cuil);
+    // const cuenta = user.usuario.datosCuentas
   }
 }
 
