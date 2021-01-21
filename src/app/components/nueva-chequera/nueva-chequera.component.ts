@@ -61,16 +61,23 @@ export class NuevaChequeraComponent implements OnInit {
   // }
 
   async solicitar(i: number){
-    const chequeras = this.cuentas[i].cuentas.chequeras;
-    const verif = this.verificarChequeras(chequeras);
-
-    if (verif.echeqDisponibles){
-      await this.errorSolicitudChequera(verif.mje);
-      return;
+    try{
+      const chequeras = this.cuentas[i].cuentas.chequeras;
+      const verif = this.verificarChequeras(chequeras);
+      if (verif.echeqDisponibles){
+        await this.errorSolicitudChequera(verif.mje);
+        return;
+      }
+      this.paso = true;
+      this.avance = '0.8';
+      this.cuentaCheq = this.cuentas[i];
+    } catch (error) {
+      console.log('La cuenta no posee chequeras, acá debería poder solicitarla');
+      console.log(error);
+      this.paso = true;
+      this.avance = '0.8';
+      this.cuentaCheq = this.cuentas[i];
     }
-    this.paso = true;
-    this.avance = '0.8';
-    this.cuentaCheq = this.cuentas[i];
   }
 
   async pedirChequera(){
@@ -94,7 +101,6 @@ export class NuevaChequeraComponent implements OnInit {
     const verif = { echeqDisponibles: false,
                         mje: 'ok'
                       };
-
     chequeras.forEach(resp => {
       if (resp.estadoChequera === true){
         activas.push(resp);

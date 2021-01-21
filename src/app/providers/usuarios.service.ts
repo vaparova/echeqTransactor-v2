@@ -61,8 +61,17 @@ export class UsuariosService {
     const arrCtas = user.usuario.datosCuentas;
     const cbu =  cuenta.cuentas.cuenta.cbu;
     const i = this.indexCuenta(arrCtas, cbu);
-    arrCtas[i].cuentas.chequeras.push(chequera);
-    this.modificarUsuario(cuil, user);
+    try{
+      arrCtas[i].cuentas.chequeras.push(chequera);
+      this.modificarUsuario(cuil, user);
+    }catch (error){
+      console.log('Cuenta sin chequeras pre existentes');
+      const a = new DatosCuentas(cuenta.cuentas.entidad, cuenta.cuentas.cuenta, 'activar');
+      a.cuentas.estado = true;
+      a.cuentas.chequeras.push(chequera);
+      arrCtas[i] = a;
+      this.modificarUsuario(cuil, user);
+    }
   }
 
   // M É T O D O S    F I R E B A S E   R E A L T I M E   D A T E B A S E
@@ -251,7 +260,7 @@ export class UsuariosService {
     const i = this.indexCuenta(cuentasArr, cbu);
     cuenta.cuentas.estado = false;
     cuenta.cuentas.chequeras = [];
-    cuenta.cuentas.claveActivación = 'inhabilitada';
+    cuenta.cuentas.claveActivación = 'desvinculada';
     cuentasArr.splice(i, 1, cuenta);
 
     userMod.usuario.datosCuentas = cuentasArr;

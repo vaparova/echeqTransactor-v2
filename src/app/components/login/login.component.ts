@@ -40,6 +40,7 @@ export class LoginComponent implements OnInit {
   }
 
   async login(){
+    this.spinner.presentLoading();
     if (!this.verificarForm()){
       return;
     }else{
