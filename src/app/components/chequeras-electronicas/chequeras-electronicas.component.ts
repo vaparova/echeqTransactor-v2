@@ -117,8 +117,8 @@ export class ChequerasElectronicasComponent implements OnInit {
         if (resp.data.respuesta){
           this.toast.mostrarToast(resp.data.argumento, 'primary');
           setTimeout( () => {
-            this.user.desvincularCuenta(this.sesion.cuil, this.usuario, cuenta);
-            this.toast.mostrarToast('Cuenta desvinculada!', 'primary');
+            this.toast.mostrarToast('Pedido Eliminado!', 'primary');
+            this.user.cancelarPedidoChequera(cuenta, this.sesion.cuil, i);
           }, 2000);
         }else{
           this.toast.mostrarToast(resp.data.argumento, 'danger');

@@ -92,6 +92,19 @@ export class UsuariosService {
     }
   }
 
+  syncChanges(): void{
+    this.obtenerSesion();
+    const cuil = this.sesion.cuil;
+    const i = this.obtenerIndex(cuil);
+    this.item = this.afs.object(`usuarios/${cuil}`).snapshotChanges();
+    this.item.subscribe( action => {
+      this.usuarios[i] = action.payload.val();
+      this.guardarStorage();
+      console.log(`actualizando usuario index ${i}`);
+      console.log(action.payload.val());
+    });
+  }
+
   verificarUsuarioFb(cuil: number): void{
     console.log('entro a verificarUsuarioFb');
     this.buscarUsuarioFb(cuil);
@@ -225,6 +238,8 @@ export class UsuariosService {
       this.borrarSesion();
       this.toast.mostrarToast('Sesión Caducada!, debe volver a ingresar', 'danger');
       this.navCtrl.navigateBack('/ingreso');
+      const hora = new Date();
+      console.log(`sesion caducada a las ${hora}`);
     }, this.time);
   }
 
@@ -299,22 +314,32 @@ export class UsuariosService {
 
   activarChequeraElectronica(chequera: any, cuenta: DatosCuentas, cuil: number): void{
     const user = this.obtenerUsuario(cuil);
-    const arrCtas = user.usuario.datosCuentas;        // array de cuentas del usuario
-    const cbu =  cuenta.cuentas.cuenta.cbu;           // cbu de la cuenta a modificar
-    const arrCheq = cuenta.cuentas.chequeras;
-    const indexCta = this.getIndexCuenta(arrCtas, cbu);  // indice de cuentas
-    const indexCheq = this.indexChequera(arrCheq, chequera.cheq.nroPrimerEcheq); // indice de chequera
-    const cheq = arrCtas[indexCta].cuentas.chequeras[indexCheq];
-    cheq.estadoChequera = true;                       // actualización de chequera
-    arrCtas[indexCta].cuentas.chequeras.splice(indexCheq, 1, cheq);
-    user.usuario.datosCuentas = arrCtas;
-    this.modificarUsuario(cuil, user);
-    this.guardarStorage();
-  }
+    // const arrCtas = this.getArrCuentas(user); // user.usuario.datosCuentas;        // array de cuentas del usuario
+    // const cbu =  this.getCbuCuenta(cuenta); // cuenta.cuentas.cuenta.cbu;           // cbu de la cuenta a modificar
+    // const arrCheq = this.getArrChequeras(cuenta); // cuenta.cuentas.chequeras;         // arr de chequeras
+    // const indexCta = this.getIndexCuenta(this.getArrCuentas(user), this.getCbuCuenta(cuenta));  // indice de cuentas
+    // const indexCheq = this.getIndexChequera(this.getArrChequeras(cuenta), chequera.cheq.nroPrimerEcheq); // indice de chequera
+    // const cheq = arrCtas[indexCta].cuentas.chequeras[indexCheq];
+    // cheq.estadoChequera = true;                       // actualización de chequera
+    // arrCtas[indexCta].cuentas.chequeras.splice(indexCheq, 1, cheq);
 
-  indexChequera(chequerasArr: DatosChequeras[], primerEcheq: number): number{
-    const chequera = chequerasArr.find( resp => resp.nroPrimerEcheq === primerEcheq);
-    return chequerasArr.indexOf(chequera);
+    // activar chequera
+    const cheqMod = this.activarChequera(
+      this.getArrCuentas(user),
+      this.getIndexCuenta(this.getArrCuentas(user), this.getCbuCuenta(cuenta)),
+      this.getIndexChequera(this.getArrChequeras(cuenta), chequera.cheq.nroPrimerEcheq)
+    );
+
+    // modificar array chequera
+    user.usuario.datosCuentas = this.modArrChequeras(
+      this.getArrCuentas(user),
+      this.getIndexCuenta(this.getArrCuentas(user), this.getCbuCuenta(cuenta)),
+      this.getIndexChequera(this.getArrChequeras(cuenta), chequera.cheq.nroPrimerEcheq),
+      cheqMod
+    );
+    console.log(user);
+   // this.modificarUsuario(cuil, user);
+   //  this.guardarStorage();
   }
 
   pedirChequera(cuenta: DatosCuentas, cuil: number): void{
@@ -323,10 +348,30 @@ export class UsuariosService {
     this.nuevaChequera(chequera, cuenta, cuil);
   }
 
-  cancelarPedidoChequera(cuenta: DatosCuenta, cuil: number, i: number){
+  cancelarPedidoChequera(cuenta: DatosCuentas, cuil: number, i: number){
     console.log('cancelarPedidoChequera() - US');
     const user = this.obtenerUsuario(cuil);
     // const cuenta = user.usuario.datosCuentas
+  }
+
+  private getIndexChequera(chequerasArr: DatosChequeras[], primerEcheq: number): number{
+    const chequera = chequerasArr.find( resp => resp.nroPrimerEcheq === primerEcheq);
+    return chequerasArr.indexOf(chequera);
+  }
+
+  private getArrChequeras(arrCtas: DatosCuentas): DatosChequeras[] {
+    return arrCtas.cuentas.chequeras;
+  }
+
+  private activarChequera(arrCtas: DatosCuentas[], indexCta: number, indexCheq: number): DatosChequeras{
+    const cheq = arrCtas[indexCta].cuentas.chequeras[indexCheq];
+    cheq.estadoChequera = true;
+    return cheq;
+  }
+
+  private modArrChequeras(arrCtas: DatosCuentas[], indexCta: number, indexCheq: number, cheq: DatosChequeras): DatosCuentas[]{
+    arrCtas[indexCta].cuentas.chequeras.splice(indexCheq, 1, cheq);
+    return arrCtas;
   }
 }
 

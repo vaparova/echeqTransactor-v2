@@ -34,7 +34,7 @@
       <ion-icon name="time-outline"></ion-icon>
       <ion-label>Pedido Pendiente</ion-label>
     </ion-chip>
-    <ion-icon slot="end" color="warning" name="trash-outline"></ion-icon>
+    <ion-icon slot="end" color="warning" name="trash-outline" (click)="cancelarPedido(i)"></ion-icon>
   </ion-item>
 
   <ion-card-header>
@@ -49,6 +49,7 @@
     <p class="texto">Sucursal: {{chequera.ent.numeroSucursal}} - {{chequera.ent.nombreSucursal}} </p>
   </ion-card-content>
 </ion-card>
+<br>
 <br>
 <ion-button expand="block" class="ion-margin-start ion-margin-end" color="success" (click)="nuevaChequera()">
   <ion-label>Nueva Chequera</ion-label>

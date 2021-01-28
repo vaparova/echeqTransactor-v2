@@ -17,7 +17,7 @@ import { DatosSesion } from '../../models/datosSesion';
 })
 export class NuevaChequeraComponent implements OnInit {
   usuario: DatosUsuario;
-  cuentas: DatosCuentas [];
+  cuentas: DatosCuentas[] = [];
   cuentaCheq: DatosCuentas;
   paso = false;
   avance = '0.3';
@@ -33,7 +33,13 @@ export class NuevaChequeraComponent implements OnInit {
 
   ngOnInit() {
     this.obtenerData();
-    this.cuentas = this.usuario.usuario.datosCuentas;
+    const ctas = this.usuario.usuario.datosCuentas;
+    console.log(ctas);
+    ctas.forEach(resp => {
+      if (resp.cuentas.estado === true){
+        this.cuentas.push(resp);
+      }
+    });
     console.log(this.cuentas);
   }
 
@@ -105,19 +111,21 @@ export class NuevaChequeraComponent implements OnInit {
       if (resp.estadoChequera === true){
         activas.push(resp);
       }
+      if (resp.estadoChequera === false){
+        verif.echeqDisponibles = true;
+        verif.mje = 'Ya posees un pedido de chequera para esta cuenta';
+        return;
+      }
     });
 
     if (activas.length > 0){
-    activas.forEach(resp => {
-      if (resp.cantidadDisponible > 11){
-        verif.echeqDisponibles = true;
-        console.log(resp.cantidadDisponible);
-        verif.mje = 'La cuenta seleccionada posee al menos una chequera electrónica con más de 10 echeqs disponibles';
-      }
-    });
-    }else{
-      verif.echeqDisponibles = true;
-      verif.mje = 'La cuenta seleccionada no está activa';
+      activas.forEach(resp => {
+        if (resp.cantidadDisponible > 11){
+          verif.echeqDisponibles = true;
+          console.log(resp.cantidadDisponible);
+          verif.mje = 'La cuenta seleccionada posee al menos una chequera electrónica con más de 10 echeqs disponibles';
+        }
+      });
     }
     return verif;
   }

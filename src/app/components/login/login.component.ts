@@ -62,6 +62,7 @@ export class LoginComponent implements OnInit {
     this.spinner.presentLoading();
     this.toast.mostrarToast('Ingreso Exitoso!', 'primary');
     this.user.logOut();
+    this.user.syncChanges();
     this.navCtrl.navigateBack('tab/index');
   }
 
