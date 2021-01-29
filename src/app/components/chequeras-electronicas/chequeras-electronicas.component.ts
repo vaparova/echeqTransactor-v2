@@ -9,6 +9,7 @@ import { SpinnerService } from '../../providers/spinner.service';
 import { NavController, AlertController } from '@ionic/angular';
 import { DatosSesion } from '../../models/datosSesion';
 import { VerificarPasswordService } from '../../providers/verificar-password.service';
+import { DatosCuenta } from '../../models/datosCuenta';
 
 
 
@@ -107,7 +108,8 @@ export class ChequerasElectronicasComponent implements OnInit {
 
 
   async cancelarPedido(i: number){
-    const cuenta = this.cuentas[i];
+    const cuenta: DatosCuenta = this.chequeras[i].cta;
+    const idx = this.buscarIndexCta(cuenta.cbu);
     const alerta = await this.alertaCancelarPedido();
     console.log(alerta.data.resp);
 
@@ -118,7 +120,8 @@ export class ChequerasElectronicasComponent implements OnInit {
           this.toast.mostrarToast(resp.data.argumento, 'primary');
           setTimeout( () => {
             this.toast.mostrarToast('Pedido Eliminado!', 'primary');
-            this.user.cancelarPedidoChequera(cuenta, this.sesion.cuil, i);
+            this.user.cancelarPedidoChequera(this.cuentas[idx], this.sesion.cuil);
+            this.borrarPedido(i);
           }, 2000);
         }else{
           this.toast.mostrarToast(resp.data.argumento, 'danger');
@@ -156,5 +159,14 @@ export class ChequerasElectronicasComponent implements OnInit {
     await alert.present();
     const response = await alert.onDidDismiss();
     return response;
+  }
+
+  private buscarIndexCta(cbu: string): number{
+    const cuenta = this.cuentas.find( resp => resp.cuentas.cuenta.cbu === cbu);
+    return this.cuentas.indexOf(cuenta);
+  }
+
+  private borrarPedido(i: number): void{
+    this.chequeras.splice(i, 1);
   }
 }
