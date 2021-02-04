@@ -40,47 +40,16 @@ export class ChequerasElectronicasComponent implements OnInit {
   ngOnInit() {
     this.obtenerData();
     this.cuentas = this.usuario.usuario.datosCuentas;
-    this.obtenerChequeras();
+    this.obtenerChequeras(this.cuentas);
     if (this.chequeras.length === 0){
       this.sinChequeras = true;
     }
     console.log(this.chequeras);
   }
 
-  obtenerData(){
-    const a = this.user.validarSesion();
-    if (a){
-      this.sesion = a;
-      this.usuario = this.user.obtenerUsuario(this.sesion.cuil);
-      console.log(`respta obtenerUsuario() US: ${this.usuario}`);
-    }else{
-      this.user.borrarSesion();
-      this.toast.mostrarToast('Debes iniciar sesión', 'danger');
-      this.navCtrl.navigateBack('/ingreso');
-      console.log('error de login!');
-    }
-  }
-  // obtenerData(){
-  //   this.sesion = this.user.obtenerSesion();
-  //   if (this.sesion === null){
-  //     this.toast.mostrarToast('Inicie sesión para continuar', 'danger');
-  //     this.navCtrl.navigateBack('/ingreso');
-  //     return;
-  //   }
-  //   this.usuario = this.user.obtenerUsuario(this.sesion.cuil);
-  // }
-
-  obtenerChequeras(){
-    this.cuentas.forEach(resp => {
-      if (resp.cuentas.chequeras){
-        resp.cuentas.chequeras.forEach((chequera: DatosChequeras) => {
-          const obj = { cta: resp.cuentas.cuenta,
-                        ent: resp.cuentas.entidad,
-                        cheq: chequera};
-          return this.chequeras.push(obj);
-        });
-      }
-    });
+  nuevaChequera(){
+    console.log('entro a la funcion nueva');
+    this.navCtrl.navigateBack(`/tab/miCuenta/sector-mi-cuenta/6`);
   }
 
   async activar(i: number){
@@ -100,12 +69,6 @@ export class ChequerasElectronicasComponent implements OnInit {
       }, 3000);
     }
   }
-
-  nuevaChequera(){
-    console.log('entro a la funcion nueva');
-    this.navCtrl.navigateBack(`/tab/miCuenta/sector-mi-cuenta/6`);
-  }
-
 
   async cancelarPedido(i: number){
     const cuenta: DatosCuenta = this.chequeras[i].cta;
@@ -132,8 +95,19 @@ export class ChequerasElectronicasComponent implements OnInit {
     }
   }
 
+  aprobarPedido(i: number): void{
+    const cta: DatosCuenta = this.chequeras[i].cta;
+    console.log(this.usuario.usuario.datosCuentas[this.buscarIndexCta(cta.cbu)]);
+    console.log(this.buscarIndexCheq(cta.cbu));
+    const arrCtas = this.user.aprobarPedidoChequera(
+      this.usuario.usuario.datosCuentas[this.buscarIndexCta(cta.cbu)],
+      this.sesion.cuil,
+      this.buscarIndexCheq(cta.cbu)
+    );
+    this.actualizarLista(arrCtas);
+  }
 
-  async alertaCancelarPedido() {
+  private async alertaCancelarPedido() {
     const alert = await this.alertController.create({
       header: 'Cancelar Pedido',
       message: 'Se eliminará tu pedido de chequera, ¿Estás Seguro?',
@@ -142,15 +116,15 @@ export class ChequerasElectronicasComponent implements OnInit {
           text: 'Cancelar',
           handler: () => {
             const rp = {  resp: false,
-              arg: 'Operacion cancelada!'};
+                arg: 'Operacion cancelada!'};
             return rp;
-          }
-        }, {
-          text: 'Ok',
-          handler: () => {
-            const rp = {  resp: true,
-              arg: 'Operacion confirmada!'};
-            return rp;
+            }
+          }, {
+            text: 'Ok',
+            handler: () => {
+              const rp = {  resp: true,
+                arg: 'Operacion confirmada!'};
+              return rp;
           }
         }
       ]
@@ -166,7 +140,45 @@ export class ChequerasElectronicasComponent implements OnInit {
     return this.cuentas.indexOf(cuenta);
   }
 
+  private buscarIndexCheq(cbu: string): number{
+    const idx = this.buscarIndexCta(cbu);
+    const cheq = this.usuario.usuario.datosCuentas[idx].cuentas.chequeras.find( resp => resp.estadoPedido === false );
+    return this.usuario.usuario.datosCuentas[idx].cuentas.chequeras.indexOf(cheq);
+  }
+
+  private obtenerData(){
+    const a = this.user.validarSesion();
+    if (a){
+      this.sesion = a;
+      this.usuario = this.user.obtenerUsuario(this.sesion.cuil);
+      console.log(`respta obtenerUsuario() US: ${this.usuario}`);
+    }else{
+      this.user.borrarSesion();
+      this.toast.mostrarToast('Debes iniciar sesión', 'danger');
+      this.navCtrl.navigateBack('/ingreso');
+      console.log('error de login!');
+    }
+  }
+
+  private obtenerChequeras(cuentas: DatosCuentas[]){
+    cuentas.forEach(resp => {
+      if (resp.cuentas.chequeras){
+        resp.cuentas.chequeras.forEach((chequera: DatosChequeras) => {
+          const obj = { cta: resp.cuentas.cuenta,
+                        ent: resp.cuentas.entidad,
+                        cheq: chequera};
+          return this.chequeras.push(obj);
+        });
+      }
+    });
+  }
+
   private borrarPedido(i: number): void{
     this.chequeras.splice(i, 1);
+  }
+
+  private actualizarLista(arrCtas: DatosCuentas[]): void{
+    this.chequeras = [];
+    this.obtenerChequeras(arrCtas);
   }
 }

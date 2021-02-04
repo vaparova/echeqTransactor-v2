@@ -346,18 +346,19 @@ export class UsuariosService {
     this.modificarUsuario(cuil, user);
   }
 
-  aprobarPedidoChequera(cuenta: DatosCuentas, cuil: number, i: number){
-    console.log('Aprobar pedido chequera() - US');
+  aprobarPedidoChequera(cuenta: DatosCuentas, cuil: number, i: number): DatosCuentas[]{
+    console.log('AprobarPedidoChequera() - US');
     const user = this.obtenerUsuario(cuil);
     const cheq = this.crearChequera(1, 'claveactivarchequera');
-    const arrCheq = this.modArrChequeras(
+    const arrCtasMod = this.modArrChequeras(
       this.getArrCuentas(user),
       this.getIndexCuenta(this.getArrCuentas(user), cuenta.cuentas.cuenta.cbu),
       i, cheq
-      );
-    // modificar la cuenta con el nuevo array de cheques
-    // modificar array de cuentas
-    // guardar cambios
+    );
+    console.log(arrCtasMod);
+    user.usuario.datosCuentas = arrCtasMod;
+    this.modificarUsuario(cuil, user);
+    return arrCtasMod;
   }
 
   private nuevaChequera(chequera: DatosChequeras, cuenta: DatosCuentas, cuil: number): void{
