@@ -64,7 +64,8 @@ export class ChequerasElectronicasComponent implements OnInit {
       this.spinner.presentLoading();
       this.toast.mostrarToast(resp.data.arg, 'primary');
       setTimeout(() => {
-        this.user.activarChequeraElectronica(this.chequeras[i], cuenta, this.sesion.cuil);
+        const arr = this.user.activarChequeraElectronica(this.chequeras[i], cuenta, this.sesion.cuil);
+        this.actualizarLista(arr);
         this.toast.mostrarToast('Has activado tu chequera!', 'primary');
       }, 3000);
     }

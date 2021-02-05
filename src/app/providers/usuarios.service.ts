@@ -301,25 +301,14 @@ export class UsuariosService {
     this.nuevaChequera(chequera, cuenta, cuil);
   }
 
-  activarChequeraElectronica(chequera: any, cuenta: DatosCuentas, cuil: number): void{
+  activarChequeraElectronica(chequera: any, cuenta: DatosCuentas, cuil: number): DatosCuentas[]{
     const user = this.obtenerUsuario(cuil);
-    // const arrCtas = this.getArrCuentas(user); // user.usuario.datosCuentas;        // array de cuentas del usuario
-    // const cbu =  this.getCbuCuenta(cuenta); // cuenta.cuentas.cuenta.cbu;           // cbu de la cuenta a modificar
-    // const arrCheq = this.getArrChequeras(cuenta); // cuenta.cuentas.chequeras;         // arr de chequeras
-    // const indexCta = this.getIndexCuenta(this.getArrCuentas(user), this.getCbuCuenta(cuenta));  // indice de cuentas
-    // const indexCheq = this.getIndexChequera(this.getArrChequeras(cuenta), chequera.cheq.nroPrimerEcheq); // indice de chequera
-    // const cheq = arrCtas[indexCta].cuentas.chequeras[indexCheq];
-    // cheq.estadoChequera = true;                       // actualización de chequera
-    // arrCtas[indexCta].cuentas.chequeras.splice(indexCheq, 1, cheq);
-
-    // activar chequera
     const cheqMod = this.activarChequera(
       this.getArrCuentas(user),
       this.getIndexCuenta(this.getArrCuentas(user), this.getCbuCuenta(cuenta)),
       this.getIndexChequera(this.getArrChequeras(cuenta), chequera.cheq.nroPrimerEcheq)
     );
-
-    // modificar array chequera
+    console.log(cheqMod);
     user.usuario.datosCuentas = this.modArrChequeras(
       this.getArrCuentas(user),
       this.getIndexCuenta(this.getArrCuentas(user), this.getCbuCuenta(cuenta)),
@@ -327,8 +316,9 @@ export class UsuariosService {
       cheqMod
     );
     console.log(user);
-   // this.modificarUsuario(cuil, user);
-   //  this.guardarStorage();
+    this.modificarUsuario(cuil, user);
+    this.guardarStorage();
+    return this.getArrCuentas(this.obtenerUsuario(cuil));
   }
 
 
@@ -358,7 +348,7 @@ export class UsuariosService {
     console.log(arrCtasMod);
     user.usuario.datosCuentas = arrCtasMod;
     this.modificarUsuario(cuil, user);
-    return arrCtasMod;
+    return this.getArrCuentas(this.obtenerUsuario(cuil));
   }
 
   private nuevaChequera(chequera: DatosChequeras, cuenta: DatosCuentas, cuil: number): void{
