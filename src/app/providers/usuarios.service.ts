@@ -301,19 +301,13 @@ export class UsuariosService {
     this.nuevaChequera(chequera, cuenta, cuil);
   }
 
-  activarChequeraElectronica(chequera: any, cuenta: DatosCuentas, cuil: number): DatosCuentas[]{
+  activarChequeraElectronica(cuenta: DatosCuentas, idxCheq: number, cuil: number): DatosCuentas[]{
     const user = this.obtenerUsuario(cuil);
-    const cheqMod = this.activarChequera(
-      this.getArrCuentas(user),
-      this.getIndexCuenta(this.getArrCuentas(user), this.getCbuCuenta(cuenta)),
-      this.getIndexChequera(this.getArrChequeras(cuenta), chequera.cheq.nroPrimerEcheq)
-    );
-    console.log(cheqMod);
     user.usuario.datosCuentas = this.modArrChequeras(
       this.getArrCuentas(user),
       this.getIndexCuenta(this.getArrCuentas(user), this.getCbuCuenta(cuenta)),
-      this.getIndexChequera(this.getArrChequeras(cuenta), chequera.cheq.nroPrimerEcheq),
-      cheqMod
+      idxCheq,
+      this.activarChequera(cuenta, idxCheq)
     );
     console.log(user);
     this.modificarUsuario(cuil, user);
@@ -322,7 +316,7 @@ export class UsuariosService {
   }
 
 
-  cancelarPedidoChequera(cuenta: DatosCuentas, cuil: number): void{
+  cancelarPedidoChequera(cuenta: DatosCuentas, cuil: number): DatosCuentas[]{
     console.log('cancelarPedidoChequera() - US');
     console.log(cuenta);
     const user = this.obtenerUsuario(cuil);
@@ -334,6 +328,7 @@ export class UsuariosService {
     user.usuario.datosCuentas = arrCtasMod;
     console.log(user);
     this.modificarUsuario(cuil, user);
+    return this.getArrCuentas(this.obtenerUsuario(cuil));
   }
 
   aprobarPedidoChequera(cuenta: DatosCuentas, cuil: number, i: number): DatosCuentas[]{
@@ -397,10 +392,10 @@ export class UsuariosService {
     return arrCtas.cuentas.chequeras;
   }
 
-  private activarChequera(arrCtas: DatosCuentas[], indexCta: number, indexCheq: number): DatosChequeras{
-    const cheq = arrCtas[indexCta].cuentas.chequeras[indexCheq];
-    cheq.estadoChequera = true;
-    return cheq;
+  private activarChequera(cta: DatosCuentas, indexCheq: number): DatosChequeras{
+    const cheqMod = cta.cuentas.chequeras[indexCheq];
+    cheqMod.estadoChequera = true;
+    return cheqMod;
   }
 
   private agregarChequera(arrCtas: DatosCuentas[], indexCta: number, cheq: DatosChequeras){
