@@ -35,9 +35,6 @@ export class ChequerasElectronicasComponent implements OnInit {
               private alertController: AlertController
               ) {
 
-  }
-
-  ngOnInit() {
     this.obtenerData();
     this.cuentas = this.usuario.usuario.datosCuentas;
     this.obtenerChequeras(this.cuentas);
@@ -45,6 +42,9 @@ export class ChequerasElectronicasComponent implements OnInit {
       this.sinChequeras = true;
     }
     console.log(this.chequeras);
+  }
+
+  ngOnInit() {
   }
 
   nuevaChequera(){

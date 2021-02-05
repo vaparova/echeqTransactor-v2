@@ -51,16 +51,6 @@ export class CuentasComponent implements OnInit {
     }
   }
 
-  // obtenerData(){
-  //   this.sesion = this.user.obtenerSesion();
-  //   if (this.sesion === null){
-  //     this.toast.mostrarToast('Inicie sesión para continuar', 'danger');
-  //     this.navCtrl.navigateBack('/ingreso');
-  //     return;
-  //   }
-  //   this.usuario = this.user.obtenerUsuario(this.sesion.cuil);
-  // }
-
   async vincular(i: number){
     const cuenta = this.cuentas[i];
     const clave = this.usuario.usuario.datosCuentas[i].cuentas.claveActivación;

@@ -5,6 +5,7 @@ import { FormBuilder, FormGroup, Validators, FormArray } from '@angular/forms';
 import { ToastsService } from '../../providers/toasts.service';
 import { DatosSesion } from '../../models/datosSesion';
 import { NavController } from '@ionic/angular';
+import { VerificarPasswordService } from '../../providers/verificar-password.service';
 
 @Component({
   selector: 'app-datos-personales',
@@ -21,7 +22,8 @@ export class DatosPersonalesComponent implements OnInit {
   constructor(private user: UsuariosService,
               private fb: FormBuilder,
               private toast: ToastsService,
-              private navCtrl: NavController
+              private navCtrl: NavController,
+              private passw: VerificarPasswordService
               ) {
     this.obtenerData();
     this.crearFormulario();
@@ -89,15 +91,26 @@ export class DatosPersonalesComponent implements OnInit {
     this.readonly = false;
   }
 
-  guardar(){
+  async guardar(){
     if (this.forma.invalid){
       this.toast.mostrarToast('Formulario inválido!', 'danger');
       return;
     }
     this.actualizarUsuario();
     this.readonly = true;
-    this.user.modificarUsuario(this.sesion.cuil, this.usuario);
-    this.toast.mostrarToast('Datos guardados!', 'primary');
+
+    const pass = await this.passw.verificarPass(this.sesion.cuil).then(resp => {
+      console.log(resp);
+      if (resp.data.respuesta){
+        this.toast.mostrarToast(resp.data.argumento, 'primary');
+        setTimeout( () => {
+          this.user.modificarUsuario(this.sesion.cuil, this.usuario);
+          this.toast.mostrarToast('Datos guardados!', 'primary');
+        }, 2000);
+      }else{
+        this.toast.mostrarToast(resp.data.argumento, 'danger');
+      }
+    });
   }
 
   private actualizarUsuario(){
