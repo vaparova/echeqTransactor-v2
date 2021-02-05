@@ -1,32 +1,40 @@
+<ion-content color="success">
+
 <form [formGroup]="forma">
-  <ion-item lines="none"> 
-  <ion-title mode="md" class="titulo ion-no-padding">Iniciar Sesión</ion-title>
+  <ion-item lines="none" color="success"> 
+  <ion-title mode="md" class="titulo ion-no-padding">Ingreso</ion-title>
   </ion-item>
   
-  <ion-item>
+  <ion-item color="light">
     <ion-label position="stacked">Usuario</ion-label>
-    <ion-input type="number"  formControlName="cuil"></ion-input>
+    <ion-input type="number"  formControlName="cuil" color="light"></ion-input>
   </ion-item>
-  <ion-item>
+  <ion-item color="light">
     <ion-label position="stacked">Contraseña</ion-label>
     <ion-input [type]="datos[1].tipo"   formControlName="password"></ion-input>
     <ion-icon *ngIf="!datos[1].ver" name="eye-outline" slot="end" (click)="visualizar(1)"></ion-icon>
     <ion-icon *ngIf="datos[1].ver" name="eye-off-outline" slot="end" (click)="ocultar(1)"></ion-icon>
   </ion-item>
+   
+  <br>
   
-    
-  <ion-button class="ion-margin-top" fill="outline" expand="block" color="success" (click)="login()">
+  <ion-button color="light" expand="block" (click)="login()">
     <ion-icon name="log-in"></ion-icon>
     Ingresar
   </ion-button>
  </form> 
-<br>
 
- <ion-button color="secondary" size="small" expand="block">
-  Olvide mi contraseña
- </ion-button>
- <ion-button size="small" color="secondary" expand="block">
-  Desbloquear mi cuenta
- </ion-button>
+ <br>
+
+  <ion-button size="small" expand="block" color="success" class="ion-no-border">
+    Olvide mi contraseña
+   </ion-button>
+ 
+   <ion-button size="small" expand="block" color="success" class="ion-no-border">
+    Desbloquear cuenta
+   </ion-button>
+
+</ion-content>
+ 
  
 
