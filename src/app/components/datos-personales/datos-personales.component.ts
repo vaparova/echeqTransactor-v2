@@ -31,21 +31,6 @@ export class DatosPersonalesComponent implements OnInit {
   }
   ngOnInit() {}
 
-  obtenerData(){
-    const a = this.user.validarSesion();
-    if (a){
-      this.sesion = a;
-      this.usuario = this.user.obtenerUsuario(this.sesion.cuil);
-      console.log(`respta obtenerUsuario() US: ${this.usuario}`);
-    }else{
-      this.user.borrarSesion();
-      this.toast.mostrarToast('Debes iniciar sesión', 'danger');
-      this.navCtrl.navigateBack('/ingreso');
-      console.log('error de login!');
-    }
-  }
-
-
   crearFormulario(): void{
     this.forma = this.fb.group({
       personales: this.fb.group({
@@ -104,13 +89,26 @@ export class DatosPersonalesComponent implements OnInit {
       if (resp.data.respuesta){
         this.toast.mostrarToast(resp.data.argumento, 'primary');
         setTimeout( () => {
-          this.user.modificarUsuario(this.sesion.cuil, this.usuario);
-          this.toast.mostrarToast('Datos guardados!', 'primary');
+          this.modificarUsuario();
         }, 2000);
       }else{
         this.toast.mostrarToast(resp.data.argumento, 'danger');
       }
     });
+  }
+
+  private obtenerData(){
+    const a = this.user.validarSesion();
+    if (a){
+      this.sesion = a;
+      this.usuario = this.user.obtenerUsuario(this.sesion.cuil);
+      console.log(`respta obtenerUsuario() US: ${this.usuario}`);
+    }else{
+      this.user.borrarSesion();
+      this.toast.mostrarToast('Debes iniciar sesión', 'danger');
+      this.navCtrl.navigateBack('/ingreso');
+      console.log('error de login!');
+    }
   }
 
   private actualizarUsuario(){
@@ -120,6 +118,15 @@ export class DatosPersonalesComponent implements OnInit {
     });
     Object.keys(this.usuario.usuario.datosPostales).forEach( (atributo, indice) => {
       this.usuario.usuario.datosPostales[atributo] = valores[1][atributo];
+    });
+  }
+
+  private modificarUsuario(): void{
+    this.user.modificarUsuario(this.sesion.cuil, this.usuario).then( () => {
+      this.toast.mostrarToast('Datos modificados!', 'primary');
+      console.log(this.usuario);
+    }).catch ( () => {
+      this.toast.mostrarToast('Error en BD!', 'danger');
     });
   }
 

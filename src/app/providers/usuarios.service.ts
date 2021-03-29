@@ -105,6 +105,11 @@ export class UsuariosService {
     }
   }
 
+  modificarUsuario(cuil: number, datos: DatosUsuario): Promise<any> {
+    this.modificarUsuarioOk(cuil, datos);
+    return this.afs.object(`usuarios/${cuil}`).update(datos);
+  }
+
   private buscarUsuarioFb(cuil: number): void {
     console.log(`Ejecutando buscarUsuarioFb, cuil: ${cuil}`);
     this.item = this.afs.object(`usuarios/${cuil}`).snapshotChanges();
@@ -122,16 +127,8 @@ export class UsuariosService {
     this.afs.object(`usuarios/${cuil}`).set(datos);
   }
 
-  public modificarUsuario(cuil: number, datos: DatosUsuario): Promise<any> {
-    this.modificarUsuarioOk(cuil, datos);
-    return this.afs.object(`usuarios/${cuil}`).update(datos);
-  }
 
   // A L M A C E N A M I E N T O   L O C A L
-
-  private guardarStorage(): void{
-    localStorage.setItem('data', JSON.stringify(this.usuarios));
-  }
 
   guardarSesion(sesion: DatosSesion): void{
     localStorage.setItem('sesion', JSON.stringify(sesion));
@@ -173,6 +170,10 @@ export class UsuariosService {
     }else{
       return null;
     }
+  }
+
+  private guardarStorage(): void{
+    localStorage.setItem('data', JSON.stringify(this.usuarios));
   }
   // F U N C I O N E S    U S U A R I O
 

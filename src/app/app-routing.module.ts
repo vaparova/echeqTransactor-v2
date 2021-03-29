@@ -11,10 +11,6 @@ const routes: Routes = [
     redirectTo: 'ingreso',
     pathMatch: 'full'
   },
-  // {
-  //   path: 'eventos',
-  //   loadChildren: () => import('../app/pages/eventos/eventos.module').then( m => m.EventosPageModule)
-  // },
   {
     path: 'ingreso',
     loadChildren: () => import('../app/pages/ingreso/ingreso.module').then( m => m.IngresoPageModule)

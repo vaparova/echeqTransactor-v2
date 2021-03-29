@@ -52,18 +52,6 @@ export class PasswordComponent implements OnInit {
       console.log('error de login!');
     }
   }
-  // obtenerData(){
-  //   const a =  this.user.obtenerSesion();
-  //   console.log(`passw: Obteniendo la sesion => ${a}`);
-  //   const cuil = this.user.sesion.cuil;
-  //   console.log(`passw: Obteniendo el cuil del sesion en US => ${cuil}`);
-  //   if (a){
-  //     this.usuario = this.user.obtenerUsuario(cuil);
-  //     console.log(`respta obtenerUsuario() US: ${this.usuario}`);
-  //   }else{
-  //     console.log('error de login!');
-  //   }
-  // }
 
   crearFormulario(): void{
       this.forma = this.fb.group({
@@ -99,24 +87,30 @@ export class PasswordComponent implements OnInit {
       return;
     }
     this.actualizarUsuario();
-    this.user.modificarUsuario(this.sesion.cuil, this.usuario).then( () => {
-      this.toast.mostrarToast('Contraseña modificada!', 'primary');
-      this.user.modificarUsuarioOk(this.sesion.cuil, this.usuario);
-      console.log(this.usuario);
-      this.navCtrl.navigateForward(`/tab/miCuenta`);
-    }).catch ( () => {
-      this.toast.mostrarToast('Error en BD!', 'danger');
-    });
+    this.modificarUsuario();
   }
 
   private actualizarUsuario(){
     const psw = new DatosIngreso(this.usuario.usuario.datosIngreso.usuario, this.forma.controls.nueva.value);
     psw.calcularVencimiento();
     this.usuario.usuario.datosIngreso = psw;
-    // const vto = this.usuario.usuario.datosIngreso.calcularVencimiento();
-    // this.usuario.usuario.datosIngreso.password = this.forma.controls.nueva.value;
-    // this.usuario.usuario.datosIngreso.vencimiento = vto;
   }
+
+  private modificarUsuario(): void{
+    this.user.modificarUsuario(this.sesion.cuil, this.usuario).then( () => {
+      this.toast.mostrarToast('Contraseña modificada!', 'primary');
+      this.cleanForm();
+      this.navCtrl.navigateForward(`/tab/miCuenta`);
+      console.log(this.usuario);
+    }).catch ( () => {
+      this.toast.mostrarToast('Error en BD!', 'danger');
+    });
+  }
+
+  private cleanForm(){
+    this.forma.reset();
+  }
+
   ngOnInit() {}
 
 }
