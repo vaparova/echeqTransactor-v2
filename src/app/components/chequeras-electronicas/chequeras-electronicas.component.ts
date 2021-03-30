@@ -48,15 +48,14 @@ export class ChequerasElectronicasComponent implements OnInit {
   }
 
   nuevaChequera(){
-    console.log('entro a la funcion nueva');
     this.navCtrl.navigateBack(`/tab/miCuenta/sector-mi-cuenta/6`);
   }
 
   async activar(i: number){
-    const cuenta = this.cuentas[i];
     const clave = this.chequeras[i].cheq.codigoActivacion;
     const resp = await this.verifClave.ingresarClaveActivación(clave);
     const cta: DatosCuenta = this.chequeras[i].cta;
+    const cuenta = this.buscarCta(cta.cbu);
 
     console.log(resp);
     if (!resp.data.resp){
@@ -66,13 +65,12 @@ export class ChequerasElectronicasComponent implements OnInit {
       this.spinner.presentLoading();
       this.toast.mostrarToast(resp.data.arg, 'primary');
       setTimeout(() => {
-        const arr = this.user.activarChequeraElectronica(
+        this.modificarUsuario(
+          'activar',
+          this.sesion.cuil,
           cuenta,
-          this.buscarIndexCheq(cta.cbu, true),
-          this.sesion.cuil
+          this.buscarIndexCheq(cta.cbu, false)
         );
-        this.actualizarLista(arr);
-        this.toast.mostrarToast('Has activado tu chequera!', 'primary');
       }, 3000);
     }
   }
@@ -89,9 +87,11 @@ export class ChequerasElectronicasComponent implements OnInit {
         if (resp.data.respuesta){
           this.toast.mostrarToast(resp.data.argumento, 'primary');
           setTimeout( () => {
-            this.toast.mostrarToast('Pedido Eliminado!', 'primary');
-            const arr = this.user.cancelarPedidoChequera(this.cuentas[idx], this.sesion.cuil);
-            this.actualizarLista(arr);
+            this.modificarUsuario(
+              'cancelar',
+              this.sesion.cuil,
+              this.cuentas[idx]
+            );
           }, 2000);
         }else{
           this.toast.mostrarToast(resp.data.argumento, 'danger');
@@ -106,12 +106,21 @@ export class ChequerasElectronicasComponent implements OnInit {
     const cta: DatosCuenta = this.chequeras[i].cta;
     console.log(this.usuario.usuario.datosCuentas[this.buscarIndexCta(cta.cbu)]);
     console.log(this.buscarIndexCheq(cta.cbu, false));
-    const arrCtas = this.user.aprobarPedidoChequera(
-      this.usuario.usuario.datosCuentas[this.buscarIndexCta(cta.cbu)],
-      this.sesion.cuil,
-      this.buscarIndexCheq(cta.cbu, false)
-    );
-    this.actualizarLista(arrCtas);
+    this.spinner.presentLoading();
+    setTimeout(() => {
+      this.modificarUsuario(
+        'aprobar',
+        this.sesion.cuil,
+        this.usuario.usuario.datosCuentas[this.buscarIndexCta(cta.cbu)],
+        this.buscarIndexCheq(cta.cbu, false)
+        );
+    }, 2000);
+    // this.user.aprobarPedidoChequera(
+    //   this.usuario.usuario.datosCuentas[this.buscarIndexCta(cta.cbu)],
+    //   this.sesion.cuil,
+    //   this.buscarIndexCheq(cta.cbu, false)
+    // );
+    // this.actualizarLista();
   }
 
   private async alertaCancelarPedido() {
@@ -142,6 +151,10 @@ export class ChequerasElectronicasComponent implements OnInit {
     return response;
   }
 
+  private buscarCta(cbu: string): DatosCuentas{
+    return this.cuentas.find( resp => resp.cuentas.cuenta.cbu === cbu);
+  }
+
   private buscarIndexCta(cbu: string): number{
     const cuenta = this.cuentas.find( resp => resp.cuentas.cuenta.cbu === cbu);
     return this.cuentas.indexOf(cuenta);
@@ -149,7 +162,9 @@ export class ChequerasElectronicasComponent implements OnInit {
 
   private buscarIndexCheq(cbu: string, estado: boolean): number{
     const idx = this.buscarIndexCta(cbu);
-    const cheq = this.usuario.usuario.datosCuentas[idx].cuentas.chequeras.find( resp => resp.estadoPedido === estado );
+    console.log(`index de la cuenta: ${idx}`);
+    const cheq = this.usuario.usuario.datosCuentas[idx].cuentas.chequeras.find( resp => resp.estadoChequera === estado );
+    console.log(cheq);
     return this.usuario.usuario.datosCuentas[idx].cuentas.chequeras.indexOf(cheq);
   }
 
@@ -180,8 +195,51 @@ export class ChequerasElectronicasComponent implements OnInit {
     });
   }
 
-  private actualizarLista(arrCtas: DatosCuentas[]): void{
+  private actualizarLista(): void{
     this.chequeras = [];
-    this.obtenerChequeras(arrCtas);
+    this.cuentas = [];
+    // this.cuentas = this.usuario.usuario.datosCuentas;
+    console.log('actualizando lista...');
+    console.log(this.user.getArrCuentas(this.user.obtenerUsuario(this.sesion.cuil)));
+    this.cuentas = this.user.getArrCuentas(this.user.obtenerUsuario(this.sesion.cuil));
+    this.obtenerChequeras(this.user.getArrCuentas(this.user.obtenerUsuario(this.sesion.cuil)));
+  }
+
+  private modificarUsuario(accion: string, cuil: number, cuenta: DatosCuentas, idx?: number): void{
+    switch (accion){
+      case('activar'): {
+        this.user.activarChequeraElectronica(cuenta, idx, cuil).then( () => {
+          this.toast.mostrarToast('Has activado tu chequera!', 'primary');
+          console.log(this.usuario);
+          this.actualizarLista();
+        }).catch ( () => {
+          this.navCtrl.navigateBack('/tab/miCuenta');
+          this.toast.mostrarToast('Error en BD!', 'danger');
+        });
+        break;
+      }
+      case('cancelar'): {
+        this.user.cancelarPedidoChequera(cuenta, cuil).then( () => {
+          this.toast.mostrarToast('Pedido Eliminado!', 'primary');
+          this.actualizarLista();
+          console.log(this.usuario);
+        }).catch ( () => {
+          this.navCtrl.navigateBack('/tab/miCuenta');
+          this.toast.mostrarToast(`Error en BD!`, 'danger');
+        });
+        break;
+      }
+      case('aprobar'): {
+        this.user.aprobarPedidoChequera(cuenta, cuil, idx).then( () => {
+          this.toast.mostrarToast('Pedido Aprobado!', 'primary');
+          this.actualizarLista();
+          console.log(this.usuario);
+        }).catch ( () => {
+          this.navCtrl.navigateBack('/tab/miCuenta');
+          this.toast.mostrarToast(`Error en BD!`, 'danger');
+        });
+        break;
+      }
+    }
   }
 }

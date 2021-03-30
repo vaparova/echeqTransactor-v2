@@ -31,7 +31,7 @@ export class UsuariosService {
   constructor( private afs: AngularFireDatabase,
                private toast: ToastsService,
                private navCtrl: NavController ) {
-    this.time = 320000;
+    this.time = 300000;
    }
 
   // M É T O D O S    P R O P I O S
@@ -274,7 +274,7 @@ export class UsuariosService {
     return cuenta.cuentas.cuenta.cbu;
   }
 
-  private getArrCuentas(userMod: DatosUsuario): DatosCuentas[]{
+  getArrCuentas(userMod: DatosUsuario): DatosCuentas[]{
     return userMod.usuario.datosCuentas;
   }
 
@@ -304,7 +304,7 @@ export class UsuariosService {
     this.nuevaChequera(chequera, cuenta, cuil);
   }
 
-  activarChequeraElectronica(cuenta: DatosCuentas, idxCheq: number, cuil: number): DatosCuentas[]{
+  activarChequeraElectronica(cuenta: DatosCuentas, idxCheq: number, cuil: number): Promise<any> {
     const user = this.obtenerUsuario(cuil);
     user.usuario.datosCuentas = this.modArrChequeras(
       this.getArrCuentas(user),
@@ -313,13 +313,13 @@ export class UsuariosService {
       this.activarChequera(cuenta, idxCheq)
     );
     console.log(user);
-    this.modificarUsuario(cuil, user);
-    this.guardarStorage();
-    return this.getArrCuentas(this.obtenerUsuario(cuil));
+    return this.modificarUsuario(cuil, user);
+    // this.guardarStorage();
+    // return this.getArrCuentas(this.obtenerUsuario(cuil));
   }
 
 
-  cancelarPedidoChequera(cuenta: DatosCuentas, cuil: number): DatosCuentas[]{
+  cancelarPedidoChequera(cuenta: DatosCuentas, cuil: number): Promise<any>{
     console.log('cancelarPedidoChequera() - US');
     console.log(cuenta);
     const user = this.obtenerUsuario(cuil);
@@ -330,11 +330,11 @@ export class UsuariosService {
     );
     user.usuario.datosCuentas = arrCtasMod;
     console.log(user);
-    this.modificarUsuario(cuil, user);
-    return this.getArrCuentas(this.obtenerUsuario(cuil));
+    return this.modificarUsuario(cuil, user);
+    // return this.getArrCuentas(this.obtenerUsuario(cuil));
   }
 
-  aprobarPedidoChequera(cuenta: DatosCuentas, cuil: number, i: number): DatosCuentas[]{
+  aprobarPedidoChequera(cuenta: DatosCuentas, cuil: number, i: number): Promise<any>{
     console.log('AprobarPedidoChequera() - US');
     const user = this.obtenerUsuario(cuil);
     const cheq = this.crearChequera(1, 'claveactivarchequera');
@@ -345,8 +345,8 @@ export class UsuariosService {
     );
     console.log(arrCtasMod);
     user.usuario.datosCuentas = arrCtasMod;
-    this.modificarUsuario(cuil, user);
-    return this.getArrCuentas(this.obtenerUsuario(cuil));
+    return this.modificarUsuario(cuil, user);
+    // return this.getArrCuentas(this.obtenerUsuario(cuil));
   }
 
   private nuevaChequera(chequera: DatosChequeras, cuenta: DatosCuentas, cuil: number): void{
@@ -396,8 +396,10 @@ export class UsuariosService {
   }
 
   private activarChequera(cta: DatosCuentas, indexCheq: number): DatosChequeras{
+    console.log(cta, indexCheq);
     const cheqMod = cta.cuentas.chequeras[indexCheq];
     cheqMod.estadoChequera = true;
+    console.log(cheqMod);
     return cheqMod;
   }
 
