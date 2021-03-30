@@ -1,4 +1,4 @@
-import { Component, OnInit, DoCheck } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { UsuariosService } from '../../providers/usuarios.service';
 import { DatosUsuario } from '../../models/datosUsuario';
 import { DatosChequeras } from '../../models/datosChequeras';
@@ -115,12 +115,6 @@ export class ChequerasElectronicasComponent implements OnInit {
         this.buscarIndexCheq(cta.cbu, false)
         );
     }, 2000);
-    // this.user.aprobarPedidoChequera(
-    //   this.usuario.usuario.datosCuentas[this.buscarIndexCta(cta.cbu)],
-    //   this.sesion.cuil,
-    //   this.buscarIndexCheq(cta.cbu, false)
-    // );
-    // this.actualizarLista();
   }
 
   private async alertaCancelarPedido() {
@@ -198,7 +192,6 @@ export class ChequerasElectronicasComponent implements OnInit {
   private actualizarLista(): void{
     this.chequeras = [];
     this.cuentas = [];
-    // this.cuentas = this.usuario.usuario.datosCuentas;
     console.log('actualizando lista...');
     console.log(this.user.getArrCuentas(this.user.obtenerUsuario(this.sesion.cuil)));
     this.cuentas = this.user.getArrCuentas(this.user.obtenerUsuario(this.sesion.cuil));

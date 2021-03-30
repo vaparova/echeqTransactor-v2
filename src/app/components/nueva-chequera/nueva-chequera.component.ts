@@ -1,4 +1,4 @@
-import { Component, DoCheck, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { UsuariosService } from '../../providers/usuarios.service';
 import { DatosUsuario } from '../../models/datosUsuario';
 import { DatosCuentas } from '../../models/datosCuentas';
@@ -56,15 +56,6 @@ export class NuevaChequeraComponent implements OnInit {
       console.log('error de login!');
     }
   }
-  // obtenerData(){
-  //   this.sesion = this.user.obtenerSesion();
-  //   if (this.sesion === null){
-  //     this.toast.mostrarToast('Inicie sesión para continuar', 'danger');
-  //     this.navCtrl.navigateBack('/ingreso');
-  //     return;
-  //   }
-  //   this.usuario = this.user.obtenerUsuario(this.sesion.cuil);
-  // }
 
   async solicitar(i: number){
     try{
@@ -94,10 +85,8 @@ export class NuevaChequeraComponent implements OnInit {
       this.navCtrl.navigateBack('/tab/miCuenta/sector-mi-cuenta/5');
     }else{
       this.spinner.presentLoading();
-      this.user.pedirChequera(this.cuentaCheq, this.sesion.cuil);
       setTimeout(() => {
-      this.toast.mostrarToast(resp.data.argumento, 'primary');
-      this.navCtrl.navigateBack('/tab/miCuenta/sector-mi-cuenta/5');
+        this.modificarUsuario(this.cuentaCheq, this.sesion.cuil, resp.data.argumento);
       }, 2000);
     }
   }
@@ -131,13 +120,22 @@ export class NuevaChequeraComponent implements OnInit {
   }
 
   async errorSolicitudChequera(mje: string){
-      const alert = await this.alertController.create({
+    const alert = await this.alertController.create({
         cssClass: 'my-custom-class2',
         header: 'Error!',
         subHeader: 'No es posible pedir nueva chequera',
         message: mje,
         buttons: ['OK']
       });
-      await alert.present();
-    }
+    await alert.present();
+  }
+
+  private modificarUsuario(cta: DatosCuentas, cuil: number, resp: any): void{
+    this.user.pedirChequera(cta, cuil).then( () => {
+      this.toast.mostrarToast(resp, 'primary');
+      this.navCtrl.navigateBack('/tab/miCuenta/sector-mi-cuenta/5');
+    }).catch ( () => {
+      this.toast.mostrarToast('Error en BD!', 'danger');
+    });
+  }
 }

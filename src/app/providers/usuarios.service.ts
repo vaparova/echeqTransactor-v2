@@ -298,10 +298,10 @@ export class UsuariosService {
 
   // F U N C I O N E S   C H E Q U E R A S   E L E C T R O N I C A S
 
-  pedirChequera(cuenta: DatosCuentas, cuil: number): void{
+  pedirChequera(cuenta: DatosCuentas, cuil: number): Promise<any>{
     console.log('pedirChequera()');
     const chequera = new DatosChequeras();
-    this.nuevaChequera(chequera, cuenta, cuil);
+    return this.nuevaChequera(chequera, cuenta, cuil);
   }
 
   activarChequeraElectronica(cuenta: DatosCuentas, idxCheq: number, cuil: number): Promise<any> {
@@ -314,8 +314,6 @@ export class UsuariosService {
     );
     console.log(user);
     return this.modificarUsuario(cuil, user);
-    // this.guardarStorage();
-    // return this.getArrCuentas(this.obtenerUsuario(cuil));
   }
 
 
@@ -331,7 +329,6 @@ export class UsuariosService {
     user.usuario.datosCuentas = arrCtasMod;
     console.log(user);
     return this.modificarUsuario(cuil, user);
-    // return this.getArrCuentas(this.obtenerUsuario(cuil));
   }
 
   aprobarPedidoChequera(cuenta: DatosCuentas, cuil: number, i: number): Promise<any>{
@@ -346,10 +343,9 @@ export class UsuariosService {
     console.log(arrCtasMod);
     user.usuario.datosCuentas = arrCtasMod;
     return this.modificarUsuario(cuil, user);
-    // return this.getArrCuentas(this.obtenerUsuario(cuil));
   }
 
-  private nuevaChequera(chequera: DatosChequeras, cuenta: DatosCuentas, cuil: number): void{
+  private nuevaChequera(chequera: DatosChequeras, cuenta: DatosCuentas, cuil: number): Promise<any>{
     const user = this.obtenerUsuario(cuil);
     try{
       this.agregarChequera(
@@ -357,7 +353,7 @@ export class UsuariosService {
         this.getIndexCuenta(this.getArrCuentas(user), this.getCbuCuenta(cuenta)),
         chequera
         );
-      this.modificarUsuario(cuil, user);
+      return this.modificarUsuario(cuil, user);
     }catch (error){
       console.log('Cuenta sin chequeras pre existentes');
       const arrCtas = this.getArrCuentas(user);
@@ -366,7 +362,7 @@ export class UsuariosService {
       this.activarCuenta(a);
       a.cuentas.chequeras.push(chequera);
       arrCtas[i] = a;
-      this.modificarUsuario(cuil, user);
+      return this.modificarUsuario(cuil, user);
     }
   }
 
