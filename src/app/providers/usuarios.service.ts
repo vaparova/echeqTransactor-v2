@@ -79,6 +79,7 @@ export class UsuariosService {
     const cuil = this.sesion.cuil;
     const i = this.obtenerIndex(cuil);
     this.item = this.afs.object(`usuarios/${cuil}`).snapshotChanges();
+    // tslint:disable-next-line: deprecation
     this.item.subscribe( action => {
       this.usuarios[i] = action.payload.val();
       this.guardarStorage();
@@ -113,6 +114,7 @@ export class UsuariosService {
   private buscarUsuarioFb(cuil: number): void {
     console.log(`Ejecutando buscarUsuarioFb, cuil: ${cuil}`);
     this.item = this.afs.object(`usuarios/${cuil}`).snapshotChanges();
+    // tslint:disable-next-line: deprecation
     this.item.subscribe( action => {
       this.usuariobd = action.payload.val();
       console.log(`resultado usuarioFb: ${action.payload.val()}`);
@@ -245,22 +247,22 @@ export class UsuariosService {
 
   // F U N C I O N E S   C U E N T A S
 
-  vincularCuenta(cuil: number, userMod: DatosUsuario, cuenta: DatosCuentas): void{
+  vincularCuenta(cuil: number, userMod: DatosUsuario, cuenta: DatosCuentas): Promise<any>{
     userMod.usuario.datosCuentas = this.modArrayCtas(
       this.getArrCuentas(userMod),
       this.getIndexCuenta(this.getArrCuentas(userMod), this.getCbuCuenta(cuenta)),
       this.activarCuenta(cuenta)
       );
-    this.modificarUsuario(cuil, userMod);
+    return this.modificarUsuario(cuil, userMod);
   }
 
-  desvincularCuenta(cuil: number, userMod: DatosUsuario, cuenta: DatosCuentas): void{
+  desvincularCuenta(cuil: number, userMod: DatosUsuario, cuenta: DatosCuentas): Promise<any>{
     userMod.usuario.datosCuentas = this.modArrayCtas(
       this.getArrCuentas(userMod),
       this.getIndexCuenta(this.getArrCuentas(userMod), this.getCbuCuenta(cuenta)),
       this.desactivarCuenta(cuenta)
       );
-    this.modificarUsuario(cuil, userMod);
+    return this.modificarUsuario(cuil, userMod);
   }
 
   private getIndexCuenta(cuentasArr: DatosCuentas[], cbu: string): number{

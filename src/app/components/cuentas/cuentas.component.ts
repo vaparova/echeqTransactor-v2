@@ -62,8 +62,7 @@ export class CuentasComponent implements OnInit {
     }else{
       this.toast.mostrarToast(resp.data.arg, 'primary');
       setTimeout(() => {
-        this.user.vincularCuenta(this.sesion.cuil, this.usuario, cuenta);
-        this.toast.mostrarToast('Has vinculado tu cuenta!', 'primary');
+        this.modificarUsuario(this.sesion.cuil, this.usuario, cuenta, 'vincular');
       }, 3000);
     }
   }
@@ -79,8 +78,7 @@ export class CuentasComponent implements OnInit {
         if (resp.data.respuesta){
           this.toast.mostrarToast(resp.data.argumento, 'primary');
           setTimeout( () => {
-            this.user.desvincularCuenta(this.sesion.cuil, this.usuario, cuenta);
-            this.toast.mostrarToast('Cuenta desvinculada!', 'primary');
+            this.modificarUsuario(this.sesion.cuil, this.usuario, cuenta, 'desvincular');
           }, 2000);
         }else{
           this.toast.mostrarToast(resp.data.argumento, 'danger');
@@ -118,5 +116,30 @@ export class CuentasComponent implements OnInit {
     await alert.present();
     const response = await alert.onDidDismiss();
     return response;
+  }
+
+  private modificarUsuario(cuil: number, usuario: DatosUsuario, cuenta: DatosCuentas, accion: string): void{
+    switch (accion){
+      case('desvincular'): {
+        this.user.desvincularCuenta(cuil, usuario, cuenta).then( () => {
+          this.toast.mostrarToast('Cuenta desvinculada!', 'primary');
+          console.log(this.usuario);
+        }).catch ( () => {
+          this.navCtrl.navigateBack('/tab/miCuenta');
+          this.toast.mostrarToast('Error en BD!', 'danger');
+        });
+        break;
+      }
+      case('vincular'): {
+        this.user.vincularCuenta(cuil, usuario, cuenta).then( () => {
+          this.toast.mostrarToast('Has vinculado tu cuenta!', 'primary');
+          console.log(this.usuario);
+        }).catch ( () => {
+          this.navCtrl.navigateBack('/tab/miCuenta');
+          this.toast.mostrarToast(`Error en BD!`, 'danger');
+        });
+        break;
+      }
+    }
   }
 }
