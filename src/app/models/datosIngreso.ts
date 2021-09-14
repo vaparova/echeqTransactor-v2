@@ -1,17 +1,17 @@
 export class DatosIngreso {
-    usuario: string;
+    // usuario: string;
     password: string;
     vencimiento: Date;
 
-    constructor(usuario: string, password: string){
-        this.usuario = usuario;
+    constructor(password: string){
+        // this.usuario = usuario;
         this.password = password;
         this.vencimiento = this.calcularVencimiento();
 
     }
 
     // la contraseña caducará cada 3 meses
-    calcularVencimiento(){
+    calcularVencimiento(): Date{
         const ahora = new Date();
         let mesVto = ahora.getMonth() + 3;
         let anioVto = ahora.getFullYear();

@@ -287,7 +287,7 @@ export class UsuariosService {
     const cta: DatosCuentas = cuenta;
     cta.cuentas.estado = false;
     cta.cuentas.chequeras = [];
-    cta.cuentas.claveActivación = 'desvinculada';
+    cta.cuentas.claveActivacion = 'desvinculada';
     return cta;
   }
 

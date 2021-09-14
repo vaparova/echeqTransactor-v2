@@ -54,16 +54,6 @@ export class EnviarTokenComponent implements OnInit {
     }
   }
 
-  // obtenerData(){
-  //   this.sesion = this.user.obtenerSesion();
-  //   if (this.sesion === null){
-  //     this.toast.mostrarToast('Inicie sesión para continuar', 'danger');
-  //     this.navCtrl.navigateBack('/ingreso');
-  //     return;
-  //   }
-  //   this.usuario = this.user.obtenerUsuario(this.sesion.cuil);
-  // }
-
   comenzar(){
     firebase.auth().signInWithPhoneNumber(this.tel, this.applicationVerifier).then(
       async (confirmationResult) => {

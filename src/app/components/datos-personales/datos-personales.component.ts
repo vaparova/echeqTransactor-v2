@@ -38,7 +38,7 @@ export class DatosPersonalesComponent implements OnInit {
         nombre: ['', [Validators.required, Validators.minLength(3)]],
         cuil: ['', [Validators.required, Validators.minLength(9)]],
         email: ['', [Validators.pattern('[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$'), Validators.required]],
-        tel: ['', [Validators.required, Validators.minLength(15)]],
+        tel: ['', [Validators.required, Validators.minLength(13)]],
       }),
       postales: this.fb.group({
         calle: ['', [Validators.required, Validators.minLength(3)]],
@@ -78,6 +78,7 @@ export class DatosPersonalesComponent implements OnInit {
 
   async guardar(){
     if (this.forma.invalid){
+      console.log(this.forma);
       this.toast.mostrarToast('Formulario inválido!', 'danger');
       return;
     }

@@ -14,7 +14,7 @@ const routes: Routes = [
   {
     path: 'ingreso',
     loadChildren: () => import('../app/pages/ingreso/ingreso.module').then( m => m.IngresoPageModule)
-  },
+  }
 ];
 
 @NgModule({

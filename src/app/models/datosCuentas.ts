@@ -7,7 +7,7 @@ export class DatosCuentas {
         entidad: DatosEntidad,
         cuenta: DatosCuenta,
         estado: boolean,
-        claveActivación: string,
+        claveActivacion: string,
         chequeras: DatosChequeras[];
     };
 
@@ -16,7 +16,7 @@ export class DatosCuentas {
             entidad: banco,
             cuenta: cta,
             estado: false,
-            claveActivación: clave,
+            claveActivacion: clave,
             chequeras: []
         };
     }

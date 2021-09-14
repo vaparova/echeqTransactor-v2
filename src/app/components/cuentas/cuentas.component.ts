@@ -29,7 +29,7 @@ export class CuentasComponent implements OnInit {
                 private navCtrl: NavController) {
 
     this.obtenerData();
-    this.cuentas = this.usuario.usuario.datosCuentas;
+    this.obtenerCuentas(); //
     if ( this.cuentas.length === 0){
       this.sinCuentas = true;
     }
@@ -53,7 +53,12 @@ export class CuentasComponent implements OnInit {
 
   async vincular(i: number){
     const cuenta = this.cuentas[i];
-    const clave = this.usuario.usuario.datosCuentas[i].cuentas.claveActivación;
+    console.log(cuenta); //
+    const idx = this.buscarIndexCta(cuenta); //
+    console.log(idx); //
+    console.log(this.usuario.usuario.datosCuentas); //
+    const clave = this.usuario.usuario.datosCuentas[idx].cuentas.claveActivacion; //
+    console.log(clave);
     const resp = await this.verifClave.ingresarClaveActivación(clave);
     console.log(resp);
     if (!resp.data.resp){
@@ -71,7 +76,6 @@ export class CuentasComponent implements OnInit {
     const cuenta = this.cuentas[i];
     const alerta = await this.alertaDesvincular();
     console.log(alerta.data.resp);
-
     if (alerta.data.resp){
       const pass = await this.passw.verificarPass(this.sesion.cuil).then(resp => {
         console.log(resp);
@@ -116,6 +120,28 @@ export class CuentasComponent implements OnInit {
     await alert.present();
     const response = await alert.onDidDismiss();
     return response;
+  }
+
+  private obtenerCuentas(): void{ //
+    const ctasCtes: DatosCuentas[] = [];
+    this.usuario.usuario.datosCuentas.forEach( cta => {
+      if (cta){
+        ctasCtes.push(cta);
+      }
+    });
+    this.cuentas = ctasCtes;
+  }
+
+  private buscarIndexCta(cta: DatosCuentas): number {  //
+    let index: number = null;
+    Object.values(this.usuario.usuario.datosCuentas).forEach( cuenta => {
+      if (cuenta){
+        if ( cuenta.cuentas.cuenta.cbu === cta.cuentas.cuenta.cbu){
+          index = this.usuario.usuario.datosCuentas.indexOf(cuenta);
+        }
+      }
+    });
+    return index;
   }
 
   private modificarUsuario(cuil: number, usuario: DatosUsuario, cuenta: DatosCuentas, accion: string): void{

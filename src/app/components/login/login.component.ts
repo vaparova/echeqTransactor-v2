@@ -106,6 +106,7 @@ export class LoginComponent implements OnInit {
       this.toast.mostrarToast('Formulario incorrecto!', 'danger');
       return false;
     }else{
+      this.user.borrarSesion();
       console.log('Formulario válido');
       return true;
     }

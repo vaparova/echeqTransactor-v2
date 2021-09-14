@@ -91,7 +91,7 @@ export class PasswordComponent implements OnInit {
   }
 
   private actualizarUsuario(){
-    const psw = new DatosIngreso(this.usuario.usuario.datosIngreso.usuario, this.forma.controls.nueva.value);
+    const psw = new DatosIngreso(this.forma.controls.nueva.value);
     psw.calcularVencimiento();
     this.usuario.usuario.datosIngreso = psw;
   }

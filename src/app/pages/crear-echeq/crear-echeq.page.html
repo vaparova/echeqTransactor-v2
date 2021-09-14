@@ -1,5 +1,22 @@
 <app-cabecera ruta="Crear Echeq >" back="crearEcheq"></app-cabecera>
 
-<ion-content class="ion-padding-start">
-<h1>Crear Echeq</h1>
+<ion-content mode="md">
+    <ion-card>
+        <ion-item color="secondary">
+            <ion-label>
+                <h1 class="titulo-ppal">{{nombre}}</h1>
+            </ion-label>
+        </ion-item>
+        <ion-card-content>
+            {{descripcion}}
+        </ion-card-content>
+    
+        <ion-item button *ngFor="let boton of botones" (click)="verComponente(boton.link)">
+            <ion-label class="titulo3">
+              {{boton.titulo}}
+            </ion-label>
+            <ion-icon slot="end" name="chevron-forward-outline"></ion-icon>
+        </ion-item>
+    </ion-card>
+
 </ion-content>
