@@ -15,6 +15,7 @@ import { Observable } from 'rxjs';
 import { DatosSesion } from '../models/datosSesion';
 import { ToastsService } from './toasts.service';
 import { NavController } from '@ionic/angular';
+import { DatosEcheq } from '../models/datosEcheq';
 
 
 @Injectable({
@@ -410,6 +411,34 @@ export class UsuariosService {
   private eliminarChequera(cta: DatosCuentas, indexCheq: number): DatosCuentas{
     cta.cuentas.chequeras.splice(indexCheq, 1);
     return cta;
+  }
+
+  // F U N C I O N E S   E C H E Q
+
+  crearEcheq(echeq: DatosEcheq, primerEcheqCheq: number, cbu: string, cuil: number): Promise<any>{
+    const user = this.obtenerUsuario(cuil);
+    const idxCta = this.getIndexCuenta(this.getArrCuentas(user), cbu);
+    const idxCheq = this.getIndexChequera(
+      this.getArrChequeras(user.usuario.datosCuentas[idxCta]),
+      primerEcheqCheq
+    );
+    const arrCtasMod = this.agregarEcheq(user, echeq, idxCta, idxCheq);
+    user.usuario.datosCuentas = arrCtasMod;
+    return this.modificarUsuario(cuil, user);
+  }
+
+  private agregarEcheq(user: DatosUsuario, echeq: DatosEcheq, idxCta: number, idxCheq: number): DatosCuentas[]{
+    const chequera = user.usuario.datosCuentas[idxCta].cuentas.chequeras[idxCheq];
+    chequera.cantidadDisponible = this.modEcheqDisponibles(chequera);
+    chequera.echeq = [];
+    chequera.echeq.push(echeq);
+    user.usuario.datosCuentas[idxCta].cuentas.chequeras[idxCheq] = chequera;
+    return user.usuario.datosCuentas;
+  }
+
+  private modEcheqDisponibles(chequera: DatosChequeras): number{
+    chequera.cantidadDisponible = chequera.cantidadDisponible - 1;
+    return chequera.cantidadDisponible;
   }
 }
 

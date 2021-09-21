@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { AlertasService } from '../../providers/alertas.service';
 import { Notificacion } from '../../models/notificacion.model';
+import { DatosAlertas } from '../../models/datosAlertas';
 
 @Component({
   selector: 'app-alerta',
@@ -9,7 +10,7 @@ import { Notificacion } from '../../models/notificacion.model';
   styleUrls: ['./alerta.page.scss'],
 })
 export class AlertaPage implements OnInit {
-  alerta: Notificacion;
+  alerta: DatosAlertas;
   index: number;
 
   constructor(private route: ActivatedRoute, private alts: AlertasService) {

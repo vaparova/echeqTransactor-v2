@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { NavController } from '@ionic/angular';
 import { Notificacion } from '../../models/notificacion.model';
 import { AlertasService } from '../../providers/alertas.service';
+import { DatosAlertas } from '../../models/datosAlertas';
 
 
 @Component({
@@ -11,7 +12,7 @@ import { AlertasService } from '../../providers/alertas.service';
 })
 export class NotificacionesComponent implements OnInit {
 
-  alertas: Notificacion[];
+  alertas: DatosAlertas[];
 
   constructor(private navCtrl: NavController, private alts: AlertasService) {
     this.alertas = this.alts.getAlertas();

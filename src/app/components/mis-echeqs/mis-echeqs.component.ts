@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
+
 
 @Component({
   selector: 'app-mis-echeqs',
@@ -7,7 +8,8 @@ import { Component, OnInit } from '@angular/core';
 })
 export class MisEcheqsComponent implements OnInit {
 
-  constructor() { }
+
+  constructor( ) {   }
 
   ngOnInit() {}
 

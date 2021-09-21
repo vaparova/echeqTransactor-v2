@@ -26,6 +26,8 @@ import { ChequerasElectronicasComponent } from './chequeras-electronicas/chequer
 import { NuevaChequeraComponent } from './nueva-chequera/nueva-chequera.component';
 import { LoginComponent } from './login/login.component';
 import { MisEcheqsComponent } from './mis-echeqs/mis-echeqs.component';
+import { NuevoEcheqComponent } from './nuevo-echeq/nuevo-echeq.component';
+import { EcheqGeneradosComponent } from './echeq-generados/echeq-generados.component';
 
 
 
@@ -43,7 +45,9 @@ import { MisEcheqsComponent } from './mis-echeqs/mis-echeqs.component';
     ChequerasElectronicasComponent,
     NuevaChequeraComponent,
     LoginComponent,
-    MisEcheqsComponent
+    MisEcheqsComponent,
+    NuevoEcheqComponent,
+    EcheqGeneradosComponent
   ],
   imports: [
     CommonModule,
@@ -70,7 +74,9 @@ import { MisEcheqsComponent } from './mis-echeqs/mis-echeqs.component';
     ChequerasElectronicasComponent,
     NuevaChequeraComponent,
     LoginComponent,
-    MisEcheqsComponent
+    MisEcheqsComponent,
+    NuevoEcheqComponent,
+    EcheqGeneradosComponent
   ],
   providers: [
     AngularFireAuth

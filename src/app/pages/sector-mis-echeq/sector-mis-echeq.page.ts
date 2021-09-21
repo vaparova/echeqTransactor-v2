@@ -15,7 +15,7 @@ export class SectorMisEcheqPage implements OnInit {
     {atras: 'tab/crearEcheq',
      comp: 'Mis Echeq > Crear Echeq'},
     {atras: 'tab/crearEcheq',
-     comp: 'Mis Echeq > Generar Echeq'},
+     comp: 'Mis Echeq > Echeq Generados'},
     {atras: 'tab/crearEcheq',
      comp: 'Mis Echeq > Echeq Entregados'}
   ];

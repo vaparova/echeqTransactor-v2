@@ -1,0 +1,125 @@
+
+  <div [ngSwitch]="index">
+    <div *ngSwitchCase="1" > 
+      <div class="ion-padding-top">
+        <ion-label class="titulo ion-padding">Crear Echeq</ion-label><br>
+      </div>
+      
+      <div *ngIf="crearUno">
+        <ion-note class="ion-padding">1 - Selecciona una chequera</ion-note>
+        <ion-card  *ngFor="let chequera of arrChequeras, let i = index" (click)="pasoDatosBeneficiario(i)">
+          <ion-card-header>
+            <ion-card-subtitle class="subtitulo">Echeq Disponibles: {{chequera.cheq.cantidadDisponible}}</ion-card-subtitle>
+            <ion-card-title>{{chequera.ent.nombreEntidad}}</ion-card-title>
+          </ion-card-header>
+        
+          <ion-card-content>
+            <p class="texto">Número Primer Echeq: {{chequera.cheq.nroPrimerEcheq}}</p>
+            <p class="texto">CBU Cuenta: {{chequera.cta.cbu}}</p>
+            <p class="texto">Denominación:{{chequera.cta.denominacion}}</p>
+            <p class="texto">Sucursal: {{chequera.ent.numeroSucursal}} - {{chequera.ent.nombreSucursal}} </p>
+          </ion-card-content>
+        </ion-card>    
+      </div>
+
+      <div *ngIf="crearDos">
+        <ion-note class="ion-padding">2 - Datos del Beneficiario</ion-note>
+        <ion-chip  color="success">
+          <ion-label >Cuenta Chequera: {{cheqSeleccionada.cta.numeroCuenta}}</ion-label>
+        </ion-chip>
+        <br>
+        <br>
+        <form [formGroup]="formaBenef" mode="md">         
+          <ion-item>
+            <ion-label position="stacked"  [color]="state.denominacion">Apellido y Nombre / Razón Social</ion-label>
+            <ion-input (ionInput)="resetState()" placeholder="Perez Juan" type="text" clearInput="true" formControlName="denominacion"></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label position="stacked" [color]="state.cuil">CUIL</ion-label>
+            <ion-input (ionInput)="resetState()" placeholder="20123456780" type="number"  clearInput="true"  formControlName="cuil"></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label position="stacked" [color]="state.email">E-mail</ion-label>
+            <ion-input (ionInput)="resetState()" placeholder="pjuan@hotmail.com" type="text" clearInput="true"  formControlName="email"></ion-input>
+          </ion-item>
+          <br>
+          <ion-button size="small" color="success" expand="block" (click)="datosEcheq()">Continuar</ion-button>
+        </form>
+        <br>
+        <br>
+      </div>
+
+      <div *ngIf="crearTres">
+        <ion-note class="ion-padding">3 - Datos del Echeq</ion-note>
+        <ion-chip  color="success">
+          <ion-label >Cuenta Chequera: {{cheqSeleccionada.cta.numeroCuenta}}</ion-label>
+        </ion-chip>
+        <ion-chip  color="success">
+          <ion-label >Beneficiario: {{beneficiario.cuilBeneficiario}} - {{beneficiario.nombreBeneficiario}}</ion-label>
+        </ion-chip>
+        <br><br>
+        <form [formGroup]="formaEcheq" mode="md">         
+          <ion-item>
+            <ion-label [color]="state.importe" position="stacked">Importe Echeq</ion-label>
+            <ion-input   (ionInput)="resetState()" type="number" placeholder="20000" clearInput="true" formControlName="importe"></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label [color]="state.pago" position="stacked">Fecha Pago</ion-label>
+            <ion-input  (ionInput)="resetState()" type="date"  clearInput="true"  formControlName="pago"></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label [color]="state.motivo" position="stacked">Motivo</ion-label>
+            <ion-select (ionChange)="resetState()" formControlName="motivo">
+              <ion-select-option *ngFor="let mot of motivos" [value]="mot.codigo">{{mot.detalle}}</ion-select-option>
+            </ion-select>
+          </ion-item>
+          <ion-item>
+            <ion-label [color]="state.referencia" position="stacked">Referencia</ion-label>
+            <ion-input  (ionInput)="resetState()" type="text" placeholder="pago proveedor" clearInput="true"  formControlName="referencia"></ion-input>
+          </ion-item>
+          <br>
+          <ion-button size="small" color="success" expand="block" (click)="confirmarDatosEcheq()">Continuar</ion-button>
+        </form>
+      </div>
+
+      <div *ngIf="crearCuatro">
+        <ion-note class="ion-padding">3 - Confirmar Echeq</ion-note>
+        <ion-chip  color="success">
+          <ion-label >Por favor, revisá bien los datos</ion-label>
+        </ion-chip>
+        <ion-card>  
+          <ion-item>
+            <ion-card-subtitle>{{cheqSeleccionada.ent.nombreEntidad}}</ion-card-subtitle>
+            <ion-chip slot="end">
+              <ion-label><strong>{{echeq.montoEcheq | currency: '$'}}</strong></ion-label>
+            </ion-chip>
+          </ion-item> 
+          <ion-card-header>
+            <ion-card-subtitle>Páguese a:</ion-card-subtitle>
+            <ion-card-title>{{beneficiario.nombreBeneficiario}}</ion-card-title>
+          </ion-card-header>    
+          <ion-card-content>
+            <ion-card-subtitle>Fecha de pago: {{echeq.fechaPago}}</ion-card-subtitle>
+            <ion-card-subtitle>Cuenta Corriente: {{cheqSeleccionada.cta.numeroCuenta}}</ion-card-subtitle>
+            <br>
+            <p class="texto">Id Echeq: {{echeq.idEcheq}}</p>
+            <p class="texto">Echeq Nº: {{echeq.nroEcheq}}</p>
+            <p class="texto">Fecha Emisión: {{echeq.fechaEmision}}</p>
+            <p class="texto">Cuil Beneficiario:{{beneficiario.cuilBeneficiario}}</p>
+            <p class="texto">Sucursal: {{cheqSeleccionada.ent.numeroSucursal}} - {{cheqSeleccionada.ent.nombreSucursal}} </p>
+            <p class="texto">CBU: {{cheqSeleccionada.cta.cbu}} </p>
+            <p class="texto">Motivo: {{echeq.motivo}}</p>
+            <p class="texto">Referencia: {{echeq.referencia}}</p>
+          </ion-card-content>
+          </ion-card>
+
+          <br>
+          <ion-button size="small" color="success" expand="block" (click)="confirmarEcheq()">Confirmar</ion-button>
+
+      </div>
+
+    </div>
+    <div *ngSwitchCase="2" > Echeq Generados</div>
+    <div *ngSwitchCase="3" > Echeq Entregados</div>
+  </div>
+
