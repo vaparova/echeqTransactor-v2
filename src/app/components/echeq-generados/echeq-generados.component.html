@@ -1,3 +1,36 @@
-<p>
-  echeq-generados works!
-</p>
+<div class="ion-padding-top">
+  <ion-label class="titulo ion-padding">Echeq Generados</ion-label><br>
+</div>
+<!-- Default Segment -->
+<ion-card *ngFor="let echeq of echeqs, let i = index">
+  <ion-item button (click)="presentActionSheet()">
+    <ion-card-subtitle>{{echeq.ent.nombreEntidad}}</ion-card-subtitle>
+    <ion-chip slot="end">
+      <ion-label><strong>{{echeq.echeq.montoEcheq | currency: '$'}}</strong></ion-label>
+    </ion-chip>
+  </ion-item> 
+  <ion-card-header>
+    <ion-card-subtitle>Páguese a:</ion-card-subtitle>
+    <ion-card-title>{{echeq.echeq.beneficiario.nombreBeneficiario}}</ion-card-title>
+  </ion-card-header>
+
+  <ion-card-content>
+    <ion-card-subtitle>Fecha de pago: {{echeq.echeq.fechaPago}}</ion-card-subtitle>
+    <ion-card-subtitle>Cuenta Corriente: {{echeq.cta.numeroCuenta}}</ion-card-subtitle>
+    <ion-card-subtitle>Echeq Nº: {{echeq.echeq.nroEcheq}}</ion-card-subtitle>     
+  </ion-card-content>
+</ion-card>
+
+
+<!-- Label only -->
+<!-- <ion-segment value="favorite" (ionChange)="segmentChanged($event)" swipeGesture="true" mode="ios">
+  <ion-segment-button value="call">
+    <ion-label>Call</ion-label>
+  </ion-segment-button>
+  <ion-segment-button value="favorite">
+    <ion-label>Favorite</ion-label>
+  </ion-segment-button>
+  <ion-segment-button value="map">
+    <ion-label>Map</ion-label>
+  </ion-segment-button>
+</ion-segment> -->

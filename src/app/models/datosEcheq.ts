@@ -1,6 +1,7 @@
 import { DatosBeneficiario } from './datosBeneficiario';
 import { DatosEndoso } from './datosEndoso';
 import { DatosRechazo } from './datosRechazo';
+import { DatosEstadoEcheq } from './datosEstadoEcheq';
 
 export class DatosEcheq{
     idEcheq: string;
@@ -20,7 +21,7 @@ export class DatosEcheq{
 
     constructor(
                 nroEcheq: number,
-                estadoEcheq: string,
+                estadoEcheq: number,
                 fechaEmision: Date,
                 fechaPago: Date,
                 montoEcheq: number,
@@ -30,7 +31,7 @@ export class DatosEcheq{
 
         this.idEcheq = this.crearIdEcheq();
         this.nroEcheq = nroEcheq;
-        this.estadoEcheq = estadoEcheq;
+        this.estadoEcheq = this.cambiarEstadoEcheq(estadoEcheq);
         this.fechaEmision = fechaEmision;
         this.fechaPago = fechaPago;
         this.montoEcheq = montoEcheq;
@@ -38,6 +39,11 @@ export class DatosEcheq{
         this.referencia = referencia;
         this.beneficiario = beneficiario;
 
+    }
+
+    cambiarEstadoEcheq(idx: number): string{
+        const estado = new DatosEstadoEcheq();
+        return estado.getEstado(idx);
     }
 
     private crearIdEcheq(): string{
@@ -49,5 +55,6 @@ export class DatosEcheq{
         }
         return result;
     }
+
 
 }

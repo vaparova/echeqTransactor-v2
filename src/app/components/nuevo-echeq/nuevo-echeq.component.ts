@@ -277,7 +277,7 @@ export class NuevoEcheqComponent implements OnInit {
   private generarEcheq(): void{
     this.echeq = new DatosEcheq(
       this.generarNroEcheq(),
-      'en edición',
+      0,
       new Date(),
       this.formaEcheq.controls.pago.value,
       this.formaEcheq.controls.importe.value,

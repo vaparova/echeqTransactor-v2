@@ -16,6 +16,7 @@ import { DatosSesion } from '../models/datosSesion';
 import { ToastsService } from './toasts.service';
 import { NavController } from '@ionic/angular';
 import { DatosEcheq } from '../models/datosEcheq';
+import { DatosEstadoEcheq } from '../models/datosEstadoEcheq';
 
 
 @Injectable({
@@ -427,6 +428,11 @@ export class UsuariosService {
     return this.modificarUsuario(cuil, user);
   }
 
+  getEcheqGenerados(cuil: number): any[]{
+    const user = this.obtenerUsuario(cuil);
+    return this.obtenerEcheqGenerado(user);
+  }
+
   private agregarEcheq(user: DatosUsuario, echeq: DatosEcheq, idxCta: number, idxCheq: number): DatosCuentas[]{
     const chequera = user.usuario.datosCuentas[idxCta].cuentas.chequeras[idxCheq];
     chequera.cantidadDisponible = this.modEcheqDisponibles(chequera);
@@ -439,6 +445,31 @@ export class UsuariosService {
   private modEcheqDisponibles(chequera: DatosChequeras): number{
     chequera.cantidadDisponible = chequera.cantidadDisponible - 1;
     return chequera.cantidadDisponible;
+  }
+
+  private obtenerEcheqGenerado(user: DatosUsuario): any []{
+    const arrEcheqs: any [] = [];
+    Object.values(user.usuario.datosCuentas).forEach( (cuenta) => {
+      if (cuenta.cuentas.chequeras){
+        Object.values(cuenta.cuentas.chequeras).forEach( (chequera) => {
+          if (chequera.echeq){
+            Object.values(chequera.echeq).forEach ( (echeqs) => {
+              const estado = new DatosEstadoEcheq();
+              if (echeqs.estadoEcheq === estado.getEstado(0)){
+                const obj = {
+                  cta: cuenta.cuentas.cuenta,
+                  ent: cuenta.cuentas.entidad,
+                  cheq: chequera,
+                  echeq: echeqs
+                };
+                arrEcheqs.push(obj);
+              }
+            });
+          }
+        });
+      }
+    });
+    return arrEcheqs;
   }
 }
 
