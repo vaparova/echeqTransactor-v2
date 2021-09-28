@@ -113,7 +113,7 @@ export class NuevoEcheqComponent implements OnInit {
   }
 
   async confirmarEcheq(){
-    const pass = await this.passw.verificarPass(this.sesion.cuil).then(resp => {
+    await this.passw.verificarPass(this.sesion.cuil).then(resp => {
       console.log(resp);
       if (resp.data.respuesta){
         this.toast.mostrarToast(resp.data.argumento, 'primary');
@@ -301,7 +301,7 @@ export class NuevoEcheqComponent implements OnInit {
     );
     resp.then( () => {
       console.log('Se agregó correctamente el echeq');
-      this.toast.mostrarToast('Se creó exitosamente el echeq', 'success');
+      this.toast.mostrarToast('Se creó exitosamente el echeq', 'primary');
       this.navCtrl.navigateBack('/tab/crearEcheq/sector-mis-echeq/2');
     }).catch( () => {
       console.log('Error en BD!');

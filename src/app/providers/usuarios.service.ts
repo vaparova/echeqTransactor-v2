@@ -433,13 +433,62 @@ export class UsuariosService {
     return this.obtenerEcheqGenerado(user);
   }
 
+  modificarEcheq(cuil: number, cuenta: DatosCuenta, chequera: DatosChequeras, echeq: DatosEcheq): Promise<any>{
+    const user = this.obtenerUsuario(cuil);
+    const arrCtas = this.getArrCuentas(user);
+    const idxCta = this.getIndexCuenta(arrCtas, cuenta.cbu);
+    const idxCheq = this.getIndexChequera(
+      this.getArrChequeras(arrCtas[idxCta]),
+      chequera.nroPrimerEcheq
+    );
+    const cheq = arrCtas[idxCta].cuentas.chequeras[idxCheq];
+    const idxEcheq = this.getIndexEcheq(cheq.echeq, echeq.nroEcheq);
+    cheq.echeq = this.modArrEcheq(cheq.echeq, idxEcheq, echeq);
+    user.usuario.datosCuentas = this.modArrChequeras(arrCtas, idxCta, idxCheq, cheq);
+    console.log(user);
+    return this.modificarUsuario(cuil, user);
+  }
+
+  eliminarEcheq(cuil: number, cuenta: DatosCuenta, chequera: DatosChequeras, nroEcheq: number): Promise<any>{
+    const user = this.obtenerUsuario(cuil);
+    const arrCtas = this.getArrCuentas(user);
+    const idxCta = this.getIndexCuenta(arrCtas, cuenta.cbu);
+    const idxCheq = this.getIndexChequera(
+      this.getArrChequeras(arrCtas[idxCta]),
+      chequera.nroPrimerEcheq
+    );
+    const cheq = arrCtas[idxCta].cuentas.chequeras[idxCheq];
+    const idxEcheq = this.getIndexEcheq(cheq.echeq, nroEcheq);
+    cheq.echeq = this.elimEcheq(cheq.echeq, idxEcheq);
+    user.usuario.datosCuentas = this.modArrChequeras(arrCtas, idxCta, idxCheq, cheq);
+    console.log(user);
+    return this.modificarUsuario(cuil, user);
+  }
+
   private agregarEcheq(user: DatosUsuario, echeq: DatosEcheq, idxCta: number, idxCheq: number): DatosCuentas[]{
     const chequera = user.usuario.datosCuentas[idxCta].cuentas.chequeras[idxCheq];
     chequera.cantidadDisponible = this.modEcheqDisponibles(chequera);
-    chequera.echeq = [];
+    if (!chequera.echeq){
+      chequera.echeq = [];
+    }
     chequera.echeq.push(echeq);
     user.usuario.datosCuentas[idxCta].cuentas.chequeras[idxCheq] = chequera;
     return user.usuario.datosCuentas;
+  }
+
+  private getIndexEcheq(arrEcheq: DatosEcheq[], nroEcheq: number): number{
+    const echeq = arrEcheq.find( resp => resp.nroEcheq === nroEcheq);
+    return arrEcheq.indexOf(echeq);
+  }
+
+  private modArrEcheq(arrEcheq: DatosEcheq[], idxEcheq: number, echeq: DatosEcheq): DatosEcheq[]{
+    arrEcheq.splice(idxEcheq, 1, echeq);
+    return arrEcheq;
+  }
+
+  private elimEcheq(arrEcheq: DatosEcheq[], idxEcheq: number): DatosEcheq[]{
+    arrEcheq.splice(idxEcheq, 1);
+    return arrEcheq;
   }
 
   private modEcheqDisponibles(chequera: DatosChequeras): number{

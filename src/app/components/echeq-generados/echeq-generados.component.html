@@ -1,36 +1,125 @@
 <div class="ion-padding-top">
   <ion-label class="titulo ion-padding">Echeq Generados</ion-label><br>
 </div>
-<!-- Default Segment -->
-<ion-card *ngFor="let echeq of echeqs, let i = index">
-  <ion-item button (click)="presentActionSheet()">
-    <ion-card-subtitle>{{echeq.ent.nombreEntidad}}</ion-card-subtitle>
-    <ion-chip slot="end">
-      <ion-label><strong>{{echeq.echeq.montoEcheq | currency: '$'}}</strong></ion-label>
+
+
+<div *ngIf="secEcheq">
+
+  <div *ngIf="vacio">
+    <br>
+    <ion-chip color="primary">
+      <ion-icon name="information-circle-outline"></ion-icon>
+      <ion-label>No tienes Echeqs Generados</ion-label>
     </ion-chip>
-  </ion-item> 
+  </div>
+
+  <!-- Default Segment -->
+  <ion-card *ngFor="let echeq of echeqs, let i = index">
+    <ion-item button (click)="presentActionSheet(i)">
+      <ion-card-subtitle>{{echeq.ent.nombreEntidad}}</ion-card-subtitle>
+      <ion-chip slot="end">
+        <ion-label><strong>{{echeq.echeq.montoEcheq | currency: '$'}}</strong></ion-label>
+      </ion-chip>
+    </ion-item> 
+    <ion-card-header>
+      <ion-card-subtitle>Páguese a:</ion-card-subtitle>
+      <ion-card-title>{{echeq.echeq.beneficiario.nombreBeneficiario}}</ion-card-title>
+    </ion-card-header>
+  
+    <ion-card-content>
+      <ion-card-subtitle>Fecha de pago: {{echeq.echeq.fechaPago}}</ion-card-subtitle>
+      <ion-card-subtitle>Cuenta Corriente: {{echeq.cta.numeroCuenta}}</ion-card-subtitle>
+      <ion-card-subtitle>Echeq Nº: {{echeq.echeq.nroEcheq}}</ion-card-subtitle>     
+    </ion-card-content>
+  </ion-card>
+</div>
+
+<div *ngIf="verEcheq">
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Echeq Nº {{echeq.echeq.nroEcheq}}</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-segment (ionChange)="segmentChanged($event)" mode="ios" value="datosEcheq">
+        <ion-segment-button value="datosEcheq">
+          <ion-label>Echeq</ion-label>
+        </ion-segment-button>
+        <ion-segment-button value="datosCuenta">
+          <ion-label>Cuenta</ion-label>
+        </ion-segment-button>
+        <ion-segment-button value="datosBeneficiario">
+          <ion-label>Beneficiario</ion-label>
+        </ion-segment-button>
+      </ion-segment>
+      <br>
+
+       <div *ngIf="datosEcheq"> 
+        <h6 class="subtitulo">Datos Echeq</h6>
+        <p class="texto">Estado Echeq: {{echeq.echeq.estadoEcheq}} </p>
+        <p class="texto">Fecha Emisión: {{echeq.echeq.fechaEmision}}</p>
+        <p class="texto">Fecha Pago: {{echeq.echeq.fechaPago}}</p>
+        <p class="texto">Id Echeq: {{echeq.echeq.idEcheq}} </p>
+        <p class="texto">Monto Echeq: {{echeq.echeq.montoEcheq}} </p>
+        <p class="texto">Motivo: {{echeq.echeq.motivo}} </p>
+        <p class="texto">Referencia: {{echeq.echeq.referencia}} </p>
+      </div> 
+
+      <div *ngIf="datosCuenta">
+        <h6 class="subtitulo">Datos Cuenta Corriente</h6>
+        <p class="texto">Denominación: {{echeq.cta.denominacion}} </p>
+        <p class="texto">Número Cuenta: {{echeq.cta.numeroCuenta}}</p>
+        <p class="texto">CBU: {{echeq.cta.cbu}} </p>
+        <p class="texto">Entidad: {{echeq.ent.numeroEntidad}} - {{echeq.ent.nombreEntidad}}</p>
+        <p class="texto">Sucursal: {{echeq.ent.numeroSucursal}} - {{echeq.ent.nombreSucursal}}</p>
+      </div>
+
+       <div *ngIf="datosBeneficiario">
+        <h6 class="subtitulo">Datos Beneficiario</h6>
+        <p class="texto">Nombre y Apellido / Razón Social: {{echeq.echeq.beneficiario.nombreBeneficiario}} </p>
+        <p class="texto">CUIL/ CUIT: {{echeq.echeq.beneficiario.cuilBeneficiario}}</p>
+        <p class="texto">email: {{echeq.echeq.beneficiario.email}}</p>    
+       </div> 
+    </ion-card-content>
+  </ion-card>
+  <ion-button class="ion-margin" color="success" expand="block" (click)="volver()">Volver</ion-button>
+</div>
+
+<div *ngIf="editEcheq">
+  <ion-card>
   <ion-card-header>
-    <ion-card-subtitle>Páguese a:</ion-card-subtitle>
-    <ion-card-title>{{echeq.echeq.beneficiario.nombreBeneficiario}}</ion-card-title>
+    <ion-card-title>Modificar Echeq Nº {{echeq.echeq.nroEcheq}}</ion-card-title>
   </ion-card-header>
 
   <ion-card-content>
-    <ion-card-subtitle>Fecha de pago: {{echeq.echeq.fechaPago}}</ion-card-subtitle>
-    <ion-card-subtitle>Cuenta Corriente: {{echeq.cta.numeroCuenta}}</ion-card-subtitle>
-    <ion-card-subtitle>Echeq Nº: {{echeq.echeq.nroEcheq}}</ion-card-subtitle>     
+    <h6 class="subtitulo">Datos Beneficiario</h6>
+    <p class="texto">Nombre y Apellido / Razón Social: {{echeq.echeq.beneficiario.nombreBeneficiario}} </p>
+    <p class="texto">CUIL/ CUIT: {{echeq.echeq.beneficiario.cuilBeneficiario}}</p>
+    <p class="texto">email: {{echeq.echeq.beneficiario.email}}</p>    
   </ion-card-content>
-</ion-card>
+  </ion-card>
+
+  <form [formGroup]="formaEcheq" mode="md">         
+    <ion-item>
+      <ion-label [color]="state.importe" position="stacked">Importe Echeq</ion-label>
+      <ion-input   (ionInput)="resetState()" type="number" placeholder="20000" clearInput="true" formControlName="importe"></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label [color]="state.pago" position="stacked">Fecha Pago</ion-label>
+      <ion-input  (ionInput)="resetState()" type="date"  clearInput="true"  formControlName="pago"></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label [color]="state.motivo" position="stacked">Motivo</ion-label>
+      <ion-select (ionChange)="resetState()" formControlName="motivo">
+        <ion-select-option *ngFor="let mot of motivos" [value]="mot.codigo">{{mot.detalle}}</ion-select-option>
+      </ion-select>
+    </ion-item>
+    <ion-item>
+      <ion-label [color]="state.referencia" position="stacked">Referencia</ion-label>
+      <ion-input  (ionInput)="resetState()" type="text" placeholder="pago proveedor" clearInput="true"  formControlName="referencia"></ion-input>
+    </ion-item>
+    <br>
+    <ion-button size="small" color="success" expand="block" (click)="modificar()">Modificar Echeq</ion-button>
+  </form>
+</div>
 
 
-<!-- Label only -->
-<!-- <ion-segment value="favorite" (ionChange)="segmentChanged($event)" swipeGesture="true" mode="ios">
-  <ion-segment-button value="call">
-    <ion-label>Call</ion-label>
-  </ion-segment-button>
-  <ion-segment-button value="favorite">
-    <ion-label>Favorite</ion-label>
-  </ion-segment-button>
-  <ion-segment-button value="map">
-    <ion-label>Map</ion-label>
-  </ion-segment-button>
-</ion-segment> -->
