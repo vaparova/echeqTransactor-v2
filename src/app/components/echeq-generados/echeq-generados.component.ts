@@ -9,6 +9,7 @@ import { VerificarPasswordService } from 'src/app/providers/verificar-password.s
 import { DatosSesion } from '../../models/datosSesion';
 import { DatosUsuario } from '../../models/datosUsuario';
 import { ActionSheetController } from '@ionic/angular';
+import { VerificarTokenService } from '../../providers/verificar-token.service';
 
 
 @Component({
@@ -57,7 +58,8 @@ export class EcheqGeneradosComponent implements OnInit {
     private fb: FormBuilder,
     private passw: VerificarPasswordService,
     private alertController: AlertController,
-    public actionSheetController: ActionSheetController
+    public actionSheetController: ActionSheetController,
+    private tkn: VerificarTokenService
     ) {
       this.obtenerData();
       this.obtenerEcheqs();
@@ -134,7 +136,9 @@ export class EcheqGeneradosComponent implements OnInit {
         text: 'Librar',
         icon: 'send-outline',
         handler: () => {
-          console.log('Delete clicked');
+          this.echeq = this.echeqs[i];
+          this.librarEcheq();
+          // this.tkn.pedirToken(this.sesion.cuil);
         }
       }, {
         text: 'Eliminar',
@@ -272,4 +276,11 @@ export class EcheqGeneradosComponent implements OnInit {
     });
   }
 
+  private librarEcheq(): void{
+    this.user.librarEcheq(this.sesion.cuil, this.echeq.cta, this.echeq.cheq, this.echeq.echeq);
+    // const resp = this.tkn.pedirToken(this.sesion.cuil);
+    // resp.then( () => {
+    //   // this.user.librarEcheq(this.sesion.cuil, this.echeq.cta, this.echeq.cheq, this.echeq.echeq.nroEcheq);
+    // });
+  }
 }
