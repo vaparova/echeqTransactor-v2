@@ -108,9 +108,12 @@ export class UsuariosService {
     }
   }
 
-  modificarUsuario(cuil: number, datos: DatosUsuario): Promise<any> {
-    this.modificarUsuarioOk(cuil, datos);
-    return this.afs.object(`usuarios/${cuil}`).update(datos);
+  modificarUsuario(cuil: number, datos: DatosUsuario): Promise<any> { ////
+    return this.afs.object(`usuarios/${cuil}`).update(datos).then( () => {
+      this.modificarUsuarioOk(cuil, datos);
+    }).catch( (err) => {
+      console.log(err);
+    });
   }
 
   private buscarUsuarioFb(cuil: number): void {
@@ -449,6 +452,9 @@ export class UsuariosService {
   }
 
   librarEcheq(cuil: number, cuenta: DatosCuenta, chequera: DatosChequeras, echeq: DatosEcheq): Promise<any>{
+    console.log(cuenta);
+    console.log(chequera);
+    console.log(echeq);
     const estadoEcheq = new DatosEstadoEcheq();
     if (echeq.estadoEcheq === estadoEcheq.getEstado(0)){
       const echeqMod = this.cambiarEstadoEcheq(echeq, 1);

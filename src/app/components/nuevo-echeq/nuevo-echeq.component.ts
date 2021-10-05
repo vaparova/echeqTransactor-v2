@@ -171,7 +171,6 @@ export class NuevoEcheqComponent implements OnInit {
     this.formaBenef = this.fb.group({
       denominacion: ['', [Validators.required, Validators.minLength(4), Validators.pattern('^([A-Z]{1}[a-z_]{2,} )+([A-Z]{1}[a-z]{2,})$')]],
       cuil: ['', [Validators.required, Validators.pattern('^[0-9]{11}$')]],
-      email: ['', [Validators.pattern('[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$'), Validators.required]],
     });
   }
 
@@ -208,9 +207,6 @@ export class NuevoEcheqComponent implements OnInit {
     if (this.formaBenef.controls.cuil.invalid){
       this.state.cuil = 'danger';
     }
-    if (this.formaBenef.controls.email.invalid){
-      this.state.email = 'danger';
-    }
   }
 
   private errorFormaEcheq(): void{
@@ -240,7 +236,6 @@ export class NuevoEcheqComponent implements OnInit {
     this.beneficiario = new DatosBeneficiario(
       this.formaBenef.controls.cuil.value,
       this.formaBenef.controls.denominacion.value,
-      this.formaBenef.controls.email.value
     );
   }
 
@@ -272,6 +267,11 @@ export class NuevoEcheqComponent implements OnInit {
     }
     return resp;
 
+  }
+
+  private crearFechaHoy(): Date{
+    const ahora = new Date();
+    return new Date(ahora.getFullYear(), ahora.getMonth(), ahora.getDay());
   }
 
   private generarEcheq(): void{

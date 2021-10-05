@@ -137,6 +137,7 @@ export class EcheqGeneradosComponent implements OnInit {
         icon: 'send-outline',
         handler: () => {
           this.echeq = this.echeqs[i];
+          // console.log(this.echeq);
           this.librarEcheq();
           // this.tkn.pedirToken(this.sesion.cuil);
         }
@@ -277,10 +278,15 @@ export class EcheqGeneradosComponent implements OnInit {
   }
 
   private librarEcheq(): void{
-    this.user.librarEcheq(this.sesion.cuil, this.echeq.cta, this.echeq.cheq, this.echeq.echeq);
-    // const resp = this.tkn.pedirToken(this.sesion.cuil);
-    // resp.then( () => {
-    //   // this.user.librarEcheq(this.sesion.cuil, this.echeq.cta, this.echeq.cheq, this.echeq.echeq.nroEcheq);
-    // });
+    console.log(this.echeq.echeq.fechaEmision);
+    const resp = this.tkn.pedirToken(this.sesion.cuil);
+    resp.then( () => {
+      return this.user.librarEcheq(this.sesion.cuil, this.echeq.cta, this.echeq.cheq, this.echeq.echeq);
+    }).then( () => {
+      this.obtenerEcheqs();
+      this.toast.mostrarToast('Echeq librado', 'primary');
+    }).catch( () => {
+      this.toast.mostrarToast('Error enb DB!', 'danger');
+    });
   }
 }

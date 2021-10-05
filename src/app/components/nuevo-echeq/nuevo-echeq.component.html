@@ -38,10 +38,6 @@
             <ion-label position="stacked" [color]="state.cuil">CUIL</ion-label>
             <ion-input (ionInput)="resetState()" placeholder="20123456780" type="number"  clearInput="true"  formControlName="cuil"></ion-input>
           </ion-item>
-          <ion-item>
-            <ion-label position="stacked" [color]="state.email">E-mail</ion-label>
-            <ion-input (ionInput)="resetState()" placeholder="pjuan@hotmail.com" type="text" clearInput="true"  formControlName="email"></ion-input>
-          </ion-item>
           <br>
           <ion-button size="small" color="success" expand="block" (click)="datosEcheq()">Continuar</ion-button>
         </form>

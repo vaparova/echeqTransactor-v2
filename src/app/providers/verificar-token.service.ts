@@ -3,6 +3,7 @@ import { UsuariosService } from './usuarios.service';
 import { AlertController, ModalController } from '@ionic/angular';
 import { EnviarTokenComponent } from '../components/enviar-token/enviar-token.component';
 import { ToastsService } from './toasts.service';
+import { resolve } from 'dns';
 
 @Injectable({
   providedIn: 'root'
@@ -17,17 +18,34 @@ export class VerificarTokenService {
 
 
   async pedirToken(cuil: number): Promise<any>{
-    return await this.verificarPin(cuil).then(resp => {
+
+  return this.verificarPin(cuil).then( (resp: any) => {
       console.log(resp);
       if (resp.data.respuesta){
-        this.toast.mostrarToast(resp.data.argumento, 'primary');
-        setTimeout( () => {
-          this.verificarToken();
-        }, 2000);
-      }else{
-        this.toast.mostrarToast(resp.data.argumento, 'danger');
+        return this.presentModal();
       }
+    }).then ( (tkn: any) => {
+      console.log(tkn);
+      if (tkn.data.verificado) {
+        this.toast.mostrarToast('Clave Token Correcta!', 'primary');
+      }else{
+      this.toast.mostrarToast(tkn.data.argument, 'danger');
+      }
+    }).catch( () => {
+      this.toast.mostrarToast('Error en Token :(', 'danger');
     });
+
+    // return await this.verificarPin(cuil).then(resp => {
+    //   console.log(resp);
+    //   if (resp.data.respuesta){
+    //     this.toast.mostrarToast(resp.data.argumento, 'primary');
+    //     setTimeout( () => {
+    //       this.verificarToken();
+    //     }, 2000);
+    //   }else{
+    //     this.toast.mostrarToast(resp.data.argumento, 'danger');
+    //   }
+    // });
   }
 
   private async verificarPin(cuil: number){
@@ -52,14 +70,14 @@ export class VerificarTokenService {
           handler: data => {
             console.log(data);
             if (data.confirmationCode === this.tokenUser){
-              console.log('PIN');
+              console.log('PIN correcto');
               return data.values = {respuesta: true,
                               argumento: 'PIN correcto...'
                             };
             }else{
-              console.log('contraseña incorrecta');
+              console.log('PIN incorrecto');
               return data.values = {respuesta: false,
-                argumento: 'Contraseña incorrecta!'
+                argumento: 'PIN incorrecto!'
               };
             }
           }
