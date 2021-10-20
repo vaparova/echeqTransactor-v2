@@ -277,15 +277,16 @@ export class EcheqGeneradosComponent implements OnInit {
     });
   }
 
-  private librarEcheq(): void{
+  private async librarEcheq(): Promise<void>{
     console.log(this.echeq.echeq.fechaEmision);
-    const resp = this.tkn.pedirToken(this.sesion.cuil);
-    resp.then( () => {
-      return this.user.librarEcheq(this.sesion.cuil, this.echeq.cta, this.echeq.cheq, this.echeq.echeq);
+    return await this.tkn.pedirToken(this.sesion.cuil).then( (tkn) => {
+      console.log('Estuvo todo ok, ya se puede librar');
+      return this.user.librarEcheq(this.sesion.cuil, this.echeq.ent, this.echeq.cta, this.echeq.cheq, this.echeq.echeq);
     }).then( () => {
       this.obtenerEcheqs();
       this.toast.mostrarToast('Echeq librado', 'primary');
-    }).catch( () => {
+    }).catch( (err) => {
+      console.log('Hubo un error o se canceló la operación');
       this.toast.mostrarToast('Error enb DB!', 'danger');
     });
   }

@@ -3,7 +3,7 @@ import { UsuariosService } from './usuarios.service';
 import { AlertController, ModalController } from '@ionic/angular';
 import { EnviarTokenComponent } from '../components/enviar-token/enviar-token.component';
 import { ToastsService } from './toasts.service';
-import { resolve } from 'dns';
+
 
 @Injectable({
   providedIn: 'root'
@@ -19,33 +19,28 @@ export class VerificarTokenService {
 
   async pedirToken(cuil: number): Promise<any>{
 
-  return this.verificarPin(cuil).then( (resp: any) => {
+  return await this.verificarPin(cuil).then( (resp: any) => {
       console.log(resp);
-      if (resp.data.respuesta){
+      if (resp.data.respuesta === true){
         return this.presentModal();
+      }else{
+        console.log('se cancelo pin');
+        throw new Error('Algo falló');
       }
     }).then ( (tkn: any) => {
       console.log(tkn);
       if (tkn.data.verificado) {
         this.toast.mostrarToast('Clave Token Correcta!', 'primary');
+        return tkn;
       }else{
       this.toast.mostrarToast(tkn.data.argument, 'danger');
+      throw new Error('Algo falló');
       }
     }).catch( () => {
+      console.log('se ejecutó catch de servicio token');
       this.toast.mostrarToast('Error en Token :(', 'danger');
+      throw new Error('Algo falló');
     });
-
-    // return await this.verificarPin(cuil).then(resp => {
-    //   console.log(resp);
-    //   if (resp.data.respuesta){
-    //     this.toast.mostrarToast(resp.data.argumento, 'primary');
-    //     setTimeout( () => {
-    //       this.verificarToken();
-    //     }, 2000);
-    //   }else{
-    //     this.toast.mostrarToast(resp.data.argumento, 'danger');
-    //   }
-    // });
   }
 
   private async verificarPin(cuil: number){

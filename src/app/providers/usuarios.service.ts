@@ -17,6 +17,8 @@ import { ToastsService } from './toasts.service';
 import { NavController } from '@ionic/angular';
 import { DatosEcheq } from '../models/datosEcheq';
 import { DatosEstadoEcheq } from '../models/datosEstadoEcheq';
+import { DatosTitularEcheq } from '../models/datosTitularEcheq';
+import { DatosCoelsa } from '../models/datosCoelsa';
 
 
 @Injectable({
@@ -64,6 +66,21 @@ export class UsuariosService {
       new DatosCuenta( '0110285930028500003701', 'CC', '2850000370', 'Romero Vanesa'),
       'clavedeactivacionuser2');
     this.adherirCuenta(cuentaUser2, 27364183807);
+  }
+
+  private crearEcheqCoelsa(cuil: number, echeq: DatosEcheq, cuenta: DatosCuenta, entidad: DatosEntidad): DatosCoelsa{ ///
+    const user = this.obtenerUsuario(cuil);
+    const titular = new DatosTitularEcheq(
+      cuenta.denominacion,
+      user.usuario.datosPersonales.cuil
+    );
+    const coelsa = new DatosCoelsa(
+      echeq,
+      cuenta,
+      entidad,
+      titular
+    );
+    return coelsa;
   }
 
   // M É T O D O S    F I R E B A S E   R E A L T I M E   D A T E B A S E
@@ -132,6 +149,10 @@ export class UsuariosService {
 
   private nuevoUsuarioFb(cuil: number, datos: DatosUsuario): void{
     this.afs.object(`usuarios/${cuil}`).set(datos);
+  }
+
+  private nuevoRegistroCoelsa(idEcheq: string, echeqCoelsa: DatosCoelsa): Promise<void>{ ////
+    return this.afs.object(`coelsa/${idEcheq}`).set(echeqCoelsa);
   }
 
 
@@ -451,7 +472,7 @@ export class UsuariosService {
     return this.modificarUsuario(cuil, user);
   }
 
-  librarEcheq(cuil: number, cuenta: DatosCuenta, chequera: DatosChequeras, echeq: DatosEcheq): Promise<any>{
+  librarEcheq(cuil: number, entidad: DatosEntidad, cuenta: DatosCuenta, chequera: DatosChequeras, echeq: DatosEcheq): Promise<any>{
     console.log(cuenta);
     console.log(chequera);
     console.log(echeq);
@@ -462,8 +483,15 @@ export class UsuariosService {
       const user = this.obtenerUsuario(cuil);
       user.usuario.datosCuentas = this.modArrEcheq(cuil, cuenta, chequera, echeqMod, echeqMod.nroEcheq, 'modificar');
       console.log(user);
-      return this.modificarUsuario(cuil, user);
+      return this.publicarEcheq(cuil, echeqMod, cuenta, entidad).then( () => {
+        return this.modificarUsuario(cuil, user);
+      });
     }
+  }
+
+  publicarEcheq(cuil: number, echeq: DatosEcheq, cuenta: DatosCuenta, entidad: DatosEntidad): Promise<void>{ ///
+    const coelsa = this.crearEcheqCoelsa(cuil, echeq, cuenta, entidad);
+    return this.nuevoRegistroCoelsa(echeq.idEcheq, coelsa);
   }
 
   private insertEcheq(user: DatosUsuario, echeq: DatosEcheq, idxCta: number, idxCheq: number): DatosCuentas[]{
