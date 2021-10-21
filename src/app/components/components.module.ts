@@ -28,6 +28,7 @@ import { LoginComponent } from './login/login.component';
 import { MisEcheqsComponent } from './mis-echeqs/mis-echeqs.component';
 import { NuevoEcheqComponent } from './nuevo-echeq/nuevo-echeq.component';
 import { EcheqGeneradosComponent } from './echeq-generados/echeq-generados.component';
+import { EcheqLibradosComponent } from './echeq-librados/echeq-librados.component';
 
 
 
@@ -47,7 +48,8 @@ import { EcheqGeneradosComponent } from './echeq-generados/echeq-generados.compo
     LoginComponent,
     MisEcheqsComponent,
     NuevoEcheqComponent,
-    EcheqGeneradosComponent
+    EcheqGeneradosComponent,
+    EcheqLibradosComponent
   ],
   imports: [
     CommonModule,
@@ -76,7 +78,8 @@ import { EcheqGeneradosComponent } from './echeq-generados/echeq-generados.compo
     LoginComponent,
     MisEcheqsComponent,
     NuevoEcheqComponent,
-    EcheqGeneradosComponent
+    EcheqGeneradosComponent,
+    EcheqLibradosComponent
   ],
   providers: [
     AngularFireAuth
