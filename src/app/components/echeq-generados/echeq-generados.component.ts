@@ -109,7 +109,7 @@ export class EcheqGeneradosComponent implements OnInit {
     });
   }
 
-  async presentActionSheet(i: number) {
+  async presentActionSheet(i: number): Promise<void> {
     const actionSheet = await this.actionSheetController.create({
       // header: 'Acciones',
       cssClass: 'my-custom-class',
@@ -158,7 +158,7 @@ export class EcheqGeneradosComponent implements OnInit {
     console.log('onDidDismiss resolved with role', role);
   }
 
-  private async confirmarBorrar() {
+  private async confirmarBorrar(): Promise<void> {
     const title = `Eliminar Echeq Nº ${this.echeq.echeq.nroEcheq}`;
     const alert = await this.alertController.create({
       cssClass: 'my-custom-class',
@@ -185,7 +185,7 @@ export class EcheqGeneradosComponent implements OnInit {
     await alert.present();
   }
 
-  private obtenerData(){
+  private obtenerData(): void{
     const a = this.user.validarSesion();
     if (a){
       this.sesion = a;

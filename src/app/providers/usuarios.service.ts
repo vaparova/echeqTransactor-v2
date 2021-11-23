@@ -37,6 +37,9 @@ export class UsuariosService {
                private navCtrl: NavController ) {
     this.time = 300000;
    }
+  private datosCoelsa: any[] = [];
+
+  coelsa: DatosCoelsa[] = [];
 
   // M É T O D O S    P R O P I O S
 
@@ -143,6 +146,20 @@ export class UsuariosService {
     });
   }
 
+  private cargarEcheq(cuil: number): void {
+    this.item = this.afs.object(`coelsa/`).snapshotChanges();
+    // tslint:disable-next-line: deprecation
+    this.item.subscribe( action => {
+      this.datosCoelsa = action.payload.val();
+      console.log(this.datosCoelsa);
+      Object.values(this.datosCoelsa).forEach(element => {
+        if (element.datosTitularEcheq.cuil === cuil){
+          this.coelsa.push(element);
+        }
+      });
+      console.log(this.datosCoelsa);
+    });
+  }
   loginFb(cuil: number): Observable<any>{
     return this.afs.object(`usuarios/${cuil}`).snapshotChanges();
   }
@@ -450,7 +467,7 @@ export class UsuariosService {
     const arrCtasMod = this.insertEcheq(user, echeq, idxCta, idxCheq);
     user.usuario.datosCuentas = arrCtasMod;
     return this.modificarUsuario(cuil, user);
-  }
+  } ///
 
   getEcheqGenerados(cuil: number): any[]{
     const user = this.obtenerUsuario(cuil);
@@ -503,7 +520,7 @@ export class UsuariosService {
     chequera.echeq.push(echeq);
     user.usuario.datosCuentas[idxCta].cuentas.chequeras[idxCheq] = chequera;
     return user.usuario.datosCuentas;
-  }
+  } ///
 
   private reemplazarEcheq(arrEcheq: DatosEcheq[], idxEcheq: number, echeq: DatosEcheq): DatosEcheq[]{
     arrEcheq.splice(idxEcheq, 1, echeq);
@@ -536,7 +553,7 @@ export class UsuariosService {
   private modEcheqDisponibles(chequera: DatosChequeras): number{
     chequera.cantidadDisponible = chequera.cantidadDisponible - 1;
     return chequera.cantidadDisponible;
-  }
+  } ///
 
   private obtenerEcheqGenerado(user: DatosUsuario): any []{
     const arrEcheqs: any [] = [];
@@ -590,6 +607,13 @@ export class UsuariosService {
     case 'eliminar':
     return this.elimEcheq(arrEcheq, idxEcheq);
     }
+  }
+
+  // C O E L S A
+
+  buscarEcheqCoelsa(cuil: number): DatosCoelsa[]{
+    this.cargarEcheq(cuil);
+    return this.coelsa;
   }
 }
 
