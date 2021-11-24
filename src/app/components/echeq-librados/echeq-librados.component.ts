@@ -121,11 +121,6 @@ export class EcheqLibradosComponent implements OnInit {
         handler: () => {
           this.echeq = this.vistaEcheqs[i];
           this.cmprbte.comprobanteEcheq(this.echeq, 'Constancia de Libramiento Echeq');
-          // this.echeq = this.echeqs[i];
-          // this.crearFormaEcheq();
-          // this.setFormaEcheq();
-          // this.modificarVista(false, false, false, true);
-          // console.log(this.echeq);
         },
       }, {
         text: 'Anular Echeq ',
@@ -145,6 +140,10 @@ export class EcheqLibradosComponent implements OnInit {
 
     const { role } = await actionSheet.onDidDismiss();
     console.log('onDidDismiss resolved with role', role);
+  }
+
+  private anularEcheq(){
+    console.log('Anulando Echeq');
   }
 
 }

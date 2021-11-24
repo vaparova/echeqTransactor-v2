@@ -22,6 +22,9 @@ import { AngularFireModule } from '@angular/fire';
 import { AngularFirestoreModule } from '@angular/fire/firestore';
 import { TabsPageRoutingModule } from './pages/tabs/tabs-routing.module';
 
+import { FileOpener } from '@ionic-native/file-opener/ngx';
+import { File } from '@ionic-native/file/ngx';
+
 
 
 
@@ -46,6 +49,8 @@ import { TabsPageRoutingModule } from './pages/tabs/tabs-routing.module';
     AlertasService,
     EventosService,
     AngularFireAuth,
+    FileOpener,
+    File,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }
   ],
   bootstrap: [AppComponent]

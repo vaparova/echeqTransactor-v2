@@ -2,6 +2,10 @@ import { Injectable } from '@angular/core';
 import pdfMake from 'pdfmake/build/pdfmake';
 import pdfFonts from 'pdfmake/build/vfs_fonts';
 import { DatosCoelsa } from '../models/datosCoelsa';
+import { FileOpener } from '@ionic-native/file-opener/ngx';
+import { File } from '@ionic-native/file/ngx';
+import { Platform } from '@ionic/angular';
+
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
 @Injectable({
@@ -12,7 +16,11 @@ export class ComprobantesServiceService {
   img: any;
   pdfObj: any;
 
-  constructor() { }
+  constructor(
+    public file: File,
+    public fileOpener: FileOpener,
+    public platform: Platform
+  ) { }
 
 
   comprobanteEcheq( echeq: DatosCoelsa, accion: string): void{
@@ -126,6 +134,20 @@ export class ComprobantesServiceService {
     };
 
     this.pdfObj = pdfMake.createPdf(documento);
+    this.openfile();
+    // this.pdfObj.download();
+  }
+
+  openfile(){
+    if (this.platform.is('cordova')){
+      this.pdfObj.getBuffer( (buffer) => {
+        const blob = new Blob([buffer], {type: 'application/pdf'});
+        this.file.writeFile(this.file.dataDirectory, 'reporte.pdf', blob, { replace: true}).then( fileEntry => {
+          this.fileOpener.open(this.file.dataDirectory + 'reporte.pdf', 'application/pdf');
+        });
+      });
+      return true;
+    }
     this.pdfObj.download();
   }
 
