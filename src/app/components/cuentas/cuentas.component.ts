@@ -124,11 +124,13 @@ export class CuentasComponent implements OnInit {
 
   private obtenerCuentas(): void{ //
     const ctasCtes: DatosCuentas[] = [];
-    this.usuario.usuario.datosCuentas.forEach( cta => {
-      if (cta){
-        ctasCtes.push(cta);
-      }
-    });
+    if (this.usuario.usuario.datosCuentas){
+      this.usuario.usuario.datosCuentas.forEach( cta => {
+        if (cta){
+          ctasCtes.push(cta);
+        }
+      });
+    }
     this.cuentas = ctasCtes;
   }
 

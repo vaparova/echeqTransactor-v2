@@ -177,16 +177,18 @@ export class ChequerasElectronicasComponent implements OnInit {
   }
 
   private obtenerChequeras(cuentas: DatosCuentas[]){
-    cuentas.forEach(resp => {
-      if (resp.cuentas.chequeras){
-        resp.cuentas.chequeras.forEach((chequera: DatosChequeras) => {
-          const obj = { cta: resp.cuentas.cuenta,
-                        ent: resp.cuentas.entidad,
-                        cheq: chequera};
-          return this.chequeras.push(obj);
-        });
-      }
-    });
+    if (cuentas){
+      cuentas.forEach(resp => {
+        if (resp.cuentas.chequeras){
+          resp.cuentas.chequeras.forEach((chequera: DatosChequeras) => {
+            const obj = { cta: resp.cuentas.cuenta,
+                          ent: resp.cuentas.entidad,
+                          cheq: chequera};
+            return this.chequeras.push(obj);
+          });
+        }
+      });
+    }
   }
 
   private actualizarLista(): void{

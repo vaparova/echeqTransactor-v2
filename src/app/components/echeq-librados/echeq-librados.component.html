@@ -30,7 +30,7 @@
 
 <div *ngIf="verListado">
   <ion-card *ngFor="let echeq of vistaEcheqs, let i = index">
-    <ion-item button (click)="presentActionSheetEmitidos(i)">
+    <ion-item button (click)="mostrarMenu(i)">
       <ion-card-subtitle>{{echeq.datosEntidad.nombreEntidad}}</ion-card-subtitle>
       <ion-chip slot="end">
         <ion-label><strong>{{echeq.datosEcheq.montoEcheq | currency: '$'}}</strong></ion-label>
