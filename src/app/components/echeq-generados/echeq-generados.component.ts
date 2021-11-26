@@ -285,6 +285,7 @@ export class EcheqGeneradosComponent implements OnInit {
     }).then( () => {
       this.obtenerEcheqs();
       this.toast.mostrarToast('Echeq librado', 'primary');
+      this.navCtrl.navigateBack('/tab/crearEcheq/sector-mis-echeq/3');
     }).catch( (err) => {
       console.log('Hubo un error o se canceló la operación');
       this.toast.mostrarToast('Error enb DB!', 'danger');

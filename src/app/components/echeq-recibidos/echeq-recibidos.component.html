@@ -1,3 +1,100 @@
-<p>
-  echeq-recibidos works!
-</p>
+<div class="ion-padding-top">
+  <ion-label class="titulo ion-padding">Administrar Recibidos</ion-label><br>
+</div>
+
+<br>
+<div *ngIf="verMenu">
+  <ion-segment  (ionChange)="segmentChanged($event)" mode="ios" value="Emitido - Pendiente">
+    <ion-segment-button value="Emitido - Pendiente">
+      <ion-label>Pendientes</ion-label>
+    </ion-segment-button>
+    <ion-segment-button value="Activo">
+      <ion-label>Activos</ion-label>
+    </ion-segment-button>
+    <ion-segment-button value="Custodia">
+      <ion-label>Custodia</ion-label>
+    </ion-segment-button>
+  </ion-segment>
+</div>
+<!-- <div> {{echeqs | json}}</div> -->
+
+
+<div *ngIf="vacio">
+  <br>
+  <ion-chip color="primary">
+    <ion-icon name="information-circle-outline"></ion-icon>
+    <ion-label>No tienes echeqs con estado "{{estado}}"</ion-label>
+  </ion-chip>
+</div>
+
+
+<div *ngIf="verListado">
+  <ion-card *ngFor="let echeq of vistaEcheqs, let i = index">
+    <ion-item button (click)="mostrarMenu(i)">
+      <ion-card-subtitle>{{echeq.datosEntidad.nombreEntidad}}</ion-card-subtitle>
+      <ion-chip slot="end">
+        <ion-label><strong>{{echeq.datosEcheq.montoEcheq | currency: '$'}}</strong></ion-label>
+      </ion-chip>
+    </ion-item> 
+    <ion-card-header>
+      <ion-card-subtitle>Páguese a:</ion-card-subtitle>
+      <ion-card-title>{{echeq.datosEcheq.beneficiario.nombreBeneficiario}}</ion-card-title>
+    </ion-card-header>
+  
+    <ion-card-content>
+      <ion-card-subtitle>Fecha de pago: {{echeq.datosEcheq.fechaPago}}</ion-card-subtitle>
+      <ion-card-subtitle>Cuenta Corriente: {{echeq.datosCuenta.numeroCuenta}}</ion-card-subtitle>
+      <ion-card-subtitle>Echeq Nº: {{echeq.datosEcheq.nroEcheq}}</ion-card-subtitle>     
+      <ion-card-subtitle><strong>Estado: {{echeq.datosEcheq.estadoEcheq}}</strong></ion-card-subtitle>
+    </ion-card-content>
+  </ion-card>
+</div>
+
+<div *ngIf="verEcheq">
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Echeq Nº {{echeq.datosEcheq.nroEcheq}}</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-segment (ionChange)="detalleEcheq($event)" mode="ios" value="datosEcheq">
+        <ion-segment-button value="datosEcheq">
+          <ion-label>Echeq</ion-label>
+        </ion-segment-button>
+        <ion-segment-button value="datosCuenta">
+          <ion-label>Cuenta</ion-label>
+        </ion-segment-button>
+        <ion-segment-button value="datosBeneficiario">
+          <ion-label>Beneficiario</ion-label>
+        </ion-segment-button>
+      </ion-segment>
+      <br>
+
+       <div *ngIf="datosEcheq"> 
+        <h6 class="subtitulo">Datos Echeq</h6>
+        <p class="texto">Estado Echeq: {{echeq.datosEcheq.estadoEcheq}} </p>
+        <p class="texto">Fecha Emisión: {{echeq.datosEcheq.fechaEmision}}</p>
+        <p class="texto">Fecha Pago: {{echeq.datosEcheq.fechaPago}}</p>
+        <p class="texto">Id Echeq: {{echeq.datosEcheq.idEcheq}} </p>
+        <p class="texto">Monto Echeq: {{echeq.datosEcheq.montoEcheq | currency: '$'}} </p>
+        <p class="texto">Motivo: {{echeq.datosEcheq.motivo}} </p>
+        <p class="texto">Referencia: {{echeq.datosEcheq.referencia}} </p>
+      </div> 
+
+      <div *ngIf="datosCuenta">
+        <h6 class="subtitulo">Datos Cuenta Corriente</h6>
+        <p class="texto">Denominación: {{echeq.datosCuenta.denominacion}} </p>
+        <p class="texto">Número Cuenta: {{echeq.datosCuenta.numeroCuenta}}</p>
+        <p class="texto">CBU: {{echeq.datosCuenta.cbu}} </p>
+        <p class="texto">Entidad: {{echeq.datosEntidad.numeroEntidad}} - {{echeq.datosEntidad.nombreEntidad}}</p>
+        <p class="texto">Sucursal: {{echeq.datosEntidad.numeroSucursal}} - {{echeq.datosEntidad.nombreSucursal}}</p>
+      </div>
+
+       <div *ngIf="datosBeneficiario">
+        <h6 class="subtitulo">Datos Beneficiario</h6>
+        <p class="texto">Nombre y Apellido / Razón Social: {{echeq.datosEcheq.beneficiario.nombreBeneficiario}} </p>
+        <p class="texto">CUIL/ CUIT: {{echeq.datosEcheq.beneficiario.cuilBeneficiario}}</p> 
+       </div> 
+    </ion-card-content>
+  </ion-card>
+  <ion-button class="ion-margin" color="success" expand="block" (click)="volver()">Volver</ion-button>
+</div>

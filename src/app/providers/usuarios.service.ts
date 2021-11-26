@@ -161,6 +161,22 @@ export class UsuariosService {
       console.log(this.datosCoelsa);
     });
   }
+
+  private cargarEcheqBeneficiario(cuil: number): void{
+    this.coelsa = [];
+    this.item = this.afs.object(`coelsa/`).snapshotChanges();
+    // tslint:disable-next-line: deprecation
+    this.item.subscribe( action => {
+      this.datosCoelsa = action.payload.val();
+      console.log(this.datosCoelsa);
+      Object.values(this.datosCoelsa).forEach(element => {
+        if (element.datosEcheq.beneficiario.cuilBeneficiario === cuil){
+          this.coelsa.push(element);
+        }
+      });
+      console.log(this.datosCoelsa);
+    });
+  }
   loginFb(cuil: number): Observable<any>{
     return this.afs.object(`usuarios/${cuil}`).snapshotChanges();
   }
@@ -619,10 +635,15 @@ export class UsuariosService {
     return this.coelsa;
   }
 
-  anularEcheqCoelsa(echeq: DatosCoelsa){
+  buscarEcheqCoelsaBeneficiario(cuil: number): DatosCoelsa[]{
+    this.cargarEcheqBeneficiario(cuil);
+    return this.coelsa;
+  }
+
+  accionEcheqCoelsa(echeq: DatosCoelsa, estado: number){
     console.log('anular echeq');
     console.log(echeq.datosEcheq.idEcheq);
-    const echeqMod = this.cambiarEstadoEcheq(echeq.datosEcheq, 10);
+    const echeqMod = this.cambiarEstadoEcheq(echeq.datosEcheq, estado);
     console.log(echeqMod);
     echeq.datosEcheq = echeqMod;
     return this.modificarArrayCoelsa(echeq);

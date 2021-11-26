@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { ActionSheetController, NavController } from '@ionic/angular';
+import { ActionSheetController, NavController, AlertController } from '@ionic/angular';
 import { UsuariosService } from 'src/app/providers/usuarios.service';
 import { DatosCoelsa } from '../../models/datosCoelsa';
 import { DatosBeneficiario } from '../../models/datosBeneficiario';
@@ -36,7 +36,8 @@ export class EcheqLibradosComponent implements OnInit, OnDestroy {
               private cmprbte: ComprobantesServiceService,
               private pass: VerificarPasswordService,
               private toast: ToastsService,
-              private navCtrl: NavController) {
+              private navCtrl: NavController,
+              private alertController: AlertController) {
               }
 
   ngOnInit() {
@@ -115,7 +116,8 @@ export class EcheqLibradosComponent implements OnInit, OnDestroy {
         role: 'destructive',
         icon: 'trash-outline',
         handler: () => {
-          this.solicitarAnularEcheq();
+          // this.solicitarAnularEcheq();
+          this.confirmarBorrar();
         },
       }
       ]
@@ -173,9 +175,10 @@ export class EcheqLibradosComponent implements OnInit, OnDestroy {
 
   private buscarEcheqs(){
     this.echeqs = [];
-    this.echeqs = this.user.buscarEcheqCoelsa(27364183807);
+    this.echeqs = this.user.buscarEcheqCoelsa(this.sesion.cuil);
     setTimeout( () => {
       this.filtrarEcheqs('Emitido - Pendiente');
+      this.arrayVacio();
     }, 2000);
   }
 
@@ -230,8 +233,35 @@ export class EcheqLibradosComponent implements OnInit, OnDestroy {
     });
   }
 
+  private async confirmarBorrar(): Promise<void> {
+    const title = `Eliminar Echeq Nº ${this.echeq.datosEcheq.nroEcheq}`;
+    const alert = await this.alertController.create({
+      cssClass: 'my-custom-class',
+      header: title,
+      message: '¿Estas seguro de anular este Echeq?',
+      buttons: [
+        {
+          text: 'Cancelar',
+          role: 'cancel',
+          cssClass: 'secondary',
+          handler: (blah) => {
+            console.log('Confirm Cancel: blah');
+          }
+        }, {
+          text: 'Confirmar',
+          handler: () => {
+            this.solicitarAnularEcheq();
+            console.log('Confirm Okay');
+          }
+        }
+      ]
+    });
+
+    await alert.present();
+  }
+
   private anularEcheq(){
-    this.user.anularEcheqCoelsa(this.echeq).then( () => {
+    this.user.accionEcheqCoelsa(this.echeq, 10).then( () => {
       this.buscarEcheqs();
       this.toast.mostrarToast('Echeq Anulado!', 'primary');
     }).catch( (err) => {
