@@ -7,6 +7,10 @@ const routes: Routes = [
   {
     path: '',
     component: EcheqRecibidosPage
+  },
+  {
+    path: 'sector-echeq-recibidos/:i',
+    loadChildren: () => import('../sector-echeq-recibidos/sector-echeq-recibidos.module').then( m => m.SectorEcheqRecibidosPageModule)
   }
 ];
 

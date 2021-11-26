@@ -14,7 +14,11 @@ const routes: Routes = [
   {
     path: 'ingreso',
     loadChildren: () => import('../app/pages/ingreso/ingreso.module').then( m => m.IngresoPageModule)
-  }
+  },
+  // {
+  //   path: 'sector-echeq-recibidos',
+  // loadChildren: () => import('./pages/sector-echeq-recibidos/sector-echeq-recibidos.module').then( m => m.SectorEcheqRecibidosPageModule)
+  // }
 ];
 
 @NgModule({

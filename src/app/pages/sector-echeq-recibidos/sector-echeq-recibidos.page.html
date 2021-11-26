@@ -1,0 +1,10 @@
+<app-cabecera [ruta]="ruta[index].comp" [back]="ruta[index].atras"></app-cabecera>
+
+<ion-content mode="md">
+  <div [ngSwitch]="index">
+    <app-echeq-recibidos  *ngSwitchCase="1"></app-echeq-recibidos>
+    <!-- <app-echeq-generados *ngSwitchCase="2"></app-echeq-generados>
+    <app-echeq-librados *ngSwitchCase="3"></app-echeq-librados> -->
+
+  </div>
+</ion-content>
