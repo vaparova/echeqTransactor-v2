@@ -103,17 +103,39 @@
   <ion-card>
     <ion-card-header>
       <ion-card-title>Echeq Nº {{echeq.datosEcheq.nroEcheq}}</ion-card-title>
-      <ion-card-subtitle>{{accion}}</ion-card-subtitle>
+      <ion-card-subtitle>{{accion}} Echeq</ion-card-subtitle>
     </ion-card-header>
   
     <ion-card-content>
       <h6 class="subtitulo">Datos Echeq</h6>
-      <p class="texto">Monto: {{echeq.datosEcheq.montoEcheq}} </p>
+      <p class="texto">Monto: ${{echeq.datosEcheq.montoEcheq |number}} </p>
       <p class="texto">Fecha Pago: {{echeq.datosEcheq.fechaPago}}</p>    
       <h6 class="subtitulo">Datos Librador</h6>
       <p class="texto">Denominación: {{echeq.datosTitularEcheq.denominacion}} </p>
       <p class="texto">CUIL/ CUIT: {{echeq.datosTitularEcheq.denominacion}}</p>    
     </ion-card-content>
   </ion-card>
+
+  <div *ngIf="!sinCuentas">
+    <br>
+    <ion-chip color="danger">
+      <ion-icon name="information-circle-outline"></ion-icon>
+      <ion-label>No posees cuentas asociadas para depositar tu echeq</ion-label>
+    </ion-chip>
+  </div>
+
+  <div *ngIf="sinCuentas">
+    <form [formGroup]="formaCtas" mode="md">         
+      <ion-item>
+        <ion-label position="stacked">Seleccionar cuenta depósito</ion-label>
+        <ion-select formControlName="cuenta">
+          <ion-select-option *ngFor="let cta of listaEntidades" [value]="cta">{{cta.cuentas.cuenta.numeroCuenta}}</ion-select-option>
+        </ion-select>
+      </ion-item>
+      <br>
+      <ion-button size="small" color="success" expand="block" (click)="depositoCta('accion')">{{accion}} Echeq</ion-button>
+      <br>
+    </form>
+  </div>
 
 </div>

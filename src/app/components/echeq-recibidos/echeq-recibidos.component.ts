@@ -7,6 +7,9 @@ import { ToastsService } from '../../providers/toasts.service';
 import { ActionSheetController, NavController, AlertController } from '@ionic/angular';
 import { ComprobantesServiceService } from '../../providers/comprobantes-service.service';
 import { VerificarPasswordService } from '../../providers/verificar-password.service';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { DatosCuentas } from 'src/app/models/datosCuentas';
+import { threadId } from 'worker_threads';
 
 @Component({
   selector: 'app-echeq-recibidos',
@@ -17,12 +20,15 @@ export class EcheqRecibidosComponent implements OnInit {
 
   sesion: DatosSesion;
   usuario: DatosUsuario;
-  vacio = false;
   echeqs: DatosCoelsa[] = [];
   vistaEcheqs: DatosCoelsa[] = [];
   echeq: DatosCoelsa;
-  estado = 'Emitido - Pendiente';
+  formaCtas: FormGroup;
+  listaEntidades: DatosCuentas[] = [];
   accion: string;
+  estado = 'Emitido - Pendiente';
+  sinCuentas = false;
+  vacio = false;
   verMenu = true;
   verListado = true;
   verEcheq = false;
@@ -30,6 +36,12 @@ export class EcheqRecibidosComponent implements OnInit {
   datosEcheq = false;
   datosCuenta = false;
   datosBeneficiario = false;
+  state = {
+    importe: '',
+    pago: '',
+    motivo: '',
+    referencia: ''
+  };
 
 
   constructor(private user: UsuariosService,
@@ -38,7 +50,8 @@ export class EcheqRecibidosComponent implements OnInit {
               public actionSheetController: ActionSheetController,
               private cmprbte: ComprobantesServiceService,
               private pass: VerificarPasswordService,
-              private alertController: AlertController
+              private alertController: AlertController,
+              private fb: FormBuilder,
               ) { }
 
   ngOnInit() {
@@ -92,6 +105,10 @@ export class EcheqRecibidosComponent implements OnInit {
   volver(){
     this.modificarVista(true, true, false, false);
     this.verDetalleEcheq(false, false, false);
+  }
+
+  depositoCta(accion: string){
+    // console.log(this.formaCtas);
   }
 
   private obtenerData(): void{
@@ -216,10 +233,11 @@ export class EcheqRecibidosComponent implements OnInit {
         },
       }, {
         text: 'Enviar a Custodia',
+        role: 'destructive',
         icon: 'calendar-outline',
         handler: () => {
-          this.accion = 'Enviar a Custodia';
-          this.modificarVista(false, false, false, true);
+          this.accion = 'Custodiar';
+          this.comprobarCtas();
         },
       }, {
         text: 'Endosar',
@@ -281,6 +299,27 @@ export class EcheqRecibidosComponent implements OnInit {
       });
     }
   }
+
+  private comprobarCtas(){
+    this.listaEntidades = this.usuario.usuario.datosCuentas;
+    this.crearFormaCta();
+    if (this.usuario.usuario.datosCuentas) {
+      this.sinCuentas = true;
+    }
+    this.modificarVista(false, false, false, true);
+  }
+
+  private crearFormaCta(): void{
+    this.formaCtas = this.fb.group({
+      cuenta: ['',  [Validators.required]],
+    });
+  }
+
+  // private setFormaCta(): void{
+  //   this.formaCtas.reset({
+  //     cuenta: this.listaEntidades,
+  //   });
+  // }
 
   private async confirmarModificarEcheq(accion: string, estado: number): Promise<void> {
     const cap = accion.replace(/\w\S*/g, (w) => (w.replace(/^\w/, (c) => c.toUpperCase())));
