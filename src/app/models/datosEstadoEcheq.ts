@@ -1,6 +1,6 @@
 export class DatosEstadoEcheq{
     estados = [
-       'En edición',
+       'En edicion',
        'Emitido - Pendiente',
        'Activo',
        'Custodia',
@@ -12,7 +12,7 @@ export class DatosEstadoEcheq{
        'Repudiado',
        'Anulado',
        'Vencido',
-       'Devolución Pendiente'
+       'Devolucion Pendiente'
     ];
 
     constructor(){}

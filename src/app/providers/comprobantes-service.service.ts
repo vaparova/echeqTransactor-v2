@@ -15,15 +15,17 @@ export class ComprobantesServiceService {
 
   img: any;
   pdfObj: any;
+  fecha: Date;
 
   constructor(
     public file: File,
     public fileOpener: FileOpener,
     public platform: Platform
-  ) { }
+  ) {  }
 
 
   comprobanteEcheq( echeq: DatosCoelsa, accion: string): void{
+    this.fecha = new Date();
     const montoEcheq = echeq.datosEcheq.montoEcheq;
     const montoFormato = new Intl.NumberFormat('en-IN', {minimumFractionDigits: 2}).format(montoEcheq);
 
@@ -108,6 +110,15 @@ export class ComprobantesServiceService {
                     }
                  ],
                },
+             ],
+             [
+              {
+                stack: [
+                         {text: [
+                      {text: `\n\nFecha y Hora de Generación: ${this.fecha} - Echeq Transactor App Mobile \n\n`, fontSize: 8, italics: true}
+                         ]},
+                ],
+              },
              ]
            ]
          },

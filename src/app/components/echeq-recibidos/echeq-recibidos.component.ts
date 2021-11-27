@@ -22,9 +22,11 @@ export class EcheqRecibidosComponent implements OnInit {
   vistaEcheqs: DatosCoelsa[] = [];
   echeq: DatosCoelsa;
   estado = 'Emitido - Pendiente';
+  accion: string;
   verMenu = true;
   verListado = true;
   verEcheq = false;
+  verCuentasDeposito = false;
   datosEcheq = false;
   datosCuenta = false;
   datosBeneficiario = false;
@@ -54,6 +56,7 @@ export class EcheqRecibidosComponent implements OnInit {
     const estado = ev.detail.value.toString();
     this.estado = estado;
     this.filtrarEcheqs(estado);
+    this.arrayVacio();
   }
 
   detalleEcheq(ev: any){
@@ -75,16 +78,19 @@ export class EcheqRecibidosComponent implements OnInit {
     this.echeq = this.vistaEcheqs[i];
     switch (this.echeq.datosEcheq.estadoEcheq){
       case ('Emitido - Pendiente'):
-        this.presentActionSheetEmitidos(i);
+        this.menuEmitidos(i);
         break;
       case ('Activo'):
-        this.presentActionSheetActivos(i);
+        this.menuActivos(i);
+        break;
+      case ('Devolucion Pendiente'):
+        this.menuDevueltos(i);
         break;
     }
   }
 
   volver(){
-    this.modificarVista(true, true, false);
+    this.modificarVista(true, true, false, false);
     this.verDetalleEcheq(false, false, false);
   }
 
@@ -103,7 +109,7 @@ export class EcheqRecibidosComponent implements OnInit {
     }
   }
 
-  async presentActionSheetEmitidos(i: number): Promise<void> {
+  async menuEmitidos(i: number): Promise<void> {
     const actionSheet = await this.actionSheetController.create({
       cssClass: 'my-custom-class',
       mode: 'md',
@@ -111,9 +117,8 @@ export class EcheqRecibidosComponent implements OnInit {
         text: 'Ver Datos',
         icon: 'eye-outline',
         handler: () => {
-          this.modificarVista(false, false, true);
+          this.modificarVista(false, false, true, false);
           this.verDetalleEcheq(true, false, false);
-          // this.echeq = this.vistaEcheqs[i];
           console.log(this.echeq);
         }
       }, {
@@ -121,21 +126,23 @@ export class EcheqRecibidosComponent implements OnInit {
         icon: 'cloud-download-outline',
         handler: () => {
           this.echeq = this.vistaEcheqs[i];
-          this.cmprbte.comprobanteEcheq(this.echeq, 'Constancia de Libramiento Echeq');
+          this.cmprbte.comprobanteEcheq(this.echeq, 'Constancia de consulta echeq');
         },
       }, {
         text: 'Recibir Echeq',
         icon: 'mail-unread-outline',
         handler: () => {
-          // this.confirmarAceptarEcheq('recibir');
-          // this.solicitarAnularEcheq();
+          this.echeq = this.vistaEcheqs[i];
+          this.confirmarModificarEcheq('recibir', 2);
+
         },
       }, {
         text: 'Repudiar Echeq',
         role: 'destructive',
         icon: 'trash-outline',
         handler: () => {
-          // this.solicitarAnularEcheq();
+          this.echeq = this.vistaEcheqs[i];
+          this.confirmarModificarEcheq('repudiar', 9);
         },
       }
       ]
@@ -146,7 +153,7 @@ export class EcheqRecibidosComponent implements OnInit {
     console.log('onDidDismiss resolved with role', role);
   }
 
-  async presentActionSheetActivos(i: number): Promise<void> {
+  async menuDevueltos(i: number): Promise<void> {
     const actionSheet = await this.actionSheetController.create({
       cssClass: 'my-custom-class',
       mode: 'md',
@@ -154,9 +161,8 @@ export class EcheqRecibidosComponent implements OnInit {
         text: 'Ver Datos',
         icon: 'eye-outline',
         handler: () => {
-          this.modificarVista(false, false, true);
+          this.modificarVista(false, false, true, false);
           this.verDetalleEcheq(true, false, false);
-          // this.echeq = this.vistaEcheqs[i];
           console.log(this.echeq);
         }
       }, {
@@ -164,10 +170,70 @@ export class EcheqRecibidosComponent implements OnInit {
         role: 'destructive',
         icon: 'cloud-download-outline',
         handler: () => {
-          // this.echeq = this.vistaEcheqs[i];
-          // this.cmprbte.comprobanteEcheq(this.echeq, 'Constancia de Libramiento Echeq');
+          this.cmprbte.comprobanteEcheq(this.echeq, 'Constancia de consulta Echeq');
         },
-      }
+      }, {
+        text: 'Aceptar Pedido Devolución',
+        role: 'destructive',
+        icon: 'thumbs-up-outline',
+        handler: () => {
+          this.confirmarModificarEcheq('aceptar devolución', 10);
+        }
+      }, {
+        text: 'Anular Pedido Devolución',
+        role: 'destructive',
+        icon: 'thumbs-down-outline',
+        handler: () => {
+          this.confirmarModificarEcheq('anular devolución', 2);
+        }
+      },
+      ]
+    });
+    await actionSheet.present();
+
+    const { role } = await actionSheet.onDidDismiss();
+    console.log('onDidDismiss resolved with role', role);
+  }
+
+  async menuActivos(i: number): Promise<void> {
+    const actionSheet = await this.actionSheetController.create({
+      cssClass: 'my-custom-class',
+      mode: 'md',
+      buttons: [ {
+        text: 'Ver Datos',
+        icon: 'eye-outline',
+        handler: () => {
+          this.modificarVista(false, false, true, false);
+          this.verDetalleEcheq(true, false, false);
+          console.log(this.echeq);
+        }
+      }, {
+        text: 'Descargar Comprobante ',
+        role: 'destructive',
+        icon: 'cloud-download-outline',
+        handler: () => {
+          this.cmprbte.comprobanteEcheq(this.echeq, 'Constancia de consulta Echeq');
+        },
+      }, {
+        text: 'Enviar a Custodia',
+        icon: 'calendar-outline',
+        handler: () => {
+          this.accion = 'Enviar a Custodia';
+          this.modificarVista(false, false, false, true);
+        },
+      }, {
+        text: 'Endosar',
+        icon: 'paper-plane-outline',
+        handler: () => {
+
+        },
+      }, {
+        text: 'Depositar',
+        icon: 'cash',
+        handler: () => {
+          this.cmprbte.comprobanteEcheq(this.echeq, 'Constancia de consulta Echeq');
+        },
+      },
       ]
     });
     await actionSheet.present();
@@ -182,10 +248,11 @@ export class EcheqRecibidosComponent implements OnInit {
     this.datosBeneficiario = datosBeneficiario;
   }
 
-  private modificarVista(verMenu: boolean, verListado: boolean, verEcheq: boolean){
+  private modificarVista(verMenu: boolean, verListado: boolean, verEcheq: boolean, verCtasDep: boolean){
     this.verMenu = verMenu;
     this.verListado = verListado;
     this.verEcheq = verEcheq;
+    this.verCuentasDeposito = verCtasDep;
   }
 
   private buscarEcheqs(){
@@ -200,20 +267,28 @@ export class EcheqRecibidosComponent implements OnInit {
   private filtrarEcheqs(estado: string){
     this.vistaEcheqs = [];
     console.log(this.echeqs.length);
-    Object.values(this.echeqs).forEach( echeq => {
-      if (echeq.datosEcheq.estadoEcheq === estado){
-        this.vistaEcheqs.push(echeq);
-      }
-    });
-    this.arrayVacio();
+    if (estado === 'Emitido - Pendiente'){
+      Object.values(this.echeqs).forEach ( echeq => {
+        if ( echeq.datosEcheq.estadoEcheq === estado || echeq.datosEcheq.estadoEcheq === 'Devolucion Pendiente'){
+          this.vistaEcheqs.push(echeq);
+        }
+      });
+    }else{
+      Object.values(this.echeqs).forEach( echeq => {
+        if (echeq.datosEcheq.estadoEcheq === estado){
+          this.vistaEcheqs.push(echeq);
+        }
+      });
+    }
   }
 
-  private async confirmarAceptarEcheq(accion: string): Promise<void> {
-    const title = `Eliminar Echeq Nº ${this.echeq.datosEcheq.nroEcheq}`;
+  private async confirmarModificarEcheq(accion: string, estado: number): Promise<void> {
+    const cap = accion.replace(/\w\S*/g, (w) => (w.replace(/^\w/, (c) => c.toUpperCase())));
+    const title = `${cap} Echeq Nº ${this.echeq.datosEcheq.nroEcheq}`;
     const alert = await this.alertController.create({
       cssClass: 'my-custom-class',
       header: title,
-      message: `¿Estas seguro de recibir/aceptar este Echeq?`,
+      message: `¿Estas seguro de ${accion} este Echeq?`,
       buttons: [
         {
           text: 'Cancelar',
@@ -225,7 +300,7 @@ export class EcheqRecibidosComponent implements OnInit {
         }, {
           text: 'Confirmar',
           handler: () => {
-            this.solicitarAceptarEcheq();
+            this.solicitarModificarEcheq(accion, estado);
             console.log('Confirm Okay');
           }
         }
@@ -235,13 +310,12 @@ export class EcheqRecibidosComponent implements OnInit {
     await alert.present();
   }
 
-  private async solicitarAceptarEcheq(): Promise<void>{
-    console.log('Anulando Echeq');
-    await this.pass.verificarPass(27364183807).then( (resp) => {
+  private async solicitarModificarEcheq(accion: string, estado: number): Promise<void>{
+    await this.pass.verificarPass(this.sesion.cuil).then( (resp) => {
       if (resp.data.respuesta){
         this.toast.mostrarToast(resp.data.argumento, 'primary');
         setTimeout( () => {
-         // this.anularEcheq();
+         this.modEcheq(accion, estado);
         }, 2000);
       }else{
         this.toast.mostrarToast(resp.data.argumento, 'danger');
@@ -258,5 +332,14 @@ export class EcheqRecibidosComponent implements OnInit {
     }
   }
 
+  private modEcheq(accion: string, estado: number){
+    this.user.accionEcheqCoelsa(this.echeq, estado).then( () => {
+      this.buscarEcheqs();
+      this.toast.mostrarToast(`Echeq modificado!`, 'primary');
+      this.cmprbte.comprobanteEcheq(this.echeq, `Constancia por ${accion} echeq`);
+    }).catch( (err) => {
+      this.toast.mostrarToast('Error en BD!', 'danger');
+    });
+  }
 
 }

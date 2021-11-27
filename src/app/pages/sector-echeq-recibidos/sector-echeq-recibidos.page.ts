@@ -12,12 +12,12 @@ export class SectorEcheqRecibidosPage implements OnInit {
   ruta = [
     {atras: 'No definido',
      comp: 'No definido'},
+    {atras: 'tab/echeqRecibidos',
+     comp: 'Echeq Recibidos > Administrar'},
     {atras: 'tab/crearEcheq',
-     comp: 'Mis Echeq > Crear Echeq'},
+     comp: 'Echeq Recibidos > Echeq Depositados'},
     {atras: 'tab/crearEcheq',
-     comp: 'Mis Echeq > Echeq Generados'},
-    {atras: 'tab/crearEcheq',
-     comp: 'Mis Echeq > Echeq Entregados'}
+     comp: 'Echeq Recibidos > Echeq Endosados'}
   ];
 
   constructor(private route: ActivatedRoute) {

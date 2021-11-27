@@ -56,6 +56,7 @@ export class EcheqLibradosComponent implements OnInit, OnDestroy {
     const estado = ev.detail.value.toString();
     this.estado = estado;
     this.filtrarEcheqs(estado);
+    this.arrayVacio();
   }
 
   detalleEcheq(ev: any){
@@ -82,15 +83,18 @@ export class EcheqLibradosComponent implements OnInit, OnDestroy {
     this.echeq = this.vistaEcheqs[i];
     switch (this.echeq.datosEcheq.estadoEcheq){
       case ('Emitido - Pendiente'):
-        this.presentActionSheetEmitidos(i);
+        this.menuEmitidos();
         break;
       case ('Activo'):
-        this.presentActionSheetActivos(i);
+        this.menuActivos();
+        break;
+      case ('Devolucion Pendiente'):
+        this.menuDevueltos();
         break;
     }
   }
 
-  async presentActionSheetEmitidos(i: number): Promise<void> {
+  async menuEmitidos(): Promise<void> {
     const actionSheet = await this.actionSheetController.create({
       cssClass: 'my-custom-class',
       mode: 'md',
@@ -100,24 +104,19 @@ export class EcheqLibradosComponent implements OnInit, OnDestroy {
         handler: () => {
           this.modificarVista(false, false, true);
           this.verDetalleEcheq(true, false, false);
-          // this.echeq = this.vistaEcheqs[i];
           console.log(this.echeq);
         }
       }, {
         text: 'Descargar Comprobante ',
-        role: 'destructive',
         icon: 'cloud-download-outline',
         handler: () => {
-          // this.echeq = this.vistaEcheqs[i];
-          this.cmprbte.comprobanteEcheq(this.echeq, 'Constancia de Libramiento Echeq');
+          this.cmprbte.comprobanteEcheq(this.echeq, 'Constancia de consulta echeq');
         },
       }, {
         text: 'Anular Echeq ',
-        role: 'destructive',
         icon: 'trash-outline',
         handler: () => {
-          // this.solicitarAnularEcheq();
-          this.confirmarBorrar();
+          this.confirmarModificarEcheq('anular', 10);
         },
       }
       ]
@@ -128,7 +127,7 @@ export class EcheqLibradosComponent implements OnInit, OnDestroy {
     console.log('onDidDismiss resolved with role', role);
   }
 
-  async presentActionSheetActivos(i: number): Promise<void> {
+  async menuActivos(): Promise<void> {
     const actionSheet = await this.actionSheetController.create({
       cssClass: 'my-custom-class',
       mode: 'md',
@@ -138,7 +137,6 @@ export class EcheqLibradosComponent implements OnInit, OnDestroy {
         handler: () => {
           this.modificarVista(false, false, true);
           this.verDetalleEcheq(true, false, false);
-          // this.echeq = this.vistaEcheqs[i];
           console.log(this.echeq);
         }
       }, {
@@ -146,8 +144,52 @@ export class EcheqLibradosComponent implements OnInit, OnDestroy {
         role: 'destructive',
         icon: 'cloud-download-outline',
         handler: () => {
-          // this.echeq = this.vistaEcheqs[i];
-          this.cmprbte.comprobanteEcheq(this.echeq, 'Constancia de Libramiento Echeq');
+          this.cmprbte.comprobanteEcheq(this.echeq, 'Constancia de consulta echeq');
+        },
+      }, {
+        text: 'Pedir Devolución',
+        role: 'destructive',
+        icon: 'arrow-undo-outline',
+        handler: () => {
+          this.confirmarModificarEcheq('pedir devolución', 12);
+          // this.cmprbte.comprobanteEcheq(this.echeq, 'Constancia de Libramiento Echeq');
+        },
+      }
+      ]
+    });
+    await actionSheet.present();
+
+    const { role } = await actionSheet.onDidDismiss();
+    console.log('onDidDismiss resolved with role', role);
+  }
+
+
+  async menuDevueltos(): Promise<void> {
+    const actionSheet = await this.actionSheetController.create({
+      cssClass: 'my-custom-class',
+      mode: 'md',
+      buttons: [ {
+        text: 'Ver Datos',
+        icon: 'eye-outline',
+        handler: () => {
+          this.modificarVista(false, false, true);
+          this.verDetalleEcheq(true, false, false);
+          console.log(this.echeq);
+        }
+      }, {
+        text: 'Descargar Comprobante ',
+        role: 'destructive',
+        icon: 'cloud-download-outline',
+        handler: () => {
+          this.cmprbte.comprobanteEcheq(this.echeq, 'Constancia de consulta echeq');
+        },
+      }, {
+        text: 'Anular Pedido Devolución',
+        role: 'destructive',
+        icon: 'arrow-redo-outline',
+        handler: () => {
+          this.confirmarModificarEcheq('anular devolución', 2);
+          // this.cmprbte.comprobanteEcheq(this.echeq, 'Constancia de Libramiento Echeq');
         },
       }
       ]
@@ -219,13 +261,13 @@ export class EcheqLibradosComponent implements OnInit, OnDestroy {
     this.datosBeneficiario = datosBeneficiario;
   }
 
-  private async solicitarAnularEcheq(){
+  private async solicitarPassword(accion: string, estado: number){
     console.log('Anulando Echeq');
-    await this.pass.verificarPass(27364183807).then( (resp) => {
+    await this.pass.verificarPass(this.sesion.cuil).then( (resp) => {
       if (resp.data.respuesta){
         this.toast.mostrarToast(resp.data.argumento, 'primary');
         setTimeout( () => {
-         this.anularEcheq();
+         this.solicitarModificarEcheq(accion, estado);
         }, 2000);
       }else{
         this.toast.mostrarToast(resp.data.argumento, 'danger');
@@ -233,12 +275,13 @@ export class EcheqLibradosComponent implements OnInit, OnDestroy {
     });
   }
 
-  private async confirmarBorrar(): Promise<void> {
-    const title = `Eliminar Echeq Nº ${this.echeq.datosEcheq.nroEcheq}`;
+  private async confirmarModificarEcheq(accion: string, estado: number): Promise<void> {
+    const cap = accion.replace(/\w\S*/g, (w) => (w.replace(/^\w/, (c) => c.toUpperCase())));
+    const title = `${cap} Echeq Nº ${this.echeq.datosEcheq.nroEcheq}`;
     const alert = await this.alertController.create({
       cssClass: 'my-custom-class',
       header: title,
-      message: '¿Estas seguro de anular este Echeq?',
+      message: `¿Estas seguro de ${accion} este Echeq?`,
       buttons: [
         {
           text: 'Cancelar',
@@ -250,7 +293,7 @@ export class EcheqLibradosComponent implements OnInit, OnDestroy {
         }, {
           text: 'Confirmar',
           handler: () => {
-            this.solicitarAnularEcheq();
+            this.solicitarPassword(accion, estado);
             console.log('Confirm Okay');
           }
         }
@@ -260,10 +303,12 @@ export class EcheqLibradosComponent implements OnInit, OnDestroy {
     await alert.present();
   }
 
-  private anularEcheq(){
-    this.user.accionEcheqCoelsa(this.echeq, 10).then( () => {
+  private solicitarModificarEcheq(accion: string, estado: number){
+    this.user.accionEcheqCoelsa(this.echeq, estado).then( () => {
       this.buscarEcheqs();
-      this.toast.mostrarToast('Echeq Anulado!', 'primary');
+      this.toast.mostrarToast(`Echeq modificado!`, 'primary');
+      this.cmprbte.comprobanteEcheq(this.echeq, `Constancia por ${accion} echeq`);
+      this.navCtrl.navigateBack('/tab/crearEcheq/sector-mis-echeq/3');
     }).catch( (err) => {
       this.toast.mostrarToast('Error en BD!', 'danger');
     });

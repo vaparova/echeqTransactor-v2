@@ -518,7 +518,8 @@ export class UsuariosService {
       user.usuario.datosCuentas = this.modArrEcheq(cuil, cuenta, chequera, echeqMod, echeqMod.nroEcheq, 'modificar');
       console.log(user);
       return this.publicarEcheq(cuil, echeqMod, cuenta, entidad).then( () => {
-        return this.modificarUsuario(cuil, user);
+        // return this.modificarUsuario(cuil, user);
+        return this.eliminarEcheq(cuil, cuenta, chequera, echeq.nroEcheq);
       });
     }
   }
@@ -641,7 +642,7 @@ export class UsuariosService {
   }
 
   accionEcheqCoelsa(echeq: DatosCoelsa, estado: number){
-    console.log('anular echeq');
+    console.log('US: Modificando estado echeq Coelsa');
     console.log(echeq.datosEcheq.idEcheq);
     const echeqMod = this.cambiarEstadoEcheq(echeq.datosEcheq, estado);
     console.log(echeqMod);
@@ -651,11 +652,9 @@ export class UsuariosService {
 
   modificarArrayCoelsa(echeq: DatosCoelsa): Promise<any>{
     return this.modificarEcheqCoelsa(echeq.datosEcheq.idEcheq, echeq).then( () => {
-      this.modificarEcheqUsuario(echeq).then( () => {
-        const i = this.obtenerIndexCoelsa(echeq);
-        this.coelsa.splice(0, 1, echeq);
-        this.guardarStorage();
-      });
+      const i = this.obtenerIndexCoelsa(echeq);
+      this.coelsa.splice(0, 1, echeq);
+      // this.guardarStorage();
     });
   }
 
@@ -667,31 +666,31 @@ export class UsuariosService {
     return this.coelsa.indexOf(echeq);
   }
 
-  private modificarEcheqUsuario(echeq: DatosCoelsa): Promise<any>{
-    const arrCtas = this.getArrCuentas(this.obtenerUsuario(echeq.datosTitularEcheq.cuil));
-    const cta = arrCtas.find( resp => resp.cuentas.cuenta.cbu === echeq.datosCuenta.cbu);
-    const arrCheq = this.getArrChequeras(cta);
-    return this.modificarEcheq(
-      echeq.datosTitularEcheq.cuil,
-      echeq.datosCuenta,
-      this.buscarChequeraEcheq(arrCheq, echeq.datosEcheq),
-      echeq.datosEcheq
-    );
-  }
+  // private modificarEcheqUsuario(echeq: DatosCoelsa): Promise<any>{
+  //   const arrCtas = this.getArrCuentas(this.obtenerUsuario(echeq.datosTitularEcheq.cuil));
+  //   const cta = arrCtas.find( resp => resp.cuentas.cuenta.cbu === echeq.datosCuenta.cbu);
+  //   const arrCheq = this.getArrChequeras(cta);
+  //   return this.modificarEcheq(
+  //     echeq.datosTitularEcheq.cuil,
+  //     echeq.datosCuenta,
+  //     this.buscarChequeraEcheq(arrCheq, echeq.datosEcheq),
+  //     echeq.datosEcheq
+  //   );
+  // }
 
-  private buscarChequeraEcheq(arrCheq: DatosChequeras[], datoEcheq: DatosEcheq): DatosChequeras{
-    let cheq: DatosChequeras;
-    Object.values(arrCheq).forEach( chequera => {
-      if (chequera.echeq){
-        Object.values(chequera.echeq).forEach ( echeq => {
-          if (echeq.idEcheq === datoEcheq.idEcheq){
-            cheq = chequera;
-          }
-        });
-      }
-    });
-    return cheq;
-  }
+//   private buscarChequeraEcheq(arrCheq: DatosChequeras[], datoEcheq: DatosEcheq): DatosChequeras{
+//     let cheq: DatosChequeras;
+//     Object.values(arrCheq).forEach( chequera => {
+//       if (chequera.echeq){
+//         Object.values(chequera.echeq).forEach ( echeq => {
+//           if (echeq.idEcheq === datoEcheq.idEcheq){
+//             cheq = chequera;
+//           }
+//         });
+//       }
+//     });
+//     return cheq;
+//   }
 }
 
 
