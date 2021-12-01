@@ -7,6 +7,15 @@
       
       <div *ngIf="crearUno">
         <ion-note class="ion-padding">1 - Selecciona una chequera</ion-note>
+
+        <div *ngIf="vacio">
+          <br>
+          <ion-chip color="warning">
+            <ion-icon name="information-circle-outline"></ion-icon>
+            <ion-label>No tienes chequeras vinculadas</ion-label>
+          </ion-chip>
+        </div>
+
         <ion-card  *ngFor="let chequera of arrChequeras, let i = index" (click)="pasoDatosBeneficiario(i)">
           <ion-card-header>
             <ion-card-subtitle class="subtitulo">Echeq Disponibles: {{chequera.cheq.cantidadDisponible}}</ion-card-subtitle>

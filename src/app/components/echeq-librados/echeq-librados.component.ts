@@ -8,6 +8,7 @@ import { VerificarPasswordService } from '../../providers/verificar-password.ser
 import { ToastsService } from '../../providers/toasts.service';
 import { DatosSesion } from 'src/app/models/datosSesion';
 import { DatosUsuario } from 'src/app/models/datosUsuario';
+import { DatosEndoso } from 'src/app/models/datosEndoso';
 
 @Component({
   selector: 'app-echeq-librados',
@@ -22,6 +23,7 @@ export class EcheqLibradosComponent implements OnInit, OnDestroy {
   echeqs: DatosCoelsa[] = [];
   vistaEcheqs: DatosCoelsa[] = [];
   echeq: DatosCoelsa;
+  tenedor: DatosBeneficiario;
   estado = 'Emitido - Pendiente';
   verMenu = true;
   verListado = true;
@@ -80,7 +82,8 @@ export class EcheqLibradosComponent implements OnInit, OnDestroy {
   }
 
   mostrarMenu(i: number){
-    this.echeq = this.vistaEcheqs[i];
+    // this.echeq = this.vistaEcheqs[i];
+    this.setEcheqVista(i);
     switch (this.echeq.datosEcheq.estadoEcheq){
       case ('Emitido - Pendiente'):
         this.menuEmitidos();
@@ -92,6 +95,12 @@ export class EcheqLibradosComponent implements OnInit, OnDestroy {
         this.menuDevueltos();
         break;
     }
+  }
+
+  private setEcheqVista(i: number){
+    this.echeq = this.vistaEcheqs[i];
+    const idx = this.echeq.datosEcheq.endososEcheq.length - 1;
+    this.tenedor = this.echeq.datosEcheq.endososEcheq[idx].endosatario;
   }
 
   async menuEmitidos(): Promise<void> {
@@ -302,6 +311,7 @@ export class EcheqLibradosComponent implements OnInit, OnDestroy {
 
     await alert.present();
   }
+
 
   private solicitarModificarEcheq(accion: string, estado: number){
     this.user.accionEcheqCoelsa(this.echeq, estado).then( () => {

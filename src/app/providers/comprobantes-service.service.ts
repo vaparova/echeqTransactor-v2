@@ -1,3 +1,4 @@
+import { DatosEcheq } from './../models/datosEcheq';
 import { Injectable } from '@angular/core';
 import pdfMake from 'pdfmake/build/pdfmake';
 import pdfFonts from 'pdfmake/build/vfs_fonts';
@@ -16,6 +17,9 @@ export class ComprobantesServiceService {
   img: any;
   pdfObj: any;
   fecha: Date;
+  denEndoso = ' - ';
+  cuilEndoso = ' - ';
+  cbuDep = ' - ';
 
   constructor(
     public file: File,
@@ -28,6 +32,21 @@ export class ComprobantesServiceService {
     this.fecha = new Date();
     const montoEcheq = echeq.datosEcheq.montoEcheq;
     const montoFormato = new Intl.NumberFormat('en-IN', {minimumFractionDigits: 2}).format(montoEcheq);
+
+    this.denEndoso = ' - ';
+    this.cuilEndoso = ' - ';
+    this.cbuDep = ' - ';
+    if (echeq.datosEcheq.endososEcheq){
+      if (echeq.datosEcheq.endososEcheq.length > 0){
+        const idx = echeq.datosEcheq.endososEcheq.length - 1;
+        this.denEndoso = echeq.datosEcheq.endososEcheq[idx].endosatario.nombreBeneficiario;
+        this.cuilEndoso = echeq.datosEcheq.endososEcheq[idx].endosatario.cuilBeneficiario.toString();
+        if (echeq.datosEcheq.endososEcheq[idx].endosatario.datosCuenta){
+          this.cbuDep = echeq.datosEcheq.endososEcheq[idx].endosatario.datosCuenta.cbu;
+        }
+      }
+    }
+
 
     const documento = {
       pageSize: {
@@ -58,21 +77,22 @@ export class ComprobantesServiceService {
                {
                 fillColor: '#F0F0F0',
                 stack: [
-                           {
-                             margin: [15, 0, 0, 0],
-                             text: [
-                           {text: '\nDatos Beneficiario', fontSize: 12, bold: true}
-                            ]},
-                       {
-                       margin: [20, 0, 0, 0],
-                       style: 'small',
-                       type: 'none',
-                     ul: [
-                        `Denominación: ${echeq.datosEcheq.beneficiario.nombreBeneficiario}`,
-                        `CUIL/ CUIT: ${echeq.datosEcheq.beneficiario.cuilBeneficiario}`,
-                     ]
-                       },
-                       {
+                  {
+                    margin: [15, 0, 0, 0],
+                        text: [
+                      {text: '\n Datos Tenedor', fontSize: 12, bold: true},
+                       ]},
+                  {
+                 margin: [20, 0, 0, 0],
+                 style: 'small',
+                 type: 'none',
+                 ul: [
+                   `Denominación: ${this.denEndoso}`,
+                   `CUIL/ CUIT: ${this.cuilEndoso}`,
+                   `CBU Depósito: ${this.cbuDep}`,
+                   ]
+                  },
+                  {
                          margin: [15, 0, 0, 0],
                              text: [
                            {text: '\n Datos Echeq', fontSize: 12, bold: true},
@@ -107,7 +127,20 @@ export class ComprobantesServiceService {
                         `Entidad: ${echeq.datosEntidad.nombreEntidad}`,
                         `Sucursal: ${echeq.datosEntidad.nombreSucursal} \n\n`,
                       ]
-                    }
+                    }, {
+                      margin: [15, 0, 0, 0],
+                      text: [
+                    {text: 'Datos Beneficiario', fontSize: 12, bold: true}
+                     ]},
+                {
+                margin: [20, 0, 0, 0],
+                style: 'small',
+                type: 'none',
+              ul: [
+                 `Denominación: ${echeq.datosEcheq.beneficiario.nombreBeneficiario}`,
+                 `CUIL/ CUIT: ${echeq.datosEcheq.beneficiario.cuilBeneficiario}\n\n`,
+              ]
+                },
                  ],
                },
              ],

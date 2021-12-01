@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { DatosSesion } from 'src/app/models/datosSesion';
 import { DatosUsuario } from 'src/app/models/datosUsuario';
 import { DatosCoelsa } from '../../models/datosCoelsa';
@@ -9,14 +9,18 @@ import { ComprobantesServiceService } from '../../providers/comprobantes-service
 import { VerificarPasswordService } from '../../providers/verificar-password.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DatosCuentas } from 'src/app/models/datosCuentas';
-import { threadId } from 'worker_threads';
+import { Button } from 'selenium-webdriver';
+import { DatosCuenta } from 'src/app/models/datosCuenta';
+import { DatosBeneficiario } from '../../models/datosBeneficiario';
+import { DatosEndoso } from '../../models/datosEndoso';
+
 
 @Component({
   selector: 'app-echeq-recibidos',
   templateUrl: './echeq-recibidos.component.html',
   styleUrls: ['./echeq-recibidos.component.scss'],
 })
-export class EcheqRecibidosComponent implements OnInit {
+export class EcheqRecibidosComponent implements OnInit, OnDestroy {
 
   sesion: DatosSesion;
   usuario: DatosUsuario;
@@ -24,7 +28,10 @@ export class EcheqRecibidosComponent implements OnInit {
   vistaEcheqs: DatosCoelsa[] = [];
   echeq: DatosCoelsa;
   formaCtas: FormGroup;
+  formaBenef: FormGroup;
   listaEntidades: DatosCuentas[] = [];
+  cta: DatosCuentas;
+  tenedor: DatosBeneficiario;
   accion: string;
   estado = 'Emitido - Pendiente';
   sinCuentas = false;
@@ -33,14 +40,13 @@ export class EcheqRecibidosComponent implements OnInit {
   verListado = true;
   verEcheq = false;
   verCuentasDeposito = false;
+  verEndoso = false;
   datosEcheq = false;
   datosCuenta = false;
   datosBeneficiario = false;
   state = {
-    importe: '',
-    pago: '',
-    motivo: '',
-    referencia: ''
+    denominacion: '',
+    cuil: ''
   };
 
 
@@ -59,6 +65,27 @@ export class EcheqRecibidosComponent implements OnInit {
     this.buscarEcheqs();
   }
 
+  ngOnDestroy(){
+  this.sesion = null;
+  this.usuario = null;
+  this.echeqs = [];
+  this.vistaEcheqs = [];
+  this.echeq = null;
+  this.formaCtas = null;
+  this.listaEntidades = [];
+  this.cta = null;
+  this.accion = '';
+  this.estado = '';
+  this.sinCuentas = false;
+  this.vacio = false;
+  this.verMenu = false;
+  this.verListado = false;
+  this.verEcheq = false;
+  this.verCuentasDeposito = false;
+  this.datosEcheq = false;
+  this.datosCuenta = false;
+  this.datosBeneficiario = false;
+  }
 
   presentActionSheet(i){
     console.log('algo');
@@ -71,6 +98,12 @@ export class EcheqRecibidosComponent implements OnInit {
     this.filtrarEcheqs(estado);
     this.arrayVacio();
   }
+
+  resetState(): void{
+    this.state.denominacion = '';
+    this.state.cuil = '';
+  }
+
 
   detalleEcheq(ev: any){
     const estado = ev.detail.value.toString();
@@ -88,7 +121,8 @@ export class EcheqRecibidosComponent implements OnInit {
   }
 
   mostrarMenu(i: number){
-    this.echeq = this.vistaEcheqs[i];
+    // this.echeq = this.vistaEcheqs[i];
+    this.setEcheqVista(i);
     switch (this.echeq.datosEcheq.estadoEcheq){
       case ('Emitido - Pendiente'):
         this.menuEmitidos(i);
@@ -99,16 +133,39 @@ export class EcheqRecibidosComponent implements OnInit {
       case ('Devolucion Pendiente'):
         this.menuDevueltos(i);
         break;
+      case ('Custodia'):
+        this.menuCustodia(i);
+        break;
     }
   }
 
   volver(){
-    this.modificarVista(true, true, false, false);
+    this.modificarVista(true, true, false, false, false);
     this.verDetalleEcheq(false, false, false);
   }
 
   depositoCta(accion: string){
-    // console.log(this.formaCtas);
+    console.log(accion);
+    console.log(this.formaCtas);
+    if (!this.formaCtas.invalid){
+      this.cta = this.formaCtas.controls.cuenta.value;
+      if (accion === 'Depositar'){
+        this.confirmarModificarEcheq('depositar', 6);
+      }else{
+        this.confirmarModificarEcheq('enviar a custiodia', 3);
+      }
+    }else{
+      this.toast.mostrarToast('Error en formulario!', 'danger');
+    }
+  }
+
+  crearEndoso(){
+    if (!this.formaBenef.invalid){
+      this.confirmarModificarEcheq('endosar', 4);
+    }else{
+      this.errorFormaBenef();
+      this.toast.mostrarToast('Error en formulario', 'danger');
+    }
   }
 
   private obtenerData(): void{
@@ -128,13 +185,13 @@ export class EcheqRecibidosComponent implements OnInit {
 
   async menuEmitidos(i: number): Promise<void> {
     const actionSheet = await this.actionSheetController.create({
-      cssClass: 'my-custom-class',
+      cssClass: 'my-custom-class2',
       mode: 'md',
       buttons: [ {
         text: 'Ver Datos',
         icon: 'eye-outline',
         handler: () => {
-          this.modificarVista(false, false, true, false);
+          this.modificarVista(false, false, true, false, false);
           this.verDetalleEcheq(true, false, false);
           console.log(this.echeq);
         }
@@ -142,14 +199,16 @@ export class EcheqRecibidosComponent implements OnInit {
         text: 'Descargar Comprobante ',
         icon: 'cloud-download-outline',
         handler: () => {
-          this.echeq = this.vistaEcheqs[i];
+          // this.echeq = this.vistaEcheqs[i];
+          this.setEcheqVista(i);
           this.cmprbte.comprobanteEcheq(this.echeq, 'Constancia de consulta echeq');
         },
       }, {
         text: 'Recibir Echeq',
         icon: 'mail-unread-outline',
         handler: () => {
-          this.echeq = this.vistaEcheqs[i];
+         // this.echeq = this.vistaEcheqs[i];
+          this.setEcheqVista(i);
           this.confirmarModificarEcheq('recibir', 2);
 
         },
@@ -158,8 +217,10 @@ export class EcheqRecibidosComponent implements OnInit {
         role: 'destructive',
         icon: 'trash-outline',
         handler: () => {
-          this.echeq = this.vistaEcheqs[i];
-          this.confirmarModificarEcheq('repudiar', 9);
+          // this.echeq = this.vistaEcheqs[i];
+          this.setEcheqVista(i);
+          this.repudiarEcheq();
+          // this.confirmarModificarEcheq('repudiar', 9);
         },
       }
       ]
@@ -172,13 +233,13 @@ export class EcheqRecibidosComponent implements OnInit {
 
   async menuDevueltos(i: number): Promise<void> {
     const actionSheet = await this.actionSheetController.create({
-      cssClass: 'my-custom-class',
+      cssClass: 'my-custom-class2',
       mode: 'md',
       buttons: [ {
         text: 'Ver Datos',
         icon: 'eye-outline',
         handler: () => {
-          this.modificarVista(false, false, true, false);
+          this.modificarVista(false, false, true, false, false);
           this.verDetalleEcheq(true, false, false);
           console.log(this.echeq);
         }
@@ -194,7 +255,7 @@ export class EcheqRecibidosComponent implements OnInit {
         role: 'destructive',
         icon: 'thumbs-up-outline',
         handler: () => {
-          this.confirmarModificarEcheq('aceptar devolución', 10);
+          this.aceptarDevolucion();
         }
       }, {
         text: 'Anular Pedido Devolución',
@@ -214,13 +275,13 @@ export class EcheqRecibidosComponent implements OnInit {
 
   async menuActivos(i: number): Promise<void> {
     const actionSheet = await this.actionSheetController.create({
-      cssClass: 'my-custom-class',
+      cssClass: 'my-custom-class2',
       mode: 'md',
       buttons: [ {
         text: 'Ver Datos',
         icon: 'eye-outline',
         handler: () => {
-          this.modificarVista(false, false, true, false);
+          this.modificarVista(false, false, true, false, false);
           this.verDetalleEcheq(true, false, false);
           console.log(this.echeq);
         }
@@ -237,19 +298,24 @@ export class EcheqRecibidosComponent implements OnInit {
         icon: 'calendar-outline',
         handler: () => {
           this.accion = 'Custodiar';
-          this.comprobarCtas();
+          (this.verificarFechaEcheq('Custodiar')) ? this.comprobarCtas() : this.toast.mostrarToast('Acción no disponible', 'danger');
         },
       }, {
         text: 'Endosar',
         icon: 'paper-plane-outline',
         handler: () => {
+          this.accion = 'Endosar';
+          this.crerFormaBenef();
+          this.modificarVista(false, false, false, false, true);
 
         },
       }, {
         text: 'Depositar',
         icon: 'cash',
         handler: () => {
-          this.cmprbte.comprobanteEcheq(this.echeq, 'Constancia de consulta Echeq');
+          this.accion = 'Depositar';
+          (this.verificarFechaEcheq('Depositar')) ?
+            console.log('esta en fecha') : this.toast.mostrarToast('Acción no disponible', 'danger');
         },
       },
       ]
@@ -260,17 +326,63 @@ export class EcheqRecibidosComponent implements OnInit {
     console.log('onDidDismiss resolved with role', role);
   }
 
+  async menuCustodia(i: number): Promise<void> {
+    const actionSheet = await this.actionSheetController.create({
+      cssClass: 'my-custom-class2',
+      mode: 'md',
+      buttons: [ {
+        text: 'Ver Datos',
+        icon: 'eye-outline',
+        handler: () => {
+          this.modificarVista(false, false, true, false, false);
+          this.verDetalleEcheq(true, false, false);
+          console.log(this.echeq);
+        }
+      }, {
+        text: 'Descargar Comprobante ',
+        role: 'destructive',
+        icon: 'cloud-download-outline',
+        handler: () => {
+          this.cmprbte.comprobanteEcheq(this.echeq, 'Constancia de consulta Echeq');
+        },
+      }, {
+        text: 'Rescatar',
+        role: 'destructive',
+        icon: 'folder-open-outline',
+        handler: () => {
+          this.accion = 'Rescatar';
+          (this.verificarFechaEcheq('Rescatar')) ?  this.confirmarModificarEcheq('rescate', 2) : this.toast.mostrarToast('Acción no disponible', 'danger');
+          // Hay que verificar la fecha de pago, hasta un día antes para rescatar
+        },
+      },
+      ]
+    });
+    await actionSheet.present();
+
+    const { role } = await actionSheet.onDidDismiss();
+    console.log('onDidDismiss resolved with role', role);
+  }
+
+  private setEcheqVista(i: number){
+    this.echeq = this.vistaEcheqs[i];
+    const idx = this.echeq.datosEcheq.endososEcheq.length - 1;
+    this.tenedor = this.echeq.datosEcheq.endososEcheq[idx].endosatario;
+  }
+
+
+
   private verDetalleEcheq(datosEcheq: boolean, datosCuenta: boolean, datosBeneficiario: boolean){
     this.datosEcheq = datosEcheq;
     this.datosCuenta = datosCuenta;
     this.datosBeneficiario = datosBeneficiario;
   }
 
-  private modificarVista(verMenu: boolean, verListado: boolean, verEcheq: boolean, verCtasDep: boolean){
+  private modificarVista(verMenu: boolean, verListado: boolean, verEcheq: boolean, verCtasDep: boolean, verEndoso: boolean){
     this.verMenu = verMenu;
     this.verListado = verListado;
     this.verEcheq = verEcheq;
     this.verCuentasDeposito = verCtasDep;
+    this.verEndoso = verEndoso;
   }
 
   private buscarEcheqs(){
@@ -298,16 +410,89 @@ export class EcheqRecibidosComponent implements OnInit {
         }
       });
     }
+    console.log(this.vistaEcheqs);
+  }
+
+  private repudiarEcheq(){
+    const idx = this.echeq.datosEcheq.endososEcheq.length;
+    switch (true){
+      case (idx > 1):
+        this.confirmarModificarEcheq('repudiar', 2);
+        this.elimEndoso();
+        break;
+      case (idx === 1):
+        this.confirmarModificarEcheq('repudiar', 9);
+        break;
+    }
+  }
+
+  private aceptarDevolucion(){
+    const idx = this.echeq.datosEcheq.endososEcheq.length;
+    switch (true){
+      case (idx > 1):
+        this.confirmarModificarEcheq('aceptar devolución', 2);
+        this.elimEndoso();
+        break;
+      case (idx === 1):
+        this.confirmarModificarEcheq('aceptar devolución', 10);
+        break;
+    }
   }
 
   private comprobarCtas(){
-    this.listaEntidades = this.usuario.usuario.datosCuentas;
+    this.setCtasDep();
     this.crearFormaCta();
     if (this.usuario.usuario.datosCuentas) {
       this.sinCuentas = true;
     }
-    this.modificarVista(false, false, false, true);
+    this.modificarVista(false, false, false, true, false);
   }
+
+  private setCtasDep(){
+    if (this.usuario.usuario.datosCuentas){
+      Object.values(this.usuario.usuario.datosCuentas).forEach( (cuentas) => {
+        if (cuentas.cuentas.cuenta.cbu !== this.echeq.datosCuenta.cbu){
+          this.listaEntidades.push(cuentas);
+        }
+      });
+    }
+  }
+
+  private setEndoso(endosante: DatosBeneficiario, endosatario: DatosBeneficiario): DatosEndoso{
+    return new DatosEndoso(endosante, endosatario);
+  }
+
+  private elimEndoso(){
+    this.echeq.datosEcheq.endososEcheq.pop();
+  }
+
+  private verificarFechaEcheq(accion: string): boolean{
+    const dif = this.restarFechas(new Date(), this.convertirFechaEcheq());
+    switch (accion){
+      case 'Custodiar':
+      case 'Rescatar':
+        return (dif > 0) ? true : false;
+      case 'Depositar':
+        return (dif < 0) ? true : false;
+    }
+  }
+
+  private restarFechas(fc: Date, fg: Date): number{
+    const c = fc.getTime();
+    const g = fg.getTime();
+    const dif = g - c;
+    console.log(dif);
+    const days = dif / (1000 * 3600 * 24 );
+    console.log(`Diferencia entre fechas ${days}`);
+    return days;
+  }
+
+  private convertirFechaEcheq(): Date{
+    let e = this.echeq.datosEcheq.fechaPago.toString();
+    e = e.replace(/-/g, ',');
+    return new Date(e);
+  }
+
 
   private crearFormaCta(): void{
     this.formaCtas = this.fb.group({
@@ -315,17 +500,27 @@ export class EcheqRecibidosComponent implements OnInit {
     });
   }
 
-  // private setFormaCta(): void{
-  //   this.formaCtas.reset({
-  //     cuenta: this.listaEntidades,
-  //   });
-  // }
+  private crerFormaBenef(): void{
+    this.formaBenef = this.fb.group({
+      denominacion: ['', [Validators.required, Validators.minLength(4), Validators.pattern('^([A-Z]{1}[a-z_]{2,} )+([A-Z]{1}[a-z]{2,})$')]],
+      cuil: ['', [Validators.required, Validators.pattern('^[0-9]{11}$')]],
+    });
+  }
+
+  private errorFormaBenef(): void{
+    if (this.formaBenef.controls.denominacion.invalid){
+      this.state.denominacion = 'danger';
+    }
+    if (this.formaBenef.controls.cuil.invalid){
+      this.state.cuil = 'danger';
+    }
+  }
 
   private async confirmarModificarEcheq(accion: string, estado: number): Promise<void> {
     const cap = accion.replace(/\w\S*/g, (w) => (w.replace(/^\w/, (c) => c.toUpperCase())));
     const title = `${cap} Echeq Nº ${this.echeq.datosEcheq.nroEcheq}`;
     const alert = await this.alertController.create({
-      cssClass: 'my-custom-class',
+      cssClass: 'my-custom-class2',
       header: title,
       message: `¿Estas seguro de ${accion} este Echeq?`,
       buttons: [
@@ -371,12 +566,62 @@ export class EcheqRecibidosComponent implements OnInit {
     }
   }
 
+  private crearNuevoEndoso(){
+    const endosante = new DatosBeneficiario(this.sesion.cuil, this.echeq.datosCuenta.denominacion);
+    const endosatario = new DatosBeneficiario(
+      this.formaBenef.controls.cuil.value,
+      this.formaBenef.controls.denominacion.value);
+    this.echeq.datosEcheq.endososEcheq.push(this.setEndoso(endosante, endosatario));
+  }
+
+  private setCtaEndosatario(cta: DatosCuentas){
+    const idx = this.echeq.datosEcheq.endososEcheq.length - 1;
+    const benef = new DatosBeneficiario(
+      this.echeq.datosEcheq.endososEcheq[idx].endosatario.cuilBeneficiario,
+      this.echeq.datosEcheq.endososEcheq[idx].endosatario.nombreBeneficiario
+    );
+    benef.datosCuenta = cta.cuentas.cuenta;
+    benef.datosEntidad = cta.cuentas.entidad;
+    console.log(benef);
+    this.echeq.datosEcheq.endososEcheq[idx].endosatario = benef;
+  }
+
+  private rescatarEcheq(){
+    const idx = this.echeq.datosEcheq.endososEcheq.length - 1;
+    const benef = new DatosBeneficiario(
+      this.echeq.datosEcheq.endososEcheq[idx].endosatario.cuilBeneficiario,
+      this.echeq.datosEcheq.endososEcheq[idx].endosatario.nombreBeneficiario
+    );
+    this.echeq.datosEcheq.endososEcheq[idx].endosatario = benef;
+  }
+
+  private adecuacionesEcheq(accion: string){
+    switch (accion){
+      case 'rescate':
+        this.rescatarEcheq();
+        console.log('Eliminando último endoso');
+        break;
+      case 'endosar':
+        this.crearNuevoEndoso();
+        break;
+      case 'enviar a custiodia':
+      case 'depositar':
+        this.setCtaEndosatario(this.formaCtas.controls.cuenta.value);
+        this.cta = null;
+        break;
+    }
+  }
+
   private modEcheq(accion: string, estado: number){
+    this.adecuacionesEcheq(accion);
     this.user.accionEcheqCoelsa(this.echeq, estado).then( () => {
       this.buscarEcheqs();
       this.toast.mostrarToast(`Echeq modificado!`, 'primary');
       this.cmprbte.comprobanteEcheq(this.echeq, `Constancia por ${accion} echeq`);
+      this.navCtrl.navigateBack('tab/echeqRecibidos/sector-echeq-recibidos/1');
+      this.modificarVista(true, true, false, false, false);
     }).catch( (err) => {
+      console.log(err);
       this.toast.mostrarToast('Error en BD!', 'danger');
     });
   }

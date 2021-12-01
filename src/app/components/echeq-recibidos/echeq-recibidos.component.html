@@ -93,6 +93,10 @@
         <h6 class="subtitulo">Datos Beneficiario</h6>
         <p class="texto">Nombre y Apellido / Razón Social: {{echeq.datosEcheq.beneficiario.nombreBeneficiario}} </p>
         <p class="texto">CUIL/ CUIT: {{echeq.datosEcheq.beneficiario.cuilBeneficiario}}</p> 
+        <br>
+        <h6 class="subtitulo">Datos Tenedor</h6>
+        <p class="texto">Nombre y Apellido / Razón Social: {{tenedor.nombreBeneficiario}} </p>
+        <p class="texto">CUIL/ CUIT: {{tenedor.cuilBeneficiario}}</p> 
        </div> 
     </ion-card-content>
   </ion-card>
@@ -128,14 +132,47 @@
     <form [formGroup]="formaCtas" mode="md">         
       <ion-item>
         <ion-label position="stacked">Seleccionar cuenta depósito</ion-label>
-        <ion-select formControlName="cuenta">
-          <ion-select-option *ngFor="let cta of listaEntidades" [value]="cta">{{cta.cuentas.cuenta.numeroCuenta}}</ion-select-option>
+        <ion-select formControlName="cuenta" interface="action-sheet">
+          <ion-select-option class="select-interface-option" *ngFor="let cta of listaEntidades" [value]="cta">{{cta.cuentas.cuenta.numeroCuenta}} - {{cta.cuentas.entidad.nombreEntidad}}</ion-select-option>
         </ion-select>
       </ion-item>
       <br>
-      <ion-button size="small" color="success" expand="block" (click)="depositoCta('accion')">{{accion}} Echeq</ion-button>
+      <ion-button size="small" color="success" expand="block" (click)="depositoCta(accion)">{{accion}} Echeq</ion-button>
       <br>
     </form>
   </div>
+</div>
 
+<div *ngIf="verEndoso">
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Echeq Nº {{echeq.datosEcheq.nroEcheq}}</ion-card-title>
+      <ion-card-subtitle>Endosar Echeq</ion-card-subtitle>
+    </ion-card-header>
+  
+    <ion-card-content>
+      <h6 class="subtitulo">Datos Echeq</h6>
+      <p class="texto">Monto: ${{echeq.datosEcheq.montoEcheq |number}} </p>
+      <p class="texto">Fecha Pago: {{echeq.datosEcheq.fechaPago}}</p>    
+      <h6 class="subtitulo">Datos Librador</h6>
+      <p class="texto">Denominación: {{echeq.datosTitularEcheq.denominacion}} </p>
+      <p class="texto">CUIL/ CUIT: {{echeq.datosTitularEcheq.denominacion}}</p>    
+    </ion-card-content>
+  </ion-card>
+  <br>
+  <ion-note class="ion-padding">Ingresar datos del Beneficiario</ion-note>
+  <form [formGroup]="formaBenef" mode="md">         
+    <ion-item>
+      <ion-label position="stacked"  [color]="state.denominacion">Apellido y Nombre / Razón Social</ion-label>
+      <ion-input (ionInput)="resetState()" placeholder="Perez Juan" type="text" clearInput="true" formControlName="denominacion"></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label position="stacked" [color]="state.cuil">CUIL</ion-label>
+      <ion-input (ionInput)="resetState()" placeholder="20123456780" type="number"  clearInput="true"  formControlName="cuil"></ion-input>
+    </ion-item>
+    <br>
+    <ion-button size="small" color="success" expand="block" (click)="crearEndoso()">Endosar</ion-button>
+  </form>
+  <br>
+  <br>
 </div>

@@ -169,10 +169,16 @@ export class UsuariosService {
     this.item.subscribe( action => {
       this.datosCoelsa = action.payload.val();
       console.log(this.datosCoelsa);
-      Object.values(this.datosCoelsa).forEach(element => {
-        if (element.datosEcheq.beneficiario.cuilBeneficiario === cuil){
-          this.coelsa.push(element);
-        }
+      Object.values(this.datosCoelsa).forEach((coelsa: DatosCoelsa) => {
+        const idx = coelsa.datosEcheq.endososEcheq.length - 1;
+        if (coelsa.datosEcheq.endososEcheq[idx].endosatario.cuilBeneficiario === cuil){
+        this.coelsa.push(coelsa);
+         }
+        // Object.values(coelsa.datosEcheq.endososEcheq).forEach(endososEcheq => {
+        //   if (endososEcheq.endosatario.cuilBeneficiario === cuil){
+        //     this.coelsa.push(coelsa);
+        //   }
+        // });
       });
       console.log(this.datosCoelsa);
     });
@@ -564,9 +570,13 @@ export class UsuariosService {
       echeq.montoEcheq,
       echeq.motivo,
       echeq.referencia,
-      echeq.beneficiario
+      echeq.beneficiario,
+      // echeq.tenedor
     );
     modEcheq.idEcheq = echeq.idEcheq;
+    if (echeq.endososEcheq){
+      modEcheq.endososEcheq = echeq.endososEcheq;
+    }
     return modEcheq;
   }
 
@@ -577,26 +587,28 @@ export class UsuariosService {
 
   private obtenerEcheqGenerado(user: DatosUsuario): any []{
     const arrEcheqs: any [] = [];
-    Object.values(user.usuario.datosCuentas).forEach( (cuenta) => {
-      if (cuenta.cuentas.chequeras){
-        Object.values(cuenta.cuentas.chequeras).forEach( (chequera) => {
-          if (chequera.echeq){
-            Object.values(chequera.echeq).forEach ( (echeqs) => {
-              const estado = new DatosEstadoEcheq();
-              if (echeqs.estadoEcheq === estado.getEstado(0)){
-                const obj = {
-                  cta: cuenta.cuentas.cuenta,
-                  ent: cuenta.cuentas.entidad,
-                  cheq: chequera,
-                  echeq: echeqs
-                };
-                arrEcheqs.push(obj);
-              }
-            });
-          }
-        });
-      }
-    });
+    if (user.usuario.datosCuentas){
+      Object.values(user.usuario.datosCuentas).forEach( (cuenta) => {
+        if (cuenta.cuentas.chequeras){
+          Object.values(cuenta.cuentas.chequeras).forEach( (chequera) => {
+            if (chequera.echeq){
+              Object.values(chequera.echeq).forEach ( (echeqs) => {
+                const estado = new DatosEstadoEcheq();
+                if (echeqs.estadoEcheq === estado.getEstado(0)){
+                  const obj = {
+                    cta: cuenta.cuentas.cuenta,
+                    ent: cuenta.cuentas.entidad,
+                    cheq: chequera,
+                    echeq: echeqs
+                  };
+                  arrEcheqs.push(obj);
+                }
+              });
+            }
+          });
+        }
+      });
+    }
     return arrEcheqs;
   }
 
@@ -654,11 +666,11 @@ export class UsuariosService {
     return this.modificarEcheqCoelsa(echeq.datosEcheq.idEcheq, echeq).then( () => {
       const i = this.obtenerIndexCoelsa(echeq);
       this.coelsa.splice(0, 1, echeq);
-      // this.guardarStorage();
+      console.log('Se modificó echeq en Coelsa');
     });
   }
 
-  private modificarEcheqCoelsa(idEcheq: string, echeq: DatosCoelsa): Promise<any> { ////
+  private modificarEcheqCoelsa(idEcheq: string, echeq: DatosCoelsa): Promise<void> { ////
     return this.afs.object(`coelsa/${idEcheq}`).update(echeq);
   }
 

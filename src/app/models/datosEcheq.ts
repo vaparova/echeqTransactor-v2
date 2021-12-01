@@ -11,6 +11,7 @@ export class DatosEcheq{
     fechaPago: Date;
     montoEcheq: number;
     beneficiario: DatosBeneficiario;
+    // tenedor: DatosBeneficiario;
     motivo: string;
     referencia: string;
     endososEcheq: DatosEndoso[] = [];
@@ -27,7 +28,8 @@ export class DatosEcheq{
                 montoEcheq: number,
                 motivo: string,
                 referencia: string,
-                beneficiario: DatosBeneficiario){
+                beneficiario: DatosBeneficiario,
+                ){
 
         this.idEcheq = this.crearIdEcheq();
         this.nroEcheq = nroEcheq;
@@ -38,6 +40,7 @@ export class DatosEcheq{
         this.motivo = motivo;
         this.referencia = referencia;
         this.beneficiario = beneficiario;
+        // this.tenedor = tenedor;
 
     }
 

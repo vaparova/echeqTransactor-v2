@@ -4,7 +4,7 @@ export class DatosBeneficiario{
     cuilBeneficiario: number;
     nombreBeneficiario: string;
     datosCuenta ?: DatosCuenta;
-    DatosEntidad ?: DatosEntidad;
+    datosEntidad ?: DatosEntidad;
 
     constructor(cuilBeneficiario: number, nombreBeneficiario: string){
         this.cuilBeneficiario = cuilBeneficiario;
@@ -13,6 +13,6 @@ export class DatosBeneficiario{
 
     setDatosDepositaria(cta: DatosCuenta, ent: DatosEntidad){
         this.datosCuenta = cta;
-        this.DatosEntidad = ent;
+        this.datosEntidad = ent;
     }
 }

@@ -29,6 +29,7 @@ export class NuevoEcheqComponent implements OnInit {
   formaEcheq: FormGroup;
   cheqSeleccionada: any;
   arrChequeras = [];
+  vacio = false;
   crearUno = true;
   crearDos = false;
   crearTres = false;
@@ -128,20 +129,24 @@ export class NuevoEcheqComponent implements OnInit {
 
   private obtenerChequeras(usuario: DatosUsuario): void{
     const arrCtas = this.user.getArrCuentas(usuario);
-    arrCtas.forEach( resp => {
-      if (resp.cuentas.chequeras){
-        resp.cuentas.chequeras.forEach( chequera => {
-          if (chequera.estadoChequera === true && chequera.estadoPedido === true){
-            const obj = {
-              cta: resp.cuentas.cuenta,
-              ent: resp.cuentas.entidad,
-              cheq: chequera
-            };
-            this.arrChequeras.push(obj);
-          }
-        });
-      }
-    });
+    if (arrCtas){
+      arrCtas.forEach( resp => {
+        if (resp.cuentas.chequeras){
+          resp.cuentas.chequeras.forEach( chequera => {
+            if (chequera.estadoChequera === true && chequera.estadoPedido === true){
+              const obj = {
+                cta: resp.cuentas.cuenta,
+                ent: resp.cuentas.entidad,
+                cheq: chequera
+              };
+              this.arrChequeras.push(obj);
+            }
+          });
+        }
+      });
+    }else{
+      this.vacio = true;
+    }
     console.log(this.arrChequeras);
   }
 
@@ -275,6 +280,7 @@ export class NuevoEcheqComponent implements OnInit {
   }
 
   private generarEcheq(): void{
+    // const benefTenedor = new DatosBeneficiario(this.sesion.cuil, this.cheqSeleccionada.cta.denominacion);
     this.echeq = new DatosEcheq(
       this.generarNroEcheq(),
       0,
@@ -283,7 +289,8 @@ export class NuevoEcheqComponent implements OnInit {
       this.formaEcheq.controls.importe.value,
       this.formaEcheq.controls.motivo.value,
       this.formaEcheq.controls.referencia.value,
-      this.beneficiario
+      this.beneficiario,
+      // benefTenedor
     );
     console.log(this.echeq);
   }

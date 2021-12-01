@@ -10,6 +10,8 @@ import { DatosSesion } from '../../models/datosSesion';
 import { DatosUsuario } from '../../models/datosUsuario';
 import { ActionSheetController } from '@ionic/angular';
 import { VerificarTokenService } from '../../providers/verificar-token.service';
+import { DatosBeneficiario } from '../../models/datosBeneficiario';
+import { DatosEndoso } from '../../models/datosEndoso';
 
 
 @Component({
@@ -281,6 +283,7 @@ export class EcheqGeneradosComponent implements OnInit {
     console.log(this.echeq.echeq.fechaEmision);
     return await this.tkn.pedirToken(this.sesion.cuil).then( (tkn) => {
       console.log('Estuvo todo ok, ya se puede librar');
+      this.crearEndosoLibrador();
       return this.user.librarEcheq(this.sesion.cuil, this.echeq.ent, this.echeq.cta, this.echeq.cheq, this.echeq.echeq);
     }).then( () => {
       this.obtenerEcheqs();
@@ -290,5 +293,26 @@ export class EcheqGeneradosComponent implements OnInit {
       console.log('Hubo un error o se canceló la operación');
       this.toast.mostrarToast('Error enb DB!', 'danger');
     });
+  }
+
+  private crearEndosoLibrador(){
+    this.echeq.echeq.endososEcheq = [];
+    const endosante = new DatosBeneficiario(this.sesion.cuil, this.echeq.cta.denominacion);
+    const endosatario = new DatosBeneficiario(
+      this.echeq.echeq.beneficiario.cuilBeneficiario,
+      this.echeq.echeq.beneficiario.nombreBeneficiario);
+    this.echeq.echeq.endososEcheq.push(this.setEndoso(endosante, endosatario));
+  }
+
+  private crearEndosoDev(){
+    const endosatario = new DatosBeneficiario(this.sesion.cuil, this.echeq.cta.denominacion);
+    const endosante = new DatosBeneficiario(
+      this.echeq.echeq.beneficiario.cuilBeneficiario,
+      this.echeq.echeq.beneficiario.nombreBeneficiario);
+    this.echeq.echeq.endososEcheq.push(this.setEndoso(endosante, endosatario));
+  }
+
+  private setEndoso(endosante: DatosBeneficiario, endosatario: DatosBeneficiario): DatosEndoso{
+    return new DatosEndoso(endosante, endosatario);
   }
 }
