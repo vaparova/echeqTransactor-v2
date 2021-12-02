@@ -1,21 +1,20 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { ActionSheetController, NavController, AlertController } from '@ionic/angular';
-import { UsuariosService } from 'src/app/providers/usuarios.service';
-import { DatosCoelsa } from '../../models/datosCoelsa';
-import { DatosBeneficiario } from '../../models/datosBeneficiario';
-import { ComprobantesServiceService } from '../../providers/comprobantes-service.service';
-import { VerificarPasswordService } from '../../providers/verificar-password.service';
-import { ToastsService } from '../../providers/toasts.service';
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { ActionSheetController, AlertController, NavController } from '@ionic/angular';
+import { DatosBeneficiario } from 'src/app/models/datosBeneficiario';
+import { DatosCoelsa } from 'src/app/models/datosCoelsa';
 import { DatosSesion } from 'src/app/models/datosSesion';
 import { DatosUsuario } from 'src/app/models/datosUsuario';
-
+import { ComprobantesServiceService } from 'src/app/providers/comprobantes-service.service';
+import { ToastsService } from 'src/app/providers/toasts.service';
+import { UsuariosService } from 'src/app/providers/usuarios.service';
+import { VerificarPasswordService } from 'src/app/providers/verificar-password.service';
 
 @Component({
-  selector: 'app-echeq-librados',
-  templateUrl: './echeq-librados.component.html',
-  styleUrls: ['./echeq-librados.component.scss'],
+  selector: 'app-echeq-endosados',
+  templateUrl: './echeq-endosados.component.html',
+  styleUrls: ['./echeq-endosados.component.scss'],
 })
-export class EcheqLibradosComponent implements OnInit, OnDestroy {
+export class EcheqEndosadosComponent implements OnInit, OnDestroy {
 
   sesion: DatosSesion;
   usuario: DatosUsuario;
@@ -85,7 +84,7 @@ export class EcheqLibradosComponent implements OnInit, OnDestroy {
     // this.echeq = this.vistaEcheqs[i];
     this.setEcheqVista(i);
     switch (this.echeq.datosEcheq.estadoEcheq){
-      case ('Emitido - Pendiente'):
+      case ('Activo - Pendiente'):
         this.menuEmitidos();
         break;
       case ('Activo'):
@@ -126,12 +125,6 @@ export class EcheqLibradosComponent implements OnInit, OnDestroy {
         icon: 'cloud-download-outline',
         handler: () => {
           this.cmprbte.comprobanteEcheq(this.echeq, 'Constancia de consulta echeq');
-        },
-      }, {
-        text: 'Anular Echeq ',
-        icon: 'trash-outline',
-        handler: () => {
-          this.confirmarModificarEcheq('anular', 10);
         },
       }
       ]
@@ -298,9 +291,10 @@ export class EcheqLibradosComponent implements OnInit, OnDestroy {
 
   private buscarEcheqs(){
     this.echeqs = [];
-    this.echeqs = this.user.buscarEcheqCoelsa(this.sesion.cuil);
+    this.echeqs = this.user.bucarEcheqCoelsaEndosante(this.sesion.cuil);
+    console.log(this.echeqs);
     setTimeout( () => {
-      this.filtrarEcheqs('Emitido - Pendiente');
+      this.filtrarEcheqs('Activo - Pendiente');
       this.arrayVacio();
     }, 2000);
   }
@@ -309,7 +303,7 @@ export class EcheqLibradosComponent implements OnInit, OnDestroy {
     this.vistaEcheqs = [];
     console.log(this.echeqs.length);
     switch (estado){
-      case ('Emitido - Pendiente'):
+      case ('Activo - Pendiente'):
         Object.values(this.echeqs).forEach ( echeq => {
           if ( echeq.datosEcheq.estadoEcheq === estado || echeq.datosEcheq.estadoEcheq === 'Activo'){
             this.vistaEcheqs.push(echeq);
@@ -434,3 +428,5 @@ export class EcheqLibradosComponent implements OnInit, OnDestroy {
     });
   }
 }
+
+

@@ -175,15 +175,30 @@ export class UsuariosService {
         if (coelsa.datosEcheq.endososEcheq[idx].endosatario.cuilBeneficiario === cuil){
         this.coelsa.push(coelsa);
          }
-        // Object.values(coelsa.datosEcheq.endososEcheq).forEach(endososEcheq => {
-        //   if (endososEcheq.endosatario.cuilBeneficiario === cuil){
-        //     this.coelsa.push(coelsa);
-        //   }
-        // });
       });
       console.log(this.datosCoelsa);
     });
   }
+
+  private cargarEcheqEndosante(cuil: number): void{
+    this.coelsa = [];
+    this.item = this.afs.object(`coelsa/`).snapshotChanges();
+    // tslint:disable-next-line: deprecation
+    this.item.subscribe( action => {
+      this.datosCoelsa = action.payload.val();
+      Object.values(this.datosCoelsa).forEach((coelsa: DatosCoelsa) => {
+        const idx = coelsa.datosEcheq.endososEcheq.length - 1;
+        if (coelsa.datosEcheq.endososEcheq[idx].endosante.cuilBeneficiario === cuil){
+          if (idx > 0) {
+              this.coelsa.push(coelsa);
+            }
+          }
+      });
+      console.log(this.coelsa);
+    });
+  }
+
+
   loginFb(cuil: number): Observable<any>{
     return this.afs.object(`usuarios/${cuil}`).snapshotChanges();
   }
@@ -656,6 +671,11 @@ export class UsuariosService {
 
   buscarEcheqCoelsaBeneficiario(cuil: number): DatosCoelsa[]{
     this.cargarEcheqBeneficiario(cuil);
+    return this.coelsa;
+  }
+
+  bucarEcheqCoelsaEndosante(cuil: number): DatosCoelsa[]{
+    this.cargarEcheqEndosante(cuil);
     return this.coelsa;
   }
 

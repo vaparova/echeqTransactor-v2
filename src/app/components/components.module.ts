@@ -32,6 +32,7 @@ import { EcheqLibradosComponent } from './echeq-librados/echeq-librados.componen
 import { GenerarComprobanteComponent } from './generar-comprobante/generar-comprobante.component';
 import { EcheqRecibidosComponent } from './echeq-recibidos/echeq-recibidos.component';
 import { EcheqDepositadosComponent } from './echeq-depositados/echeq-depositados.component';
+import { EcheqEndosadosComponent } from './echeq-endosados/echeq-endosados.component';
 
 
 
@@ -55,7 +56,8 @@ import { EcheqDepositadosComponent } from './echeq-depositados/echeq-depositados
     EcheqLibradosComponent,
     GenerarComprobanteComponent,
     EcheqRecibidosComponent,
-    EcheqDepositadosComponent
+    EcheqDepositadosComponent,
+    EcheqEndosadosComponent
   ],
   imports: [
     CommonModule,
@@ -88,7 +90,8 @@ import { EcheqDepositadosComponent } from './echeq-depositados/echeq-depositados
     EcheqLibradosComponent,
     GenerarComprobanteComponent,
     EcheqRecibidosComponent,
-    EcheqDepositadosComponent
+    EcheqDepositadosComponent,
+    EcheqEndosadosComponent
   ],
   providers: [
     AngularFireAuth
