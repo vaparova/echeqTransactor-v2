@@ -14,9 +14,9 @@ export class SectorEcheqRecibidosPage implements OnInit {
      comp: 'No definido'},
     {atras: 'tab/echeqRecibidos',
      comp: 'Echeq Recibidos > Administrar'},
-    {atras: 'tab/crearEcheq',
-     comp: 'Echeq Recibidos > Echeq Depositados'},
-    {atras: 'tab/crearEcheq',
+    {atras: 'tab/echeqRecibidos',
+     comp: 'Echeq Recibidos > Depositados'},
+    {atras: 'tab/echeqRecibidos',
      comp: 'Echeq Recibidos > Echeq Endosados'}
   ];
 

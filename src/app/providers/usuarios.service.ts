@@ -19,6 +19,7 @@ import { DatosEcheq } from '../models/datosEcheq';
 import { DatosEstadoEcheq } from '../models/datosEstadoEcheq';
 import { DatosTitularEcheq } from '../models/datosTitularEcheq';
 import { DatosCoelsa } from '../models/datosCoelsa';
+import { DatosRechazo } from '../models/datosRechazo';
 
 
 @Injectable({
@@ -562,6 +563,10 @@ export class UsuariosService {
   }
 
   private cambiarEstadoEcheq(echeq: DatosEcheq, estado: number): DatosEcheq{
+    let datosRechazo: DatosRechazo[] = [];
+    if (echeq.datosRechazo){
+      datosRechazo = echeq.datosRechazo;
+    }
     const modEcheq = new DatosEcheq(
       echeq.nroEcheq,
       estado,
@@ -573,6 +578,7 @@ export class UsuariosService {
       echeq.beneficiario,
       // echeq.tenedor
     );
+    modEcheq.datosRechazo = datosRechazo;
     modEcheq.idEcheq = echeq.idEcheq;
     if (echeq.endososEcheq){
       modEcheq.endososEcheq = echeq.endososEcheq;

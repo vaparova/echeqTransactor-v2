@@ -91,6 +91,12 @@ export class EcheqLibradosComponent implements OnInit, OnDestroy {
       case ('Activo'):
         this.menuActivos();
         break;
+      case ('Rechazado'):
+        this.menuRechazados();
+        break;
+      case ('Acuerdo Pendiente'):
+        this.menuAcordados();
+        break;
       case ('Devolucion Pendiente'):
         this.menuDevueltos();
         break;
@@ -150,18 +156,85 @@ export class EcheqLibradosComponent implements OnInit, OnDestroy {
         }
       }, {
         text: 'Descargar Comprobante ',
-        role: 'destructive',
         icon: 'cloud-download-outline',
         handler: () => {
           this.cmprbte.comprobanteEcheq(this.echeq, 'Constancia de consulta echeq');
         },
       }, {
-        text: 'Pedir Devolución',
-        role: 'destructive',
+        text: 'Solicitar Devolucion',
         icon: 'arrow-undo-outline',
         handler: () => {
-          this.confirmarModificarEcheq('pedir devolución', 12);
-          // this.cmprbte.comprobanteEcheq(this.echeq, 'Constancia de Libramiento Echeq');
+          this.comprobarEndosos();
+        },
+      }
+      ]
+    });
+    await actionSheet.present();
+
+    const { role } = await actionSheet.onDidDismiss();
+    console.log('onDidDismiss resolved with role', role);
+  }
+
+  async menuRechazados(): Promise<void> {
+    const actionSheet = await this.actionSheetController.create({
+      cssClass: 'my-custom-class',
+      mode: 'md',
+      buttons: [ {
+        text: 'Ver Datos',
+        icon: 'eye-outline',
+        handler: () => {
+          this.modificarVista(false, false, true);
+          this.verDetalleEcheq(true, false, false);
+          console.log(this.echeq);
+        }
+      }, {
+        text: 'Descargar Comprobante ',
+        role: 'destructive',
+        icon: 'cloud-download-outline',
+        handler: () => {
+          this.cmprbte.comprobanteEcheqCAC(this.echeq, 'Constancia de consulta echeq');
+        },
+      }, {
+        text: 'Solicitar Acuerdo',
+        role: 'destructive',
+        icon: 'arrow-undo-circle-outline',
+        handler: () => {
+          this.solicitarAcuerdo();
+        },
+      }
+      ]
+    });
+    await actionSheet.present();
+
+    const { role } = await actionSheet.onDidDismiss();
+    console.log('onDidDismiss resolved with role', role);
+  }
+
+  async menuAcordados(): Promise<void> {
+    const actionSheet = await this.actionSheetController.create({
+      cssClass: 'my-custom-class',
+      mode: 'md',
+      buttons: [ {
+        text: 'Ver Datos',
+        icon: 'eye-outline',
+        handler: () => {
+          this.modificarVista(false, false, true);
+          this.verDetalleEcheq(true, false, false);
+          console.log(this.echeq);
+        }
+      }, {
+        text: 'Descargar Comprobante ',
+        role: 'destructive',
+        icon: 'cloud-download-outline',
+        handler: () => {
+          this.cmprbte.comprobanteEcheqCAC(this.echeq, 'Constancia de consulta echeq');
+        },
+      }, {
+        text: 'Anular Acuerdo',
+        role: 'destructive',
+        icon: 'close-circle-outline',
+        handler: () => {
+          this.confirmarModificarEcheq('anular acuerdo', 8);
         },
       }
       ]
@@ -198,7 +271,6 @@ export class EcheqLibradosComponent implements OnInit, OnDestroy {
         icon: 'arrow-redo-outline',
         handler: () => {
           this.confirmarModificarEcheq('anular devolución', 2);
-          // this.cmprbte.comprobanteEcheq(this.echeq, 'Constancia de Libramiento Echeq');
         },
       }
       ]
@@ -236,19 +308,30 @@ export class EcheqLibradosComponent implements OnInit, OnDestroy {
   private filtrarEcheqs(estado: string){
     this.vistaEcheqs = [];
     console.log(this.echeqs.length);
-    if (estado === 'Emitido - Pendiente'){
-      Object.values(this.echeqs).forEach ( echeq => {
-        if ( echeq.datosEcheq.estadoEcheq === estado || echeq.datosEcheq.estadoEcheq === 'Activo'){
-          this.vistaEcheqs.push(echeq);
-        }
-      });
-    }else{
-      Object.values(this.echeqs).forEach( echeq => {
-        if (echeq.datosEcheq.estadoEcheq === estado){
-          this.vistaEcheqs.push(echeq);
-        }
-      });
+    switch (estado){
+      case ('Emitido - Pendiente'):
+        Object.values(this.echeqs).forEach ( echeq => {
+          if ( echeq.datosEcheq.estadoEcheq === estado || echeq.datosEcheq.estadoEcheq === 'Activo'){
+            this.vistaEcheqs.push(echeq);
+          }
+        });
+        break;
+      case ('Rechazado'):
+        Object.values(this.echeqs).forEach ( echeq => {
+          if ( echeq.datosEcheq.estadoEcheq === estado || echeq.datosEcheq.estadoEcheq === 'Acuerdo Pendiente'){
+            this.vistaEcheqs.push(echeq);
+          }
+        });
+        break;
+      default:
+        Object.values(this.echeqs).forEach( echeq => {
+          if (echeq.datosEcheq.estadoEcheq === estado){
+            this.vistaEcheqs.push(echeq);
+          }
+        });
+        break;
     }
+    console.log(this.vistaEcheqs);
   }
 
   private arrayVacio(){
@@ -268,6 +351,29 @@ export class EcheqLibradosComponent implements OnInit, OnDestroy {
     this.datosEcheq = datosEcheq;
     this.datosCuenta = datosCuenta;
     this.datosBeneficiario = datosBeneficiario;
+  }
+
+  private solicitarAcuerdo(){
+    const idx = this.echeq.datosEcheq.endososEcheq.length - 1;
+    const ultEnd = this.echeq.datosEcheq.endososEcheq[idx];
+    console.log(ultEnd);
+    if (ultEnd.endosante.cuilBeneficiario === this.sesion.cuil){
+      this.confirmarModificarEcheq('solicitar acuerdo', 13);
+    }else{
+      this.toast.mostrarToast('Opción no disponible', 'danger');
+    }
+  }
+
+
+  private comprobarEndosos(){
+    const idx = this.echeq.datosEcheq.endososEcheq.length - 1;
+    const ultEnd = this.echeq.datosEcheq.endososEcheq[idx];
+    console.log(ultEnd);
+    if (ultEnd.endosante.cuilBeneficiario === this.sesion.cuil){
+      this.confirmarModificarEcheq('solicitar devolucion', 12);
+    }else{
+      this.toast.mostrarToast('Opción no disponible', 'danger');
+    }
   }
 
   private async solicitarPassword(accion: string, estado: number){
@@ -317,7 +423,11 @@ export class EcheqLibradosComponent implements OnInit, OnDestroy {
     this.user.accionEcheqCoelsa(this.echeq, estado).then( () => {
       this.buscarEcheqs();
       this.toast.mostrarToast(`Echeq modificado!`, 'primary');
-      this.cmprbte.comprobanteEcheq(this.echeq, `Constancia por ${accion} echeq`);
+      if (accion === 'solicitar acuerdo' || accion === 'anular acuerdo'){
+        this.cmprbte.comprobanteEcheqCAC(this.echeq, `Constancia por ${accion} echeq`);
+      }else{
+        this.cmprbte.comprobanteEcheq(this.echeq, `Constancia por ${accion} echeq`);
+      }
       this.navCtrl.navigateBack('/tab/crearEcheq/sector-mis-echeq/3');
     }).catch( (err) => {
       this.toast.mostrarToast('Error en BD!', 'danger');

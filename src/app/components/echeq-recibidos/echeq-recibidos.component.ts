@@ -9,8 +9,6 @@ import { ComprobantesServiceService } from '../../providers/comprobantes-service
 import { VerificarPasswordService } from '../../providers/verificar-password.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DatosCuentas } from 'src/app/models/datosCuentas';
-import { Button } from 'selenium-webdriver';
-import { DatosCuenta } from 'src/app/models/datosCuenta';
 import { DatosBeneficiario } from '../../models/datosBeneficiario';
 import { DatosEndoso } from '../../models/datosEndoso';
 
@@ -125,6 +123,7 @@ export class EcheqRecibidosComponent implements OnInit, OnDestroy {
     this.setEcheqVista(i);
     switch (this.echeq.datosEcheq.estadoEcheq){
       case ('Emitido - Pendiente'):
+      case ('Activo - Pendiente'):
         this.menuEmitidos(i);
         break;
       case ('Activo'):
@@ -399,7 +398,8 @@ export class EcheqRecibidosComponent implements OnInit, OnDestroy {
     console.log(this.echeqs.length);
     if (estado === 'Emitido - Pendiente'){
       Object.values(this.echeqs).forEach ( echeq => {
-        if ( echeq.datosEcheq.estadoEcheq === estado || echeq.datosEcheq.estadoEcheq === 'Devolucion Pendiente'){
+        if ( echeq.datosEcheq.estadoEcheq === estado || echeq.datosEcheq.estadoEcheq === 'Devolucion Pendiente' ||
+        echeq.datosEcheq.estadoEcheq === 'Activo - Pendiente' ){
           this.vistaEcheqs.push(echeq);
         }
       });

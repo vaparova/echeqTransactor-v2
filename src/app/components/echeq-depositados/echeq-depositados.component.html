@@ -1,19 +1,19 @@
 <div class="ion-padding-top">
-  <ion-label class="titulo ion-padding">Echeq Entregados</ion-label><br>
+  <ion-label class="titulo ion-padding">Echeq Depositados</ion-label><br>
 </div>
 
 <br>
 <div *ngIf="verMenu">
-  <ion-segment  (ionChange)="segmentChanged($event)" mode="ios" value="Emitido - Pendiente">
-    <ion-segment-button value="Emitido - Pendiente">
-      <ion-label>Librados</ion-label>
+  <ion-segment  (ionChange)="segmentChanged($event)" mode="ios" value="Depositado">
+    <ion-segment-button value="Depositado">
+      <ion-label>Presentados</ion-label>
     </ion-segment-button>
     <ion-segment-button value="Rechazado">
       <ion-label>Rechazados</ion-label>
     </ion-segment-button>
-    <ion-segment-button value="Devolucion Pendiente">
-      <ion-label>Devueltos</ion-label>
-    </ion-segment-button>
+    <!-- <ion-segment-button value="Custodia">
+      <ion-label>Custodia</ion-label>
+    </ion-segment-button> -->
   </ion-segment>
 </div>
 <!-- <div> {{echeqs | json}}</div> -->
@@ -26,7 +26,6 @@
     <ion-label>No tienes echeqs con estado "{{estado}}"</ion-label>
   </ion-chip>
 </div>
-
 
 <div *ngIf="verListado">
   <ion-card *ngFor="let echeq of vistaEcheqs, let i = index">
@@ -97,6 +96,7 @@
         <h6 class="subtitulo">Datos Tenedor</h6>
         <p class="texto">Nombre y Apellido / Razón Social: {{tenedor.nombreBeneficiario}} </p>
         <p class="texto">CUIL/ CUIT: {{tenedor.cuilBeneficiario}}</p> 
+        <p class="texto">CBU Depósito: {{tenedor.datosCuenta.cbu}}</p> 
        </div> 
     </ion-card-content>
   </ion-card>

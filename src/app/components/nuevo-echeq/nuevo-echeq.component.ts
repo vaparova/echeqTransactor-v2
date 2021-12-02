@@ -142,6 +142,8 @@ export class NuevoEcheqComponent implements OnInit {
               this.arrChequeras.push(obj);
             }
           });
+        }else{
+          this.vacio = true;
         }
       });
     }else{
