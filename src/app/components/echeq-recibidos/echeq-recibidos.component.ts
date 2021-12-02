@@ -315,7 +315,7 @@ export class EcheqRecibidosComponent implements OnInit, OnDestroy {
         handler: () => {
           this.accion = 'Depositar';
           (this.verificarFechaEcheq('Depositar')) ?
-            console.log('esta en fecha') : this.toast.mostrarToast('Acción no disponible', 'danger');
+          this.comprobarCtas() : this.toast.mostrarToast('Acción no disponible', 'danger');
         },
       },
       ]
@@ -567,11 +567,14 @@ export class EcheqRecibidosComponent implements OnInit, OnDestroy {
   }
 
   private crearNuevoEndoso(){
-    const endosante = new DatosBeneficiario(this.sesion.cuil, this.echeq.datosCuenta.denominacion);
+    const denominacion = this.usuario.usuario.datosPersonales.apellido + ' ' + this.usuario.usuario.datosPersonales.nombre;
+    const endosante = new DatosBeneficiario(this.sesion.cuil, denominacion);
     const endosatario = new DatosBeneficiario(
       this.formaBenef.controls.cuil.value,
       this.formaBenef.controls.denominacion.value);
-    this.echeq.datosEcheq.endososEcheq.push(this.setEndoso(endosante, endosatario));
+    const endoso = this.setEndoso(endosante, endosatario);
+    console.log(endoso);
+    this.echeq.datosEcheq.endososEcheq.push(endoso);
   }
 
   private setCtaEndosatario(cta: DatosCuentas){
