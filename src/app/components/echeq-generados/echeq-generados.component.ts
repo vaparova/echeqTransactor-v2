@@ -287,6 +287,7 @@ export class EcheqGeneradosComponent implements OnInit {
       return this.user.librarEcheq(this.sesion.cuil, this.echeq.ent, this.echeq.cta, this.echeq.cheq, this.echeq.echeq);
     }).then( () => {
       this.obtenerEcheqs();
+      this.user.generarAlerta('echeq librado', this.echeq);
       this.toast.mostrarToast('Echeq librado', 'primary');
       this.navCtrl.navigateBack('/tab/crearEcheq/sector-mis-echeq/3');
     }).catch( (err) => {

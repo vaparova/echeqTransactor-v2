@@ -40,6 +40,7 @@ export class UsuariosService {
                private navCtrl: NavController,
                private alertas: AlertasService ) {
     this.time = 300000;
+    this.crearNotifEcheqCoelsa();
    }
   private datosCoelsa: any[] = [];
 
@@ -89,6 +90,8 @@ export class UsuariosService {
     );
     return coelsa;
   }
+
+
 
   // M É T O D O S    F I R E B A S E   R E A L T I M E   D A T E B A S E
 
@@ -147,6 +150,30 @@ export class UsuariosService {
     this.item.subscribe( action => {
       this.usuariobd = action.payload.val();
       console.log(`resultado usuarioFb: ${action.payload.val()}`);
+    });
+  }
+
+  private crearNotifEcheqCoelsa(): void {
+    this.coelsa = [];
+    this.item = this.afs.object(`coelsa/`).snapshotChanges();
+    // tslint:disable-next-line: deprecation
+    this.item.subscribe( action => {
+      this.datosCoelsa = action.payload.val();
+      console.log(this.datosCoelsa);
+      Object.values(this.datosCoelsa).forEach((datosCoelsa: DatosCoelsa) => {
+        switch (true){
+          case (datosCoelsa.datosEcheq.estadoEcheq === 'Pagado'):
+            this.generarAlerta('Pago', datosCoelsa);
+            break;
+          case (datosCoelsa.datosEcheq.estadoEcheq === 'Rechazado'):
+            this.generarAlerta('Rechazo', datosCoelsa);
+            break;
+          case (datosCoelsa.datosEcheq.estadoEcheq === 'Vencido'):
+            this.generarAlerta('Vencido', datosCoelsa);
+            break;
+        }
+      });
+      console.log(this.datosCoelsa);
     });
   }
 
@@ -713,6 +740,8 @@ export class UsuariosService {
     const idx = echeq.datosEcheq.endososEcheq.length - 1;
     const endosante = echeq.datosEcheq.endososEcheq[idx].endosante;
     const endosatario = echeq.datosEcheq.endososEcheq[idx].endosatario;
+    const idxRech = echeq.datosEcheq.datosRechazo.length - 1;
+    const rechazo = echeq.datosEcheq.datosRechazo[idxRech];
     console.log('generando alerta');
     switch (accion){
       case ('aceptar acuerdo'):
@@ -721,7 +750,8 @@ export class UsuariosService {
           this.setAlerta(
             `Acuerdo en Echeq nª ${echeq.datosEcheq.nroEcheq}`,
             `${endosatario.nombreBeneficiario} ha aceptado tu acuerdo por rechazo en el echeq ${echeq.datosEcheq.nroEcheq}.
-            Si no has librado este echeq, puedes solicitar acuerdo con la persona que te lo pasó.`
+            Si no has librado este echeq, puedes solicitar acuerdo con la persona que te lo pasó.`,
+            echeq
           )
         );
         break;
@@ -729,17 +759,156 @@ export class UsuariosService {
         this.nuevaAlerta(
           endosante.cuilBeneficiario,
           this.setAlerta(
-            `Acuerdo en Echeq nª ${echeq.datosEcheq.nroEcheq}`,
+            `Rechazo de acuerdo en Echeq nª ${echeq.datosEcheq.nroEcheq}`,
             `${endosatario.nombreBeneficiario} ha rechazado tu acuerdo por rechazo en el echeq ${echeq.datosEcheq.nroEcheq}.
-            Deberás llegar a un acuerdo con fin de poder abonar tu echeq rechazado.`
+            Deberás llegar a un acuerdo con fin de poder abonar tu echeq rechazado.`,
+            echeq
           )
+        );
+        break;
+      case ('solicitar devolucion'):
+        this.nuevaAlerta(
+          endosante.cuilBeneficiario,
+          this.setAlerta(
+            `Devolución en Echeq nª ${echeq.datosEcheq.nroEcheq}`,
+            `${endosatario.nombreBeneficiario} ha solicitado la devolución en el echeq nª ${echeq.datosEcheq.nroEcheq}.
+            En caso de aceptarla, ya no podrás realizar mas acciones sobre este echeq. También puedes optar por rechazar el pedido.`,
+            echeq
+          )
+        );
+        break;
+      case ('solicitar acuerdo'):
+        this.nuevaAlerta(
+          endosante.cuilBeneficiario,
+          this.setAlerta(
+            `Acuerdo en Echeq nª ${echeq.datosEcheq.nroEcheq}`,
+            `${endosatario.nombreBeneficiario} ha solicitado un acuerdo para saldar echeq nª ${echeq.datosEcheq.nroEcheq} rechazado.
+            Si aceptas este acuerdo, darás conformidad de el librador/endosante te ha abonado la suma adeudada por el rechazo de este echeq.
+            En caso contrario, puedes rechazar este acuerdo.`,
+            echeq
+          )
+        );
+        break;
+      case ('anular acuerdo'):
+        this.nuevaAlerta(
+          endosante.cuilBeneficiario,
+          this.setAlerta(
+            `Anulación de acuerdo Echeq nª ${echeq.datosEcheq.nroEcheq}`,
+            `${endosatario.nombreBeneficiario} ha anulado el acuerdo para saldar echeq nª ${echeq.datosEcheq.nroEcheq} rechazado.
+            Te sugerimos que te pongas en contacto con el librador/endosante.`,
+            echeq
+          )
+        );
+        break;
+      case ('anular devolución'):
+        this.nuevaAlerta(
+          endosante.cuilBeneficiario,
+          this.setAlerta(
+            `Anulación de devolución Echeq nª ${echeq.datosEcheq.nroEcheq}`,
+            `${endosatario.nombreBeneficiario} ha anulado tu pedido de devolución en echeq nª ${echeq.datosEcheq.nroEcheq}.`,
+            echeq
+          )
+        );
+        break;
+      case ('echeq librado'):
+        this.nuevaAlerta(
+          endosatario.cuilBeneficiario,
+          this.setAlerta(
+            `Has recibido el Echeq nª ${echeq.datosEcheq.nroEcheq}`,
+            `${endosante.nombreBeneficiario} te ha librado el echeq nª ${echeq.datosEcheq.nroEcheq}. Puedes aceptar la recepción
+            de este echeq. También en caso de no desear recibirlo, puedes optar por repudiarlo para devolvérselo al emisor.`,
+            echeq
+          )
+        );
+        break;
+      case ('anular'):
+        this.nuevaAlerta(
+          endosatario.cuilBeneficiario,
+          this.setAlerta(
+            `Han anulado el Echeq nª ${echeq.datosEcheq.nroEcheq}`,
+            `${endosante.nombreBeneficiario} ha anulado el echeq nª ${echeq.datosEcheq.nroEcheq}.`,
+            echeq
+          )
+        );
+        break;
+      case ('recibir'):
+        this.nuevaAlerta(
+          endosante.cuilBeneficiario,
+          this.setAlerta(
+            `Han recibido tu Echeq nª ${echeq.datosEcheq.nroEcheq}`,
+            `${endosatario.nombreBeneficiario} ha recibido tu echeq nª ${echeq.datosEcheq.nroEcheq}.`,
+            echeq
+          )
+        );
+        break;
+      case ('repudiar'):
+        this.nuevaAlerta(
+          endosante.cuilBeneficiario,
+          this.setAlerta(
+            `Han repudiado tu Echeq nª ${echeq.datosEcheq.nroEcheq}`,
+            `${endosatario.nombreBeneficiario} ha repudiado tu echeq nª ${echeq.datosEcheq.nroEcheq}.`,
+            echeq
+          )
+        );
+        break;
+      case ('aceptar devolución'):
+        this.nuevaAlerta(
+          endosante.cuilBeneficiario,
+          this.setAlerta(
+            `Han aceptado la devolución del Echeq nª ${echeq.datosEcheq.nroEcheq}`,
+            `${endosatario.nombreBeneficiario} ha aceptado tu pedido de devolución del echeq nª ${echeq.datosEcheq.nroEcheq}.`,
+            echeq
+          )
+        );
+        break;
+      case ('depositar'):
+        this.nuevaAlerta(
+          endosante.cuilBeneficiario,
+          this.setAlerta(
+            `Han depositado tu Echeq nª ${echeq.datosEcheq.nroEcheq}`,
+            `${endosatario.nombreBeneficiario} ha procedido a depositar tu echeq nª ${echeq.datosEcheq.nroEcheq}. Asegúrate de
+            tu cuenta posea fondos para realizar el pago.`,
+            echeq
+            )
+        );
+        break;
+      case ('Pago'):
+        this.nuevaAlerta(
+          echeq.datosTitularEcheq.cuil,
+          this.setAlerta(
+            `Se ha pagado tu Echeq nª ${echeq.datosEcheq.nroEcheq}`,
+            `Se ha procedido a pagar tu echeq nª ${echeq.datosEcheq.nroEcheq}.`,
+            echeq
+            )
+        );
+        break;
+      case ('Rechazo'):
+        this.nuevaAlerta(
+          endosante.cuilBeneficiario,
+          this.setAlerta(
+            `Se ha rechazado el pago tu Echeq nª ${echeq.datosEcheq.nroEcheq}`,
+            `Se ha procedido a rechazar el pago tu echeq nª ${echeq.datosEcheq.nroEcheq}, con motivo ${rechazo.motivoRechazo}.
+             Deberás contactarte con el tenedor del echeq a fin de proceder al pago del valor mediante un arreglo entre ambos. Una
+             vez acordado el pago, seleccioná la opción de acuerdo para que el tenedor la acepte.`,
+             echeq
+            )
+        );
+        break;
+      case ('Vencido'):
+        this.nuevaAlerta(
+          endosante.cuilBeneficiario,
+          this.setAlerta(
+            `Tu Echeq nª ${echeq.datosEcheq.nroEcheq} está vencido`,
+            `No han presentado tu echeq nª ${echeq.datosEcheq.nroEcheq} al cobro.`,
+            echeq
+            )
         );
         break;
     }
   }
 
-  private setAlerta(title: string, detalle: string){
-    return new DatosAlertas(title, detalle);
+  private setAlerta(title: string, detalle: string, echeq: DatosCoelsa){
+    return new DatosAlertas(title, detalle, echeq);
   }
 
   private nuevaAlerta(cuilDestinatario: number, alerta: DatosAlertas): void{
