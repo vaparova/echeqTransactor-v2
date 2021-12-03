@@ -58,12 +58,12 @@ export class EcheqRecibidosComponent implements OnInit, OnDestroy {
               private fb: FormBuilder,
               ) { }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.obtenerData();
     this.buscarEcheqs();
   }
 
-  ngOnDestroy(){
+  ngOnDestroy(): void{
   this.sesion = null;
   this.usuario = null;
   this.echeqs = [];
@@ -85,11 +85,11 @@ export class EcheqRecibidosComponent implements OnInit, OnDestroy {
   this.datosBeneficiario = false;
   }
 
-  presentActionSheet(i){
+  presentActionSheet(i): void{
     console.log('algo');
   }
 
-  segmentChanged(ev: any){
+  segmentChanged(ev: any): void{
     console.log('algo');
     const estado = ev.detail.value.toString();
     this.estado = estado;
@@ -103,7 +103,7 @@ export class EcheqRecibidosComponent implements OnInit, OnDestroy {
   }
 
 
-  detalleEcheq(ev: any){
+  detalleEcheq(ev: any): void{
     const estado = ev.detail.value.toString();
     switch (estado){
       case 'datosEcheq':
@@ -118,7 +118,7 @@ export class EcheqRecibidosComponent implements OnInit, OnDestroy {
     }
   }
 
-  mostrarMenu(i: number){
+  mostrarMenu(i: number): void{
     // this.echeq = this.vistaEcheqs[i];
     this.setEcheqVista(i);
     switch (this.echeq.datosEcheq.estadoEcheq){
@@ -138,12 +138,12 @@ export class EcheqRecibidosComponent implements OnInit, OnDestroy {
     }
   }
 
-  volver(){
+  volver(): void{
     this.modificarVista(true, true, false, false, false);
     this.verDetalleEcheq(false, false, false);
   }
 
-  depositoCta(accion: string){
+  depositoCta(accion: string): void{
     console.log(accion);
     console.log(this.formaCtas);
     if (!this.formaCtas.invalid){
@@ -158,7 +158,7 @@ export class EcheqRecibidosComponent implements OnInit, OnDestroy {
     }
   }
 
-  crearEndoso(){
+  crearEndoso(): void{
     if (!this.formaBenef.invalid){
       this.confirmarModificarEcheq('endosar', 4);
     }else{
@@ -362,7 +362,7 @@ export class EcheqRecibidosComponent implements OnInit, OnDestroy {
     console.log('onDidDismiss resolved with role', role);
   }
 
-  private setEcheqVista(i: number){
+  private setEcheqVista(i: number): void{
     this.echeq = this.vistaEcheqs[i];
     const idx = this.echeq.datosEcheq.endososEcheq.length - 1;
     this.tenedor = this.echeq.datosEcheq.endososEcheq[idx].endosatario;
@@ -370,13 +370,13 @@ export class EcheqRecibidosComponent implements OnInit, OnDestroy {
 
 
 
-  private verDetalleEcheq(datosEcheq: boolean, datosCuenta: boolean, datosBeneficiario: boolean){
+  private verDetalleEcheq(datosEcheq: boolean, datosCuenta: boolean, datosBeneficiario: boolean): void{
     this.datosEcheq = datosEcheq;
     this.datosCuenta = datosCuenta;
     this.datosBeneficiario = datosBeneficiario;
   }
 
-  private modificarVista(verMenu: boolean, verListado: boolean, verEcheq: boolean, verCtasDep: boolean, verEndoso: boolean){
+  private modificarVista(verMenu: boolean, verListado: boolean, verEcheq: boolean, verCtasDep: boolean, verEndoso: boolean): void{
     this.verMenu = verMenu;
     this.verListado = verListado;
     this.verEcheq = verEcheq;
@@ -384,7 +384,7 @@ export class EcheqRecibidosComponent implements OnInit, OnDestroy {
     this.verEndoso = verEndoso;
   }
 
-  private buscarEcheqs(){
+  private buscarEcheqs(): void{
     this.echeqs = [];
     this.echeqs = this.user.buscarEcheqCoelsaBeneficiario(this.sesion.cuil);
     setTimeout( () => {
@@ -393,7 +393,7 @@ export class EcheqRecibidosComponent implements OnInit, OnDestroy {
     }, 2000);
   }
 
-  private filtrarEcheqs(estado: string){
+  private filtrarEcheqs(estado: string): void{
     this.vistaEcheqs = [];
     console.log(this.echeqs.length);
     if (estado === 'Emitido - Pendiente'){
@@ -413,7 +413,7 @@ export class EcheqRecibidosComponent implements OnInit, OnDestroy {
     console.log(this.vistaEcheqs);
   }
 
-  private repudiarEcheq(){
+  private repudiarEcheq(): void{
     const idx = this.echeq.datosEcheq.endososEcheq.length;
     switch (true){
       case (idx > 1):
@@ -426,7 +426,7 @@ export class EcheqRecibidosComponent implements OnInit, OnDestroy {
     }
   }
 
-  private aceptarDevolucion(){
+  private aceptarDevolucion(): void{
     const idx = this.echeq.datosEcheq.endososEcheq.length;
     switch (true){
       case (idx > 1):
@@ -439,7 +439,7 @@ export class EcheqRecibidosComponent implements OnInit, OnDestroy {
     }
   }
 
-  private comprobarCtas(){
+  private comprobarCtas(): void{
     this.setCtasDep();
     this.crearFormaCta();
     if (this.usuario.usuario.datosCuentas) {
@@ -448,7 +448,7 @@ export class EcheqRecibidosComponent implements OnInit, OnDestroy {
     this.modificarVista(false, false, false, true, false);
   }
 
-  private setCtasDep(){
+  private setCtasDep(): void{
     if (this.usuario.usuario.datosCuentas){
       Object.values(this.usuario.usuario.datosCuentas).forEach( (cuentas) => {
         if (cuentas.cuentas.cuenta.cbu !== this.echeq.datosCuenta.cbu){
@@ -462,7 +462,7 @@ export class EcheqRecibidosComponent implements OnInit, OnDestroy {
     return new DatosEndoso(endosante, endosatario);
   }
 
-  private elimEndoso(){
+  private elimEndoso(): void{
     this.echeq.datosEcheq.endososEcheq.pop();
   }
 
@@ -557,7 +557,7 @@ export class EcheqRecibidosComponent implements OnInit, OnDestroy {
     });
   }
 
-  private arrayVacio(){
+  private arrayVacio(): void{
     console.log(this.vistaEcheqs.length);
     if (this.vistaEcheqs.length < 1){
       this.vacio = true;
@@ -566,7 +566,7 @@ export class EcheqRecibidosComponent implements OnInit, OnDestroy {
     }
   }
 
-  private crearNuevoEndoso(){
+  private crearNuevoEndoso(): void{
     const denominacion = this.usuario.usuario.datosPersonales.apellido + ' ' + this.usuario.usuario.datosPersonales.nombre;
     const endosante = new DatosBeneficiario(this.sesion.cuil, denominacion);
     const endosatario = new DatosBeneficiario(
@@ -577,7 +577,7 @@ export class EcheqRecibidosComponent implements OnInit, OnDestroy {
     this.echeq.datosEcheq.endososEcheq.push(endoso);
   }
 
-  private setCtaEndosatario(cta: DatosCuentas){
+  private setCtaEndosatario(cta: DatosCuentas): void{
     const idx = this.echeq.datosEcheq.endososEcheq.length - 1;
     const benef = new DatosBeneficiario(
       this.echeq.datosEcheq.endososEcheq[idx].endosatario.cuilBeneficiario,
@@ -589,7 +589,7 @@ export class EcheqRecibidosComponent implements OnInit, OnDestroy {
     this.echeq.datosEcheq.endososEcheq[idx].endosatario = benef;
   }
 
-  private rescatarEcheq(){
+  private rescatarEcheq(): void{
     const idx = this.echeq.datosEcheq.endososEcheq.length - 1;
     const benef = new DatosBeneficiario(
       this.echeq.datosEcheq.endososEcheq[idx].endosatario.cuilBeneficiario,
@@ -598,7 +598,7 @@ export class EcheqRecibidosComponent implements OnInit, OnDestroy {
     this.echeq.datosEcheq.endososEcheq[idx].endosatario = benef;
   }
 
-  private adecuacionesEcheq(accion: string){
+  private adecuacionesEcheq(accion: string): void{
     switch (accion){
       case 'rescate':
         this.rescatarEcheq();
@@ -615,7 +615,7 @@ export class EcheqRecibidosComponent implements OnInit, OnDestroy {
     }
   }
 
-  private modEcheq(accion: string, estado: number){
+  private modEcheq(accion: string, estado: number): void{
     this.adecuacionesEcheq(accion);
     this.user.accionEcheqCoelsa(this.echeq, estado).then( () => {
       this.buscarEcheqs();

@@ -4,12 +4,14 @@ import { ActionSheetController, AlertController, NavController } from '@ionic/an
 import { DatosBeneficiario } from 'src/app/models/datosBeneficiario';
 import { DatosCoelsa } from 'src/app/models/datosCoelsa';
 import { DatosCuentas } from 'src/app/models/datosCuentas';
+import { DatosEcheq } from 'src/app/models/datosEcheq';
 import { DatosSesion } from 'src/app/models/datosSesion';
 import { DatosUsuario } from 'src/app/models/datosUsuario';
 import { ComprobantesServiceService } from 'src/app/providers/comprobantes-service.service';
 import { ToastsService } from 'src/app/providers/toasts.service';
 import { UsuariosService } from 'src/app/providers/usuarios.service';
 import { VerificarPasswordService } from 'src/app/providers/verificar-password.service';
+import { DatosAlertas } from '../../models/datosAlertas';
 
 @Component({
   selector: 'app-echeq-depositados',
@@ -51,12 +53,12 @@ export class EcheqDepositadosComponent implements OnInit, OnDestroy {
               private fb: FormBuilder,
     ) { }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.obtenerData();
     this.buscarEcheqs();
   }
 
-  ngOnDestroy(){
+  ngOnDestroy(): void{
     this.sesion = null;
     this.usuario = null;
     this.echeqs = [];
@@ -78,7 +80,7 @@ export class EcheqDepositadosComponent implements OnInit, OnDestroy {
     this.datosBeneficiario = false;
   }
 
-  segmentChanged(ev: any){
+  segmentChanged(ev: any): void{
     console.log('algo');
     const estado = ev.detail.value.toString();
     this.estado = estado;
@@ -86,7 +88,7 @@ export class EcheqDepositadosComponent implements OnInit, OnDestroy {
     this.arrayVacio();
   }
 
-  detalleEcheq(ev: any){
+  detalleEcheq(ev: any): void{
     const estado = ev.detail.value.toString();
     switch (estado){
       case 'datosEcheq':
@@ -101,12 +103,12 @@ export class EcheqDepositadosComponent implements OnInit, OnDestroy {
     }
   }
 
-  volver(){
+  volver(): void{
     this.modificarVista(true, true, false, false, false);
     this.verDetalleEcheq(false, false, false);
   }
 
-  mostrarMenu(i: number){
+  mostrarMenu(i: number): void{
     // this.echeq = this.vistaEcheqs[i];
     this.setEcheqVista(i);
     switch (this.echeq.datosEcheq.estadoEcheq){
@@ -226,13 +228,13 @@ export class EcheqDepositadosComponent implements OnInit, OnDestroy {
     console.log('onDidDismiss resolved with role', role);
   }
 
-  private setEcheqVista(i: number){
+  private setEcheqVista(i: number): void{
     this.echeq = this.vistaEcheqs[i];
     const idx = this.echeq.datosEcheq.endososEcheq.length - 1;
     this.tenedor = this.echeq.datosEcheq.endososEcheq[idx].endosatario;
   }
 
-  private modificarVista(verMenu: boolean, verListado: boolean, verEcheq: boolean, verCtasDep: boolean, verEndoso: boolean){
+  private modificarVista(verMenu: boolean, verListado: boolean, verEcheq: boolean, verCtasDep: boolean, verEndoso: boolean): void{
     this.verMenu = verMenu;
     this.verListado = verListado;
     this.verEcheq = verEcheq;
@@ -240,7 +242,7 @@ export class EcheqDepositadosComponent implements OnInit, OnDestroy {
     this.verEndoso = verEndoso;
   }
 
-  private verDetalleEcheq(datosEcheq: boolean, datosCuenta: boolean, datosBeneficiario: boolean){
+  private verDetalleEcheq(datosEcheq: boolean, datosCuenta: boolean, datosBeneficiario: boolean): void{
     this.datosEcheq = datosEcheq;
     this.datosCuenta = datosCuenta;
     this.datosBeneficiario = datosBeneficiario;
@@ -261,7 +263,7 @@ export class EcheqDepositadosComponent implements OnInit, OnDestroy {
     }
   }
 
-  private buscarEcheqs(){
+  private buscarEcheqs(): void{
     this.echeqs = [];
     this.echeqs = this.user.buscarEcheqCoelsaBeneficiario(this.sesion.cuil);
     setTimeout( () => {
@@ -270,7 +272,7 @@ export class EcheqDepositadosComponent implements OnInit, OnDestroy {
     }, 2000);
   }
 
-  private filtrarEcheqs(estado: string){
+  private filtrarEcheqs(estado: string): void{
     this.vistaEcheqs = [];
     console.log(this.echeqs.length);
 
@@ -293,7 +295,7 @@ export class EcheqDepositadosComponent implements OnInit, OnDestroy {
     console.log(this.vistaEcheqs);
   }
 
-  private arrayVacio(){
+  private arrayVacio(): void{
     console.log(this.vistaEcheqs.length);
     if (this.vistaEcheqs.length < 1){
       this.vacio = true;
@@ -330,11 +332,11 @@ export class EcheqDepositadosComponent implements OnInit, OnDestroy {
     await alert.present();
   }
 
-  private elimEndoso(){
+  private elimEndoso(): void{
     this.echeq.datosEcheq.endososEcheq.pop();
   }
 
-  private async solicitarPassword(accion: string, estado: number){
+  private async solicitarPassword(accion: string, estado: number): Promise<void>{
     console.log('Anulando Echeq');
     await this.pass.verificarPass(this.sesion.cuil).then( (resp) => {
       if (resp.data.respuesta){
@@ -352,7 +354,7 @@ export class EcheqDepositadosComponent implements OnInit, OnDestroy {
     });
   }
 
-  private echeqAcordado(accion){
+  private echeqAcordado(accion): void{
     const long = this.echeq.datosEcheq.endososEcheq.length;
     switch (true){
       case (this.echeq.datosEcheq.endososEcheq.length > 1):
@@ -365,9 +367,10 @@ export class EcheqDepositadosComponent implements OnInit, OnDestroy {
     }
   }
 
-  private solicitarModificarEcheq(accion: string, estado: number){
+  private solicitarModificarEcheq(accion: string, estado: number): void{
     this.user.accionEcheqCoelsa(this.echeq, estado).then( () => {
       this.buscarEcheqs();
+      this.user.generarAlerta(accion, this.echeq);
       this.toast.mostrarToast(`Echeq modificado!`, 'primary');
       this.cmprbte.comprobanteEcheqCAC(this.echeq, `Constancia por ${accion} echeq`);
       this.navCtrl.navigateBack('tab/echeqRecibidos/sector-echeq-recibidos/2');
@@ -375,5 +378,6 @@ export class EcheqDepositadosComponent implements OnInit, OnDestroy {
       this.toast.mostrarToast('Error en BD!', 'danger');
     });
   }
+
 
 }

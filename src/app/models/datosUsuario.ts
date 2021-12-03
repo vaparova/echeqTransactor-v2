@@ -3,6 +3,7 @@ import { DatosPostales } from './datosPostales';
 import { DatosIngreso } from './datosIngreso';
 import { DatosToken } from './datosToken';
 import { DatosCuentas } from './datosCuentas';
+import { DatosAlertas } from './datosAlertas';
 
 export class DatosUsuario{
 
@@ -11,7 +12,8 @@ export class DatosUsuario{
         datosPostales: DatosPostales,
         datosIngreso: DatosIngreso,
         datosToken: DatosToken,
-        datosCuentas: DatosCuentas[]
+        datosCuentas: DatosCuentas[],
+        datosAlertas?: DatosAlertas[]
     };
 
     constructor(pers: DatosPersonales, post: DatosPostales, ing: DatosIngreso){

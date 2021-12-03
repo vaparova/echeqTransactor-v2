@@ -20,6 +20,8 @@ import { DatosEstadoEcheq } from '../models/datosEstadoEcheq';
 import { DatosTitularEcheq } from '../models/datosTitularEcheq';
 import { DatosCoelsa } from '../models/datosCoelsa';
 import { DatosRechazo } from '../models/datosRechazo';
+import { AlertasService } from './alertas.service';
+import { DatosAlertas } from '../models/datosAlertas';
 
 
 @Injectable({
@@ -35,7 +37,8 @@ export class UsuariosService {
 
   constructor( private afs: AngularFireDatabase,
                private toast: ToastsService,
-               private navCtrl: NavController ) {
+               private navCtrl: NavController,
+               private alertas: AlertasService ) {
     this.time = 300000;
    }
   private datosCoelsa: any[] = [];
@@ -704,31 +707,54 @@ export class UsuariosService {
     return this.coelsa.indexOf(echeq);
   }
 
-  // private modificarEcheqUsuario(echeq: DatosCoelsa): Promise<any>{
-  //   const arrCtas = this.getArrCuentas(this.obtenerUsuario(echeq.datosTitularEcheq.cuil));
-  //   const cta = arrCtas.find( resp => resp.cuentas.cuenta.cbu === echeq.datosCuenta.cbu);
-  //   const arrCheq = this.getArrChequeras(cta);
-  //   return this.modificarEcheq(
-  //     echeq.datosTitularEcheq.cuil,
-  //     echeq.datosCuenta,
-  //     this.buscarChequeraEcheq(arrCheq, echeq.datosEcheq),
-  //     echeq.datosEcheq
-  //   );
-  // }
+  // F U N C I O N E S   A L E R T A S
 
-//   private buscarChequeraEcheq(arrCheq: DatosChequeras[], datoEcheq: DatosEcheq): DatosChequeras{
-//     let cheq: DatosChequeras;
-//     Object.values(arrCheq).forEach( chequera => {
-//       if (chequera.echeq){
-//         Object.values(chequera.echeq).forEach ( echeq => {
-//           if (echeq.idEcheq === datoEcheq.idEcheq){
-//             cheq = chequera;
-//           }
-//         });
-//       }
-//     });
-//     return cheq;
-//   }
+  generarAlerta(accion: string, echeq: DatosCoelsa){
+    const idx = echeq.datosEcheq.endososEcheq.length - 1;
+    const endosante = echeq.datosEcheq.endososEcheq[idx].endosante;
+    const endosatario = echeq.datosEcheq.endososEcheq[idx].endosatario;
+    console.log('generando alerta');
+    switch (accion){
+      case ('aceptar acuerdo'):
+        this.nuevaAlerta(
+          endosante.cuilBeneficiario,
+          this.setAlerta(
+            `Acuerdo en Echeq nª ${echeq.datosEcheq.nroEcheq}`,
+            `${endosatario.nombreBeneficiario} ha aceptado tu acuerdo por rechazo en el echeq ${echeq.datosEcheq.nroEcheq}.
+            Si no has librado este echeq, puedes solicitar acuerdo con la persona que te lo pasó.`
+          )
+        );
+        break;
+      case ('rechazar acuerdo'):
+        this.nuevaAlerta(
+          endosante.cuilBeneficiario,
+          this.setAlerta(
+            `Acuerdo en Echeq nª ${echeq.datosEcheq.nroEcheq}`,
+            `${endosatario.nombreBeneficiario} ha rechazado tu acuerdo por rechazo en el echeq ${echeq.datosEcheq.nroEcheq}.
+            Deberás llegar a un acuerdo con fin de poder abonar tu echeq rechazado.`
+          )
+        );
+        break;
+    }
+  }
+
+  private setAlerta(title: string, detalle: string){
+    return new DatosAlertas(title, detalle);
+  }
+
+  private nuevaAlerta(cuilDestinatario: number, alerta: DatosAlertas): void{
+    const userDest = this.obtenerUsuario(cuilDestinatario);
+    if (userDest){
+      console.log('El destinatario del echeq posee cuenta en EcheqTransactor');
+      if (!userDest.usuario.datosAlertas){
+        userDest.usuario.datosAlertas = [];
+      }
+      userDest.usuario.datosAlertas.push(alerta);
+      console.log(`Se ha agregado una nueva alerta para el usuario ${cuilDestinatario}`);
+      console.log(userDest.usuario.datosAlertas);
+    }
+  }
+
 }
 
 
