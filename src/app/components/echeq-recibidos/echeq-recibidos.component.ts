@@ -119,7 +119,6 @@ export class EcheqRecibidosComponent implements OnInit, OnDestroy {
   }
 
   mostrarMenu(i: number): void{
-    // this.echeq = this.vistaEcheqs[i];
     this.setEcheqVista(i);
     switch (this.echeq.datosEcheq.estadoEcheq){
       case ('Emitido - Pendiente'):
@@ -619,6 +618,7 @@ export class EcheqRecibidosComponent implements OnInit, OnDestroy {
     this.adecuacionesEcheq(accion);
     this.user.accionEcheqCoelsa(this.echeq, estado).then( () => {
       this.buscarEcheqs();
+      this.user.generarAlerta('echeq librado', this.echeq);
       this.toast.mostrarToast(`Echeq modificado!`, 'primary');
       this.cmprbte.comprobanteEcheq(this.echeq, `Constancia por ${accion} echeq`);
       this.navCtrl.navigateBack('tab/echeqRecibidos/sector-echeq-recibidos/1');
