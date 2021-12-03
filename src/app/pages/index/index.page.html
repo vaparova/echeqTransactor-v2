@@ -2,6 +2,25 @@
 
 
 <ion-content class="ion-padding-start" mode="md">
+      <!-- <ion-list-header mode="md">
+        <ion-label class="titulo">Bienvenido/a!</ion-label>
+      </ion-list-header>
+      <ion-chip>
+        <ion-avatar>
+          <img src="https://gravatar.com/avatar/dba6bae8c566f9d4041fb9cd9ada7741?d=identicon&f=y">
+        </ion-avatar>
+        <ion-label>{{nombre}}</ion-label>
+      </ion-chip> -->
+      <ion-list-header mode="md">
+        <ion-label class="titulo">Bienvenido/a!</ion-label>
+      </ion-list-header>
+      <ion-item>
+        <ion-avatar slot="start">
+          <img src="https://gravatar.com/avatar/dba6bae8c566f9d4041fb9cd9ada7741?d=identicon&f=y">
+        </ion-avatar>
+        <ion-label class="subtitulo">{{nombre}}</ion-label>
+        <ion-icon slot="end" name="log-out-outline" (click)="salir()"></ion-icon>
+      </ion-item>
 
 <app-notificaciones></app-notificaciones>
 <app-subsecciones></app-subsecciones> 
