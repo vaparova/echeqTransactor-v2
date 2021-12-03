@@ -9,6 +9,7 @@ export class DatosCuentas {
         estado: boolean,
         claveActivacion: string,
         chequeras: DatosChequeras[];
+        limiteCredito: number;
     };
 
     constructor(banco: DatosEntidad, cta: DatosCuenta, clave: string){
@@ -17,7 +18,8 @@ export class DatosCuentas {
             cuenta: cta,
             estado: false,
             claveActivacion: clave,
-            chequeras: []
+            chequeras: [],
+            limiteCredito: 200000
         };
     }
 }

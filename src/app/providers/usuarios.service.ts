@@ -533,11 +533,18 @@ export class UsuariosService {
     const idxCheq = this.getIndexChequera(
       this.getArrChequeras(user.usuario.datosCuentas[idxCta]),
       primerEcheqCheq
-    );
+      );
+    user.usuario.datosCuentas[idxCta].cuentas.limiteCredito = this.actualizarLimiteCred(idxCta, echeq, user);
     const arrCtasMod = this.insertEcheq(user, echeq, idxCta, idxCheq);
     user.usuario.datosCuentas = arrCtasMod;
     return this.modificarUsuario(cuil, user);
   } ///
+
+
+  private actualizarLimiteCred(idxCta: number, echeq: DatosEcheq, user: DatosUsuario): number{
+    const limite = user.usuario.datosCuentas[idxCta].cuentas.limiteCredito;
+    return limite - echeq.montoEcheq;
+  }
 
   getEcheqGenerados(cuil: number): any[]{
     const user = this.obtenerUsuario(cuil);

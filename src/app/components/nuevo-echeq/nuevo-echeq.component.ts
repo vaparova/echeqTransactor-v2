@@ -108,9 +108,28 @@ export class NuevoEcheqComponent implements OnInit {
       this.toast.mostrarToast('Formulario inválido!', 'danger');
       return;
     }else{
-      this.generarEcheq();
-      this.pasosCrearEcheq(false, false, false, true);
+      if (this.verificarLimiteCredito()){
+        this.generarEcheq();
+        this.pasosCrearEcheq(false, false, false, true);
+      }else{
+        this.toast.mostrarToast('No posees límite suficiente!', 'danger');
+      }
     }
+  }
+
+  private verificarLimiteCredito(): boolean{
+   let limite: number;
+   const cbu =  this.cheqSeleccionada.cta.cbu;
+   Object.values(this.usuario.usuario.datosCuentas).forEach( datosCuentas => {
+     if (datosCuentas.cuentas.cuenta.cbu === cbu){
+      limite = datosCuentas.cuentas.limiteCredito;
+     }
+   });
+   if (limite > this.formaEcheq.controls.importe.value){
+      return true;
+   }else{
+     return false;
+   }
   }
 
   async confirmarEcheq(){
