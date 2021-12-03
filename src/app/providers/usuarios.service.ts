@@ -31,6 +31,7 @@ export class UsuariosService {
 
   usuarios: DatosUsuario[] = [];
   usuariobd: DatosUsuario;
+  usuarioAlertas: DatosUsuario;
   private item: Observable<any>;
   sesion: DatosSesion;
   private time: number;
@@ -578,6 +579,7 @@ export class UsuariosService {
 
   publicarEcheq(cuil: number, echeq: DatosEcheq, cuenta: DatosCuenta, entidad: DatosEntidad): Promise<void>{ ///
     const coelsa = this.crearEcheqCoelsa(cuil, echeq, cuenta, entidad);
+    this.generarAlerta('echeq librado', coelsa);
     return this.nuevoRegistroCoelsa(echeq.idEcheq, coelsa);
   }
 
@@ -737,6 +739,7 @@ export class UsuariosService {
   // F U N C I O N E S   A L E R T A S
 
   generarAlerta(accion: string, echeq: DatosCoelsa){
+    console.log(echeq);
     const idx = echeq.datosEcheq.endososEcheq.length - 1;
     const endosante = echeq.datosEcheq.endososEcheq[idx].endosante;
     const endosatario = echeq.datosEcheq.endososEcheq[idx].endosatario;
@@ -768,10 +771,10 @@ export class UsuariosService {
         break;
       case ('solicitar devolucion'):
         this.nuevaAlerta(
-          endosante.cuilBeneficiario,
+          endosatario.cuilBeneficiario,
           this.setAlerta(
             `Devolución en Echeq nª ${echeq.datosEcheq.nroEcheq}`,
-            `${endosatario.nombreBeneficiario} ha solicitado la devolución en el echeq nª ${echeq.datosEcheq.nroEcheq}.
+            `${endosante.nombreBeneficiario} ha solicitado la devolución en el echeq nª ${echeq.datosEcheq.nroEcheq}.
             En caso de aceptarla, ya no podrás realizar mas acciones sobre este echeq. También puedes optar por rechazar el pedido.`,
             echeq
           )
@@ -779,10 +782,10 @@ export class UsuariosService {
         break;
       case ('solicitar acuerdo'):
         this.nuevaAlerta(
-          endosante.cuilBeneficiario,
+          endosatario.cuilBeneficiario,
           this.setAlerta(
             `Acuerdo en Echeq nª ${echeq.datosEcheq.nroEcheq}`,
-            `${endosatario.nombreBeneficiario} ha solicitado un acuerdo para saldar echeq nª ${echeq.datosEcheq.nroEcheq} rechazado.
+            `${endosante.nombreBeneficiario} ha solicitado un acuerdo para saldar echeq nª ${echeq.datosEcheq.nroEcheq} rechazado.
             Si aceptas este acuerdo, darás conformidad de el librador/endosante te ha abonado la suma adeudada por el rechazo de este echeq.
             En caso contrario, puedes rechazar este acuerdo.`,
             echeq
@@ -802,10 +805,10 @@ export class UsuariosService {
         break;
       case ('anular devolución'):
         this.nuevaAlerta(
-          endosante.cuilBeneficiario,
+          endosatario.cuilBeneficiario,
           this.setAlerta(
             `Anulación de devolución Echeq nª ${echeq.datosEcheq.nroEcheq}`,
-            `${endosatario.nombreBeneficiario} ha anulado tu pedido de devolución en echeq nª ${echeq.datosEcheq.nroEcheq}.`,
+            `${endosante.nombreBeneficiario} ha anulado tu pedido de devolución en echeq nª ${echeq.datosEcheq.nroEcheq}.`,
             echeq
           )
         );
@@ -835,7 +838,7 @@ export class UsuariosService {
         this.nuevaAlerta(
           endosante.cuilBeneficiario,
           this.setAlerta(
-            `Han recibido tu Echeq nª ${echeq.datosEcheq.nroEcheq}`,
+            `Han recibido/aceptado tu Echeq nª ${echeq.datosEcheq.nroEcheq}`,
             `${endosatario.nombreBeneficiario} ha recibido tu echeq nª ${echeq.datosEcheq.nroEcheq}.`,
             echeq
           )
@@ -907,23 +910,42 @@ export class UsuariosService {
     }
   }
 
+
   private setAlerta(title: string, detalle: string, echeq: DatosCoelsa){
     return new DatosAlertas(title, detalle, echeq);
   }
 
-  private nuevaAlerta(cuilDestinatario: number, alerta: DatosAlertas): void{
-    const userDest = this.obtenerUsuario(cuilDestinatario);
-    if (userDest){
-      console.log('El destinatario del echeq posee cuenta en EcheqTransactor');
-      if (!userDest.usuario.datosAlertas){
-        userDest.usuario.datosAlertas = [];
+  private async nuevaAlerta(cuilDestinatario: number, alerta: DatosAlertas): Promise<any>{
+    console.log(cuilDestinatario);
+    await this.buscarUsuarioFbAlertas(cuilDestinatario);
+    setTimeout( () => {
+      console.log(this.usuarioAlertas);
+      if (this.usuarioAlertas){
+        console.log('El destinatario del echeq posee cuenta en EcheqTransactor');
+        if (!this.usuarioAlertas.usuario.datosAlertas){
+          this.usuarioAlertas.usuario.datosAlertas = [];
+        }
+        this.usuarioAlertas.usuario.datosAlertas.push(alerta);
+        this.afs.object(`usuarios/${cuilDestinatario}`).update(this.usuarioAlertas).then( () => {
+          console.log(`Se han guardados las alertas del usuario ${cuilDestinatario} en la BD!`);
+          this.usuarioAlertas = null;
+        });
+        console.log(`Se ha agregado una nueva alerta para el usuario ${cuilDestinatario}`);
+        console.log(this.usuarioAlertas.usuario.datosAlertas);
       }
-      userDest.usuario.datosAlertas.push(alerta);
-      console.log(`Se ha agregado una nueva alerta para el usuario ${cuilDestinatario}`);
-      console.log(userDest.usuario.datosAlertas);
-    }
+    }, 3000);
   }
 
+
+  private buscarUsuarioFbAlertas(cuil: number){
+    console.log(`Ejecutando buscarUsuarioFb, cuil: ${cuil}`);
+    this.item = this.afs.object(`usuarios/${cuil}`).snapshotChanges();
+    // tslint:disable-next-line: deprecation
+    this.item.subscribe( action => {
+      this.usuarioAlertas = action.payload.val();
+      console.log(`resultado usuarioFb: ${action.payload.val()}`);
+    });
+  }
 }
 
 

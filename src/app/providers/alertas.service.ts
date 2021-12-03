@@ -9,13 +9,13 @@ export class AlertasService {
   alertas: DatosAlertas[] = [];
 
   constructor() {
-    this.agregarAlerta('Has recibido un nuevo Echeq', 'Has recibido el valor 00002641');
+    // this.agregarAlerta('Has recibido un nuevo Echeq', 'Has recibido el valor 00002641');
 
   }
 
-  agregarAlerta(tit: string, det: string): void{
-    this.alertas.push(this.crearAlerta(tit, det));
-  }
+  // agregarAlerta(tit: string, det: string): void{
+  //   this.alertas.push(this.crearAlerta(tit, det));
+  // }
 
   getAlertas(): DatosAlertas []{
     return this.alertas;
@@ -25,8 +25,8 @@ export class AlertasService {
     return this.alertas[i];
   }
 
-  private crearAlerta(tit: string, det: string): DatosAlertas{
-    return new DatosAlertas(tit, det);
-  }
+  // private crearAlerta(tit: string, det: string): DatosAlertas{
+  //   return new DatosAlertas(tit, det);
+  // }
 }
 

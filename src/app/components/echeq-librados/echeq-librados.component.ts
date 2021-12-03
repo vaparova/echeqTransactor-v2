@@ -428,8 +428,10 @@ export class EcheqLibradosComponent implements OnInit, OnDestroy {
       }else{
         this.cmprbte.comprobanteEcheq(this.echeq, `Constancia por ${accion} echeq`);
       }
-      this.user.generarAlerta('echeq librado', this.echeq);
       this.navCtrl.navigateBack('/tab/crearEcheq/sector-mis-echeq/3');
+      setTimeout( () => {
+        this.user.generarAlerta(accion, this.echeq);
+      }, 1500);
     }).catch( (err) => {
       this.toast.mostrarToast('Error en BD!', 'danger');
     });

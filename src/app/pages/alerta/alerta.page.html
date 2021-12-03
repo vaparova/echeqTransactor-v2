@@ -1,15 +1,72 @@
 <app-cabecera ruta="Inicio > Notificaciones" back="tab/index"></app-cabecera>
-
 <ion-content>
-  <ion-card>
+  <!-- <div class="ion-padding-top">
+    <ion-label class="titulo ion-padding">{{alerta.title}}</ion-label><br>
+  </div> -->
+
+  <!-- <div class='ion-padding'> {{alerta.detalle}}</div> -->
+  <!-- <ion-card>
     <ion-card-header>
-      <ion-card-title>{{alerta.title}}</ion-card-title>
     </ion-card-header>
-  
+    
     <ion-card-content>
       {{alerta.detalle}}
     </ion-card-content>
-  </ion-card>
+  </ion-card>  -->
+  
+  <div>
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>{{alerta.title}}</ion-card-title>
+        <ion-card-subtitle> {{alerta.detalle}}</ion-card-subtitle>
+      </ion-card-header>
+      <ion-card-content color="medium">
+        <ion-segment (ionChange)="detalleEcheq($event)" mode="ios" value="datosEcheq">
+          <ion-segment-button value="datosEcheq">
+            <ion-label>Echeq</ion-label>
+          </ion-segment-button>
+          <ion-segment-button value="datosCuenta">
+            <ion-label>Cuenta</ion-label>
+          </ion-segment-button>
+          <ion-segment-button value="datosBeneficiario">
+            <ion-label>Beneficiario</ion-label>
+          </ion-segment-button>
+        </ion-segment>
+        <br>
+  
+         <div *ngIf="datosEcheq"> 
+          <h6 class="subtitulo">Datos Echeq</h6>
+          <p class="texto">Estado Echeq: {{alerta.echeq.datosEcheq.estadoEcheq}} </p>
+          <p class="texto">Fecha Emisión: {{alerta.echeq.datosEcheq.fechaEmision}}</p>
+          <p class="texto">Fecha Pago: {{alerta.echeq.datosEcheq.fechaPago}}</p>
+          <p class="texto">Id Echeq: {{alerta.echeq.datosEcheq.idEcheq}} </p>
+          <p class="texto">Monto Echeq: {{alerta.echeq.datosEcheq.montoEcheq | currency: '$'}} </p>
+          <p class="texto">Motivo: {{alerta.echeq.datosEcheq.motivo}} </p>
+          <p class="texto">Referencia: {{alerta.echeq.datosEcheq.referencia}} </p>
+        </div> 
+  
+        <div *ngIf="datosCuenta">
+          <h6 class="subtitulo">Datos Cuenta Corriente</h6>
+          <p class="texto">Denominación: {{alerta.echeq.datosCuenta.denominacion}} </p>
+          <p class="texto">Número Cuenta: {{alerta.echeq.datosCuenta.numeroCuenta}}</p>
+          <p class="texto">CBU: {{alerta.echeq.datosCuenta.cbu}} </p>
+          <p class="texto">Entidad: {{alerta.echeq.datosEntidad.numeroEntidad}} - {{alerta.echeq.datosEntidad.nombreEntidad}}</p>
+          <p class="texto">Sucursal: {{alerta.echeq.datosEntidad.numeroSucursal}} - {{alerta.echeq.datosEntidad.nombreSucursal}}</p>
+        </div>
+  
+         <div *ngIf="datosBeneficiario">
+          <h6 class="subtitulo">Datos Beneficiario</h6>
+          <p class="texto">Nombre y Apellido / Razón Social: {{alerta.echeq.datosEcheq.beneficiario.nombreBeneficiario}} </p>
+          <p class="texto">CUIL/ CUIT: {{alerta.echeq.datosEcheq.beneficiario.cuilBeneficiario}}</p> 
+          <br>
+          <h6 class="subtitulo">Datos Tenedor</h6>
+          <p class="texto">Nombre y Apellido / Razón Social: {{tenedor.nombreBeneficiario}} </p>
+          <p class="texto">CUIL/ CUIT: {{tenedor.cuilBeneficiario}}</p> 
+         </div> 
+      </ion-card-content>
+    </ion-card>
+  </div>
+    
   
   
 </ion-content>
