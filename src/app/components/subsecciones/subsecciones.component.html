@@ -2,8 +2,8 @@
   <ion-label class="titulo">Administrá tus Echeq</ion-label>
 </ion-list-header>
 
-<ion-card *ngFor="let subseccion of subsecciones">
-  <ion-item button color="secondary">
+<ion-card *ngFor="let subseccion of subsecciones, let i = index">
+  <ion-item button color="secondary" (click)="navegar(i)">
     <ion-label class="titulo2">{{subseccion.titulo}}</ion-label>
   </ion-item>
 

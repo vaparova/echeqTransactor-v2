@@ -33,11 +33,16 @@ export class NotificacionesComponent implements OnInit {
   }
 
   verDetalle(i: number) {
+    this.alertas[i].leido = true;
+    this.usuario.usuario.datosAlertas = this.alertas;
+    this.user.modificarUsuario(this.sesion.cuil, this.usuario);
     console.log(`Index de alerta ${i}`);
     this.navCtrl.navigateForward(`/tab/index/alerta/ ${i}`);
   }
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.alertas.reverse();
+  }
 
   detalleEcheq(ev: any): void{
     const estado = ev.detail.value.toString();
@@ -75,14 +80,4 @@ export class NotificacionesComponent implements OnInit {
       console.log('error de login!');
     }
   }
-
-  doRefresh(event) {
-    console.log('Begin async operation');
-
-    setTimeout(() => {
-      console.log('Async operation has ended');
-      event.target.complete();
-    }, 2000);
-  }
-
 }

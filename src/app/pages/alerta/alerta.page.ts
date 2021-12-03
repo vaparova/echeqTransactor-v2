@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { AlertasService } from '../../providers/alertas.service';
-import { Notificacion } from '../../models/notificacion.model';
 import { DatosAlertas } from '../../models/datosAlertas';
 import { DatosSesion } from 'src/app/models/datosSesion';
 import { DatosUsuario } from 'src/app/models/datosUsuario';
@@ -78,5 +77,9 @@ export class AlertaPage implements OnInit {
     this.datosEcheq = datosEcheq;
     this.datosCuenta = datosCuenta;
     this.datosBeneficiario = datosBeneficiario;
+  }
+
+  volver(){
+    this.navCtrl.navigateBack('/tab/index');
   }
 }

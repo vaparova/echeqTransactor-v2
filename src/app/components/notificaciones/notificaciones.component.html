@@ -1,19 +1,14 @@
 <ion-list-header mode="md">
-  <ion-label class="titulo">Notificaciones
-</ion-label>
+  <ion-label class="titulo">Notificaciones</ion-label>
 </ion-list-header>
 
-<ion-content>
-  <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
-    <ion-refresher-content>
 
       <div *ngIf="vacio">
         <ion-chip color="primary">
           <ion-icon name="information-circle-outline"></ion-icon>
           <ion-label>No tienes Notificaciones</ion-label>
         </ion-chip>
-      </div>
-      
+      </div> 
       
       <ion-item button lines="inset" *ngFor="let alerta of alertas | slice:0:5, let i = index" (click)="verDetalle(i)">
         <ion-label>
@@ -23,17 +18,12 @@
         <ion-icon *ngIf="alerta.leido" size="small" name="mail-open-outline" slot="end" color="success"></ion-icon>
         <ion-icon slot="end" name="chevron-forward-outline"></ion-icon>
       </ion-item>
-      <ion-item button lines="inset"(click)="verDetalle(1)" color="medium">
+      <ion-item button lines="inset" color="medium">
         <ion-label>
           Ver más notificaciones ...
         </ion-label>
         <ion-icon slot="end" name="arrow-redo-outline"></ion-icon>
-      </ion-item>
-      
-
-    </ion-refresher-content>
-  </ion-refresher>
-</ion-content>
+      </ion-item> 
 
 
 
