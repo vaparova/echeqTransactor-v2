@@ -25,10 +25,16 @@ export class NotificacionesComponent implements OnInit {
   datosBeneficiario = false;
 
   constructor(private navCtrl: NavController, private user: UsuariosService, private toast: ToastsService) {
+   this.cargarAlertas();
+  }
+
+  cargarAlertas(){
     this.obtenerData();
     this.alertas = this.usuario.usuario.datosAlertas;
     if (!this.alertas){
       this.vacio = true;
+    }else{
+      this.alertas.reverse();
     }
   }
 
@@ -41,7 +47,6 @@ export class NotificacionesComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.alertas.reverse();
   }
 
   detalleEcheq(ev: any): void{

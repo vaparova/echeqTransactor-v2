@@ -1,29 +1,34 @@
 <ion-list-header mode="md">
-  <ion-label class="titulo">Notificaciones</ion-label>
+  <ion-label class="titulo">Notificaciones
+
+    <ion-icon slot="end" size="small" name="refresh" (click)="cargarAlertas()"></ion-icon>
+  </ion-label>
 </ion-list-header>
 
 
       <div *ngIf="vacio">
         <ion-chip color="primary">
-          <ion-icon name="information-circle-outline"></ion-icon>
+          <ion-icon name="information-circle-sharp"></ion-icon>
           <ion-label>No tienes Notificaciones</ion-label>
         </ion-chip>
       </div> 
       
-      <ion-item button lines="inset" *ngFor="let alerta of alertas | slice:0:5, let i = index" (click)="verDetalle(i)">
-        <ion-label>
-          {{alerta.title}}
-        </ion-label>
-        <ion-icon *ngIf="!alerta.leido" size="small" name="mail-unread-outline" slot="end" color="primary"></ion-icon>
-        <ion-icon *ngIf="alerta.leido" size="small" name="mail-open-outline" slot="end" color="success"></ion-icon>
-        <ion-icon slot="end" name="chevron-forward-outline"></ion-icon>
-      </ion-item>
-      <ion-item button lines="inset" color="medium">
-        <ion-label>
-          Ver más notificaciones ...
-        </ion-label>
-        <ion-icon slot="end" name="arrow-redo-outline"></ion-icon>
-      </ion-item> 
+      <div *ngIf="!vacio">
+        <ion-item button lines="inset" *ngFor="let alerta of alertas | slice:0:5, let i = index" (click)="verDetalle(i)">
+          <ion-label>
+            {{alerta.title}}
+          </ion-label>
+          <ion-icon *ngIf="!alerta.leido" size="small" name="mail-unread-outline" slot="end" color="primary"></ion-icon>
+          <ion-icon *ngIf="alerta.leido" size="small" name="mail-open-outline" slot="end" color="success"></ion-icon>
+          <ion-icon slot="end" name="chevron-forward-outline"></ion-icon>
+        </ion-item>
+        <ion-item button lines="inset" color="medium">
+          <ion-label>
+            Ver más notificaciones ...
+          </ion-label>
+          <ion-icon slot="end" name="arrow-redo-outline"></ion-icon>
+        </ion-item> 
+      </div>
 
 
 

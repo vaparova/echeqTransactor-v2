@@ -1,8 +1,5 @@
 import { Injectable } from '@angular/core';
 import { DatosUsuario } from '../models/datosUsuario';
-import { DatosPersonales } from '../models/datosPersonales';
-import { DatosPostales } from '../models/datosPostales';
-import { DatosIngreso } from '../models/datosIngreso';
 import { DatosCuentas } from '../models/datosCuentas';
 import { DatosEntidad } from '../models/datosEntidad';
 import { DatosCuenta } from '../models/datosCuenta';
@@ -273,8 +270,10 @@ export class UsuariosService {
   borrarSesion(): void{
     this.usuarios = [];
     this.usuariobd = null;
+    this.usuarioAlertas = null;
     this.sesion = null;
     localStorage.clear();
+    this.item = null;
   }
 
   validarSesion(): DatosSesion{
@@ -937,12 +936,13 @@ export class UsuariosService {
           this.usuarioAlertas.usuario.datosAlertas = [];
         }
         this.usuarioAlertas.usuario.datosAlertas.push(alerta);
-        this.afs.object(`usuarios/${cuilDestinatario}`).update(this.usuarioAlertas).then( () => {
+        const cuil = this.usuarioAlertas.usuario.datosPersonales.cuil;
+        this.afs.object(`usuarios/${cuil}`).update(this.usuarioAlertas).then( () => {
           console.log(`Se han guardados las alertas del usuario ${cuilDestinatario} en la BD!`);
-          this.usuarioAlertas = null;
         });
         console.log(`Se ha agregado una nueva alerta para el usuario ${cuilDestinatario}`);
         console.log(this.usuarioAlertas.usuario.datosAlertas);
+        this.usuarioAlertas = null;
       }
     }, 3000);
   }
