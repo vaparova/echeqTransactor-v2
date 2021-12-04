@@ -29,6 +29,7 @@ export class CuentasComponent implements OnInit {
                 private navCtrl: NavController) {
 
     this.obtenerData();
+    this.user.agregarTiempo();
     this.obtenerCuentas(); //
     if ( this.cuentas.length === 0){
       this.sinCuentas = true;

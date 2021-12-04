@@ -36,6 +36,7 @@ export class ChequerasElectronicasComponent implements OnInit {
               ) {
 
     this.obtenerData();
+    this.user.agregarTiempo();
     this.cuentas = this.usuario.usuario.datosCuentas;
     this.obtenerChequeras(this.cuentas);
     if (this.chequeras.length === 0){

@@ -69,7 +69,9 @@ export class EcheqGeneradosComponent implements OnInit {
 
    }
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.user.agregarTiempo();
+  }
 
   segmentChanged(ev: any) {
     console.log('Segment changed', ev, ev.detail.value );

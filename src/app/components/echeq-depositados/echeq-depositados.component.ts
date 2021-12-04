@@ -56,6 +56,7 @@ export class EcheqDepositadosComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.obtenerData();
     this.buscarEcheqs();
+    this.user.agregarTiempo();
   }
 
   ngOnDestroy(): void{

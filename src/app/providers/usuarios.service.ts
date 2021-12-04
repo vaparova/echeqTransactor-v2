@@ -40,7 +40,7 @@ export class UsuariosService {
                private toast: ToastsService,
                private navCtrl: NavController,
                private alertas: AlertasService ) {
-    this.time = 300000;
+    this.time = 500000;
     this.crearNotifEcheqCoelsa();
    }
   private datosCoelsa: any[] = [];
@@ -48,6 +48,10 @@ export class UsuariosService {
   coelsa: DatosCoelsa[] = [];
 
   // M É T O D O S    P R O P I O S
+
+  agregarTiempo(){
+    this.time += 200000;
+  }
 
   private nuevoUsuario(usuario: DatosUsuario): void{
     if (usuario){

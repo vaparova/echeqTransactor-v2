@@ -70,7 +70,9 @@ export class NuevoEcheqComponent implements OnInit {
       this.obtenerChequeras(this.usuario);
    }
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.user.agregarTiempo();
+  }
 
   resetState(): void{
     this.state.denominacion = '';
